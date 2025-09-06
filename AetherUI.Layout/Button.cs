@@ -219,6 +219,21 @@ namespace AetherUI.Layout
 
         #endregion
 
+        #region 可视树
+
+        /// <summary>
+        /// 获取可视子元素（如果Content是UIElement）
+        /// </summary>
+        public override System.Collections.Generic.IEnumerable<UIElement> GetVisualChildren()
+        {
+            if (Content is UIElement element)
+            {
+                yield return element;
+            }
+        }
+
+        #endregion
+
         #region 事件处理
 
         /// <summary>

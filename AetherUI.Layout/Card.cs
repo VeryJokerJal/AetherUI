@@ -208,6 +208,23 @@ namespace AetherUI.Layout
 
         #endregion
 
+        #region 可视树
+
+        /// <summary>
+        /// 获取可视子元素
+        /// </summary>
+        public override System.Collections.Generic.IEnumerable<UIElement> GetVisualChildren()
+        {
+            if (_header != null)
+                yield return _header;
+            if (_content != null)
+                yield return _content;
+            if (_footer != null)
+                yield return _footer;
+        }
+
+        #endregion
+
         #region 布局重写
 
         /// <summary>

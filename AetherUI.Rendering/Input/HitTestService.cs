@@ -74,13 +74,16 @@ namespace AetherUI.Rendering.Input
 
             // 从后往前（Z序：后添加的在上方）遍历子元素，优先命中更上层的子
             List<UIElement> children = [.. element.GetVisualChildren()];
+            Debug.WriteLine($"Element {element.GetType().Name} has {children.Count} visual children");
             children.Reverse();
 
             foreach (UIElement child in children)
             {
+                Debug.WriteLine($"Testing child: {child.GetType().Name}");
                 UIElement? hitChild = HitTestRecursive(child, windowPoint, new AetherUI.Core.Point(rectInWindow.X, rectInWindow.Y));
                 if (hitChild != null)
                 {
+                    Debug.WriteLine($"Child hit: {hitChild.GetType().Name}");
                     return hitChild;
                 }
             }
