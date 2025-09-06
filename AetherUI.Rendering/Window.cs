@@ -217,12 +217,15 @@ Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
 
                 // 开始渲染帧
                 RenderContext.BeginFrame();
+                RenderContext.DumpGLState("BeginFrame");
+                RenderContext.CheckGLErrorStatic("BeginFrame");
 
                 // 渲染背景效果
                 if (BackgroundRenderer != null && RenderContext != null)
                 {
                     Vector2 resolution = new((float)RenderContext.ViewportSize.Width, (float)RenderContext.ViewportSize.Height);
                     BackgroundRenderer.RenderBackground(RenderContext.MVPMatrix, resolution, _time);
+                    RenderContext.CheckGLErrorStatic("RenderBackground");
                 }
 
                 // 执行布局（如果需要）
@@ -236,10 +239,12 @@ Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
                 if (_rootElement != null && _uiRenderer != null)
                 {
                     _uiRenderer.RenderElement(_rootElement);
+                    RenderContext.CheckGLErrorStatic("RenderElement");
                 }
 
                 // 结束渲染帧
                 RenderContext.EndFrame();
+                RenderContext.CheckGLErrorStatic("EndFrame");
 
                 // 交换缓冲区
                 SwapBuffers();

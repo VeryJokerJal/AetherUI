@@ -422,6 +422,7 @@ return f;
             GL.UseProgram(_textShaderProgram);
             GL.BindVertexArray(_vao);
             GL.BindTexture(TextureTarget.Texture2D, textureId);
+            RenderContext.CheckGLErrorStatic("Text:BindProgramVAO+Tex");
 
             // 设置MVP矩阵
             int mvpLocation = GL.GetUniformLocation(_textShaderProgram, "uMVP");
@@ -435,6 +436,7 @@ return f;
             // 设置纹理
             int textureLocation = GL.GetUniformLocation(_textShaderProgram, "uTexture");
             GL.Uniform1(textureLocation, 0);
+            RenderContext.CheckGLErrorStatic("Text:SetUniforms");
 
             // 创建四边形顶点数据
             float[] vertices = {
@@ -447,9 +449,11 @@ return f;
 
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
             GL.BufferData(BufferTarget.ArrayBuffer, vertices.Length * sizeof(float), vertices, BufferUsageHint.DynamicDraw);
+            RenderContext.CheckGLErrorStatic("Text:BufferData");
 
             // 绘制四边形
             GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
+            RenderContext.CheckGLErrorStatic("Text:DrawArrays");
 
             GL.BindTexture(TextureTarget.Texture2D, 0);
             GL.BindVertexArray(0);

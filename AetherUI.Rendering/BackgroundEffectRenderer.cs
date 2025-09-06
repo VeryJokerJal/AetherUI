@@ -328,17 +328,21 @@ _windowEffectApplied = false;
 
             GL.UseProgram(_gradientShaderProgram);
             GL.BindVertexArray(_vao);
+            RenderContext.CheckGLErrorStatic("Gradient:BindProgramVAO");
 
             // 设置uniform变量
             SetGradientShaderUniforms(mvpMatrix, time);
+            RenderContext.CheckGLErrorStatic("Gradient:SetUniforms");
 
             // 禁用深度写入，启用混合
             GL.DepthMask(false);
             GL.Enable(EnableCap.Blend);
             GL.BlendFunc(BlendingFactor.SrcAlpha, BlendingFactor.OneMinusSrcAlpha);
+            RenderContext.CheckGLErrorStatic("Gradient:BlendSetup");
 
             // 绘制全屏四边形
             GL.DrawArrays(PrimitiveType.TriangleFan, 0, 4);
+            RenderContext.CheckGLErrorStatic("Gradient:DrawArrays");
 
             // 恢复状态
             GL.DepthMask(true);

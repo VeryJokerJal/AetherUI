@@ -93,18 +93,22 @@ namespace AetherUI.Rendering
             // 上传顶点数据
             GL.BindBuffer(BufferTarget.ArrayBuffer, _vbo);
             GL.BufferData(BufferTarget.ArrayBuffer, _vertices.Count * sizeof(float), _vertices.ToArray(), BufferUsageHint.DynamicDraw);
+            RenderContext.CheckGLErrorStatic("Geometry:BufferData VBO");
 
             // 上传索引数据
             GL.BindBuffer(BufferTarget.ElementArrayBuffer, _ebo);
             GL.BufferData(BufferTarget.ElementArrayBuffer, _indices.Count * sizeof(uint), _indices.ToArray(), BufferUsageHint.DynamicDraw);
+            RenderContext.CheckGLErrorStatic("Geometry:BufferData EBO");
 
             // 使用着色器
             _shaderManager.UseShader("basic");
             _shaderManager.SetUniformMatrix4("basic", "uMVP", mvpMatrix);
+            RenderContext.CheckGLErrorStatic("Geometry:UseShader+SetUniform");
 
             // 绑定VAO并渲染
             GL.BindVertexArray(_vao);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Count, DrawElementsType.UnsignedInt, 0);
+            RenderContext.CheckGLErrorStatic("Geometry:DrawElements");
             GL.BindVertexArray(0);
 }
 

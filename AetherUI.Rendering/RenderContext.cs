@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using AetherUI.Core;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -233,6 +234,40 @@ namespace AetherUI.Rendering
         private void UpdateMVPMatrix()
         {
             MVPMatrix = _modelMatrix * _viewMatrix * _projectionMatrix;
+        }
+
+        /// <summary>
+        /// 打印当前OpenGL关键状态（仅用于调试）
+        /// </summary>
+        public static void DumpGLState(string tag)
+        {
+            int currentProgram = 0;
+            GL.GetInteger(GetPName.CurrentProgram, out currentProgram);
+            int boundVAO = 0;
+            GL.GetInteger(GetPName.VertexArrayBinding, out boundVAO);
+            int arrayBuffer = 0;
+            GL.GetInteger(GetPName.ArrayBufferBinding, out arrayBuffer);
+            int elementArray = 0;
+            GL.GetInteger(GetPName.ElementArrayBufferBinding, out elementArray);
+            int boundTexture = 0;
+            GL.GetInteger(GetPName.TextureBinding2D, out boundTexture);
+            bool blendEnabled = GL.IsEnabled(EnableCap.Blend);
+            bool depthTestEnabled = GL.IsEnabled(EnableCap.DepthTest);
+            bool cullEnabled = GL.IsEnabled(EnableCap.CullFace);
+            Debug.WriteLine($"[GLState:{tag}] Program={currentProgram}, VAO={boundVAO}, VBO={arrayBuffer}, EBO={elementArray}, Tex2D={boundTexture}, Blend={blendEnabled}, DepthTest={depthTestEnabled}, Cull={cullEnabled}");
+        }
+
+        /// <summary>
+        /// 静态错误检查（不抛异常，打印调试信息）
+        /// </summary>
+        public static void CheckGLErrorStatic(string operation = "")
+        {
+            ErrorCode err = GL.GetError();
+            if (err != ErrorCode.NoError)
+            {
+                Debug.WriteLine($"[GL-Error] {err} during {operation}");
+                DumpGLState($"Err@{operation}");
+            }
         }
 
         /// <summary>
