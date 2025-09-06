@@ -21,10 +21,17 @@ namespace AetherUI.Layout
 
             try
             {
-                // 运行所有StackPanel测试
+                // 运行StackPanel测试
+                Console.WriteLine("StackPanel 测试:");
+                Console.WriteLine("================");
                 TestVerticalStackPanel();
                 TestHorizontalStackPanel();
                 TestNestedStackPanel();
+
+                Console.WriteLine("\nGrid 测试:");
+                Console.WriteLine("==========");
+                // 运行Grid测试
+                GridTest.RunAllTests();
             }
             catch (Exception ex)
             {
