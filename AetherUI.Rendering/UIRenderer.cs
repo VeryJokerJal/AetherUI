@@ -64,28 +64,25 @@ namespace AetherUI.Rendering
 
             Debug.WriteLine($"Rendering element: {element.GetType().Name}");
 
-            // 开始批量渲染
-            _geometryRenderer.BeginBatch();
-
             // 渲染元素及其子元素
             RenderElementRecursive(element, Matrix4.Identity);
-
-            // 结束批量渲染
-            _geometryRenderer.EndBatch(_renderContext.MVPMatrix);
         }
 
         /// <summary>
         /// 递归渲染元素
         /// </summary>
         /// <param name="element">元素</param>
-        /// <param name="transform">变换矩阵</param>
-        private void RenderElementRecursive(UIElement element, Matrix4 transform)
+        /// <param name="parentTransform">父元素的变换矩阵</param>
+        private void RenderElementRecursive(UIElement element, Matrix4 parentTransform)
         {
             if (element.Visibility == Visibility.Collapsed)
                 return;
 
-            // 计算元素的变换矩阵
-            Matrix4 elementTransform = transform;
+            // 获取元素的布局位置
+            Rect layoutRect = element.LayoutRect;
+
+            // 计算元素的变换矩阵（包含位置偏移）
+            Matrix4 elementTransform = parentTransform * Matrix4.CreateTranslation((float)layoutRect.X, (float)layoutRect.Y, 0);
 
             // 渲染元素本身
             RenderElementVisual(element, elementTransform);
@@ -120,33 +117,54 @@ namespace AetherUI.Rendering
         /// <param name="transform">变换矩阵</param>
         private void RenderElementVisual(UIElement element, Matrix4 transform)
         {
+            // 使用元素的渲染尺寸，位置信息已经包含在变换矩阵中
             Rect bounds = new Rect(0, 0, element.RenderSize.Width, element.RenderSize.Height);
 
-            switch (element)
+            // 保存当前的模型矩阵
+            Matrix4 previousModelMatrix = _renderContext.ModelMatrix;
+
+            // 应用元素的变换矩阵
+            _renderContext.ModelMatrix = transform;
+
+            try
             {
-                case Button button:
-                    RenderButton(button, bounds);
-                    break;
+                // 开始批量渲染
+                _geometryRenderer.BeginBatch();
 
-                case TextBlock textBlock:
-                    RenderTextBlock(textBlock, bounds);
-                    break;
+                switch (element)
+                {
+                    case Button button:
+                        RenderButton(button, bounds);
+                        break;
 
-                case Border border:
-                    RenderBorder(border, bounds);
-                    break;
+                    case TextBlock textBlock:
+                        RenderTextBlock(textBlock, bounds);
+                        break;
 
-                case Card card:
-                    RenderCard(card, bounds);
-                    break;
+                    case Border border:
+                        RenderBorder(border, bounds);
+                        break;
 
-                case Panel panel:
-                    RenderPanel(panel, bounds);
-                    break;
+                    case Card card:
+                        RenderCard(card, bounds);
+                        break;
 
-                default:
-                    RenderDefaultElement(element, bounds);
-                    break;
+                    case Panel panel:
+                        RenderPanel(panel, bounds);
+                        break;
+
+                    default:
+                        RenderDefaultElement(element, bounds);
+                        break;
+                }
+
+                // 结束批量渲染，使用当前的MVP矩阵
+                _geometryRenderer.EndBatch(_renderContext.MVPMatrix);
+            }
+            finally
+            {
+                // 恢复之前的模型矩阵
+                _renderContext.ModelMatrix = previousModelMatrix;
             }
         }
 

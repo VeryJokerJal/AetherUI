@@ -1,5 +1,4 @@
-﻿using System;
-using System.Diagnostics;
+﻿using System.Diagnostics;
 using AetherUI.Core;
 using AetherUI.Layout;
 using AetherUI.Rendering;
@@ -54,7 +53,7 @@ namespace AetherUI.Demo
                 Console.WriteLine("\n按任意键退出...");
                 try
                 {
-                    Console.ReadKey();
+                    _ = Console.ReadKey();
                 }
                 catch { }
             }
@@ -67,13 +66,14 @@ namespace AetherUI.Demo
         private static void RunModernWindowDemo(UIElement demoUI)
         {
             // 创建窗口
-            var window = new AetherUI.Rendering.Window(1200, 800, "AetherUI 现代化窗口演示");
-
-            // 设置根UI元素
-            window.RootElement = demoUI;
+            Window window = new(1200, 800, "AetherUI 现代化窗口演示")
+            {
+                // 设置根UI元素
+                RootElement = demoUI
+            };
 
             // 配置现代化背景效果
-            var backgroundConfig = new AetherUI.Rendering.BackgroundEffectConfig
+            BackgroundEffectConfig backgroundConfig = new()
             {
                 Type = AetherUI.Rendering.BackgroundEffectType.Acrylic,
                 Opacity = 0.85f,
@@ -140,7 +140,7 @@ namespace AetherUI.Demo
             Console.WriteLine("创建演示UI界面...");
 
             // 创建主容器 - 使用Grid布局
-            var mainGrid = new Grid();
+            Grid mainGrid = new();
 
             // 定义行和列
             mainGrid.RowDefinitions.Add(new RowDefinition { Height = new GridLength(80, GridUnitType.Pixel) });
@@ -151,25 +151,25 @@ namespace AetherUI.Demo
             mainGrid.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
             // 标题栏
-            var titleBar = CreateTitleBar();
+            UIElement titleBar = CreateTitleBar();
             Grid.SetRow(titleBar, 0);
             Grid.SetColumnSpan(titleBar, 2);
             mainGrid.Children.Add(titleBar);
 
             // 左侧导航面板
-            var navigationPanel = CreateNavigationPanel();
+            UIElement navigationPanel = CreateNavigationPanel();
             Grid.SetRow(navigationPanel, 1);
             Grid.SetColumn(navigationPanel, 0);
             mainGrid.Children.Add(navigationPanel);
 
             // 主内容区域
-            var contentArea = CreateContentArea();
+            UIElement contentArea = CreateContentArea();
             Grid.SetRow(contentArea, 1);
             Grid.SetColumn(contentArea, 1);
             mainGrid.Children.Add(contentArea);
 
             // 状态栏
-            var statusBar = CreateStatusBar();
+            UIElement statusBar = CreateStatusBar();
             Grid.SetRow(statusBar, 2);
             Grid.SetColumnSpan(statusBar, 2);
             mainGrid.Children.Add(statusBar);
@@ -184,19 +184,19 @@ namespace AetherUI.Demo
         /// <returns>标题栏UI元素</returns>
         private static UIElement CreateTitleBar()
         {
-            var titleBorder = new Border
+            Border titleBorder = new()
             {
                 Background = "DarkSlateBlue"
             };
 
-            var titlePanel = new StackPanel
+            StackPanel titlePanel = new()
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(20, 15, 20, 15)
             };
 
             // 应用图标（使用TextBlock模拟）
-            var iconBorder = new Border
+            Border iconBorder = new()
             {
                 Width = 40,
                 Height = 40,
@@ -205,7 +205,7 @@ namespace AetherUI.Demo
                 Margin = new Thickness(0, 0, 15, 0)
             };
 
-            var iconText = new TextBlock
+            TextBlock iconText = new()
             {
                 Text = "字",
                 FontSize = 20,
@@ -220,12 +220,12 @@ namespace AetherUI.Demo
             titlePanel.Children.Add(iconBorder);
 
             // 标题文本区域
-            var titleTextPanel = new StackPanel
+            StackPanel titleTextPanel = new()
             {
                 Orientation = Orientation.Vertical
             };
 
-            var mainTitle = new TextBlock
+            TextBlock mainTitle = new()
             {
                 Text = "AetherUI 字体渲染演示",
                 FontSize = 24,
@@ -234,7 +234,7 @@ namespace AetherUI.Demo
                 Foreground = "White"
             };
 
-            var subTitle = new TextBlock
+            TextBlock subTitle = new()
             {
                 Text = "现代化跨平台UI框架 - 完整字体系统支持",
                 FontSize = 14,
@@ -257,21 +257,21 @@ namespace AetherUI.Demo
         /// <returns>导航面板UI元素</returns>
         private static UIElement CreateNavigationPanel()
         {
-            var navBorder = new Border
+            Border navBorder = new()
             {
                 Background = "LightGray",
                 BorderBrush = "Gray",
                 BorderThickness = new Thickness(0, 0, 1, 0)
             };
 
-            var navPanel = new StackPanel
+            StackPanel navPanel = new()
             {
                 Orientation = Orientation.Vertical,
                 Margin = new Thickness(15)
             };
 
             // 导航标题
-            var navTitle = new TextBlock
+            TextBlock navTitle = new()
             {
                 Text = "功能演示",
                 FontSize = 18,
@@ -280,7 +280,7 @@ namespace AetherUI.Demo
             navPanel.Children.Add(navTitle);
 
             // 导航项目
-            var navItems = new[]
+            string[] navItems = new[]
             {
                 "🏠 主页概览",
                 "📦 布局容器",
@@ -291,10 +291,10 @@ namespace AetherUI.Demo
                 "⚙️ 系统信息"
             };
 
-            foreach (var item in navItems)
+            foreach (string? item in navItems)
             {
                 // 使用Border包装Button来实现样式
-                var buttonBorder = new Border
+                Border buttonBorder = new()
                 {
                     Background = "White",
                     BorderBrush = "DodgerBlue",
@@ -303,7 +303,7 @@ namespace AetherUI.Demo
                     Margin = new Thickness(0, 0, 0, 8)
                 };
 
-                var navButton = new Button
+                Button navButton = new()
                 {
                     Content = item,
                     HorizontalAlignment = HorizontalAlignment.Stretch,
@@ -324,21 +324,21 @@ namespace AetherUI.Demo
         /// <returns>内容区域UI元素</returns>
         private static UIElement CreateContentArea()
         {
-            var contentBorder = new Border
+            Border contentBorder = new()
             {
                 Background = "White",
                 Margin = new Thickness(10)
             };
 
             // 使用TabControl样式的内容切换（简化版）
-            var contentPanel = new StackPanel
+            StackPanel contentPanel = new()
             {
                 Orientation = Orientation.Vertical,
                 Margin = new Thickness(20)
             };
 
             // 内容标题
-            var contentTitle = new TextBlock
+            TextBlock contentTitle = new()
             {
                 Text = "🏠 主页概览",
                 FontSize = 28,
@@ -347,11 +347,11 @@ namespace AetherUI.Demo
             contentPanel.Children.Add(contentTitle);
 
             // 欢迎信息
-            var welcomeCard = CreateWelcomeCard();
+            UIElement welcomeCard = CreateWelcomeCard();
             contentPanel.Children.Add(welcomeCard);
 
             // 功能展示区域
-            var featuresArea = CreateFeaturesArea();
+            UIElement featuresArea = CreateFeaturesArea();
             contentPanel.Children.Add(featuresArea);
 
             contentBorder.Child = contentPanel;
@@ -364,7 +364,7 @@ namespace AetherUI.Demo
         /// <returns>欢迎卡片UI元素</returns>
         private static UIElement CreateWelcomeCard()
         {
-            var card = new Card
+            Card card = new()
             {
                 Background = "AliceBlue",
                 CornerRadius = 8,
@@ -372,14 +372,14 @@ namespace AetherUI.Demo
                 Margin = new Thickness(0, 0, 0, 30)
             };
 
-            var cardContent = new StackPanel
+            StackPanel cardContent = new()
             {
                 Orientation = Orientation.Vertical,
                 Margin = new Thickness(25)
             };
 
             // 欢迎标题
-            var welcomeTitle = new TextBlock
+            TextBlock welcomeTitle = new()
             {
                 Text = "欢迎使用 AetherUI 字体渲染系统！",
                 FontSize = 20,
@@ -391,7 +391,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(welcomeTitle);
 
             // 描述文本
-            var description = new TextBlock
+            TextBlock description = new()
             {
                 Text = "AetherUI 是一个现代化的跨平台UI框架，基于OpenGL渲染，支持完整的字体系统。" +
                        "本演示展示了真实的字体渲染功能，包括中文字体、字体样式、颜色和大小控制。",
@@ -403,7 +403,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(description);
 
             // 字体演示区域
-            var fontDemoTitle = new TextBlock
+            TextBlock fontDemoTitle = new()
             {
                 Text = "字体渲染演示：",
                 FontSize = 16,
@@ -415,7 +415,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(fontDemoTitle);
 
             // 不同字体样式演示
-            var fontSamples = new StackPanel
+            StackPanel fontSamples = new()
             {
                 Orientation = Orientation.Vertical,
                 Margin = new Thickness(20, 0, 0, 20)
@@ -435,7 +435,7 @@ namespace AetherUI.Demo
 
             foreach (var sample in samples)
             {
-                var sampleText = new TextBlock
+                TextBlock sampleText = new()
                 {
                     Text = sample.Text,
                     FontSize = sample.FontSize,
@@ -451,7 +451,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(fontSamples);
 
             // 功能亮点
-            var featuresPanel = new StackPanel
+            StackPanel featuresPanel = new()
             {
                 Orientation = Orientation.Horizontal
             };
@@ -466,7 +466,7 @@ namespace AetherUI.Demo
 
             foreach (var feature in features)
             {
-                var featureBorder = new Border
+                Border featureBorder = new()
                 {
                     Background = "LightBlue",
                     CornerRadius = 15,
@@ -474,7 +474,7 @@ namespace AetherUI.Demo
                     Margin = new Thickness(0, 0, 10, 0)
                 };
 
-                var featureText = new TextBlock
+                TextBlock featureText = new()
                 {
                     Text = feature.Text,
                     FontSize = 12,
@@ -498,7 +498,7 @@ namespace AetherUI.Demo
         /// <returns>功能展示区域UI元素</returns>
         private static UIElement CreateFeaturesArea()
         {
-            var featuresGrid = new Grid();
+            Grid featuresGrid = new();
 
             // 定义2x2网格
             featuresGrid.RowDefinitions.Add(new RowDefinition());
@@ -507,25 +507,25 @@ namespace AetherUI.Demo
             featuresGrid.ColumnDefinitions.Add(new ColumnDefinition());
 
             // 布局容器演示
-            var layoutDemo = CreateLayoutDemo();
+            UIElement layoutDemo = CreateLayoutDemo();
             Grid.SetRow(layoutDemo, 0);
             Grid.SetColumn(layoutDemo, 0);
             featuresGrid.Children.Add(layoutDemo);
 
             // 控件演示
-            var controlsDemo = CreateControlsDemo();
+            UIElement controlsDemo = CreateControlsDemo();
             Grid.SetRow(controlsDemo, 0);
             Grid.SetColumn(controlsDemo, 1);
             featuresGrid.Children.Add(controlsDemo);
 
             // 事件演示
-            var eventsDemo = CreateEventsDemo();
+            UIElement eventsDemo = CreateEventsDemo();
             Grid.SetRow(eventsDemo, 1);
             Grid.SetColumn(eventsDemo, 0);
             featuresGrid.Children.Add(eventsDemo);
 
             // 渲染演示
-            var renderingDemo = CreateRenderingDemo();
+            UIElement renderingDemo = CreateRenderingDemo();
             Grid.SetRow(renderingDemo, 1);
             Grid.SetColumn(renderingDemo, 1);
             featuresGrid.Children.Add(renderingDemo);
@@ -539,7 +539,7 @@ namespace AetherUI.Demo
         /// <returns>状态栏UI元素</returns>
         private static UIElement CreateStatusBar()
         {
-            var statusBorder = new Border
+            Border statusBorder = new()
             {
                 Background = "LightGray",
                 BorderBrush = "Gray",
@@ -547,13 +547,13 @@ namespace AetherUI.Demo
                 Padding = new Thickness(15, 8, 15, 8)
             };
 
-            var statusPanel = new StackPanel
+            StackPanel statusPanel = new()
             {
                 Orientation = Orientation.Horizontal
             };
 
             // 状态信息
-            var statusText = new TextBlock
+            TextBlock statusText = new()
             {
                 Text = "就绪 | AetherUI v1.0 | OpenGL 渲染 | 实时演示模式",
                 FontSize = 12
@@ -570,7 +570,7 @@ namespace AetherUI.Demo
         /// <returns>布局演示UI元素</returns>
         private static UIElement CreateLayoutDemo()
         {
-            var demoCard = new Card
+            Card demoCard = new()
             {
                 Background = "LightYellow",
                 CornerRadius = 6,
@@ -578,14 +578,14 @@ namespace AetherUI.Demo
                 Elevation = 1
             };
 
-            var cardContent = new StackPanel
+            StackPanel cardContent = new()
             {
                 Orientation = Orientation.Vertical,
                 Margin = new Thickness(15)
             };
 
             // 标题
-            var title = new TextBlock
+            TextBlock title = new()
             {
                 Text = "📦 布局容器",
                 FontSize = 16,
@@ -594,7 +594,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(title);
 
             // StackPanel演示
-            var stackDemo = new StackPanel
+            StackPanel stackDemo = new()
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 10)
@@ -602,7 +602,7 @@ namespace AetherUI.Demo
 
             for (int i = 1; i <= 3; i++)
             {
-                var stackItem = new Border
+                Border stackItem = new()
                 {
                     Background = "Orange",
                     Width = 30,
@@ -611,7 +611,7 @@ namespace AetherUI.Demo
                     CornerRadius = 3
                 };
 
-                var stackText = new TextBlock
+                TextBlock stackText = new()
                 {
                     Text = i.ToString(),
                     HorizontalAlignment = HorizontalAlignment.Center,
@@ -626,7 +626,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(stackDemo);
 
             // Grid演示
-            var gridDemo = new Grid
+            Grid gridDemo = new()
             {
                 Margin = new Thickness(0, 0, 0, 10)
             };
@@ -640,14 +640,14 @@ namespace AetherUI.Demo
             {
                 for (int col = 0; col < 2; col++)
                 {
-                    var gridItem = new Border
+                    Border gridItem = new()
                     {
                         Background = "LightGreen",
                         Margin = new Thickness(1),
                         CornerRadius = 2
                     };
 
-                    var gridText = new TextBlock
+                    TextBlock gridText = new()
                     {
                         Text = $"{row},{col}",
                         HorizontalAlignment = HorizontalAlignment.Center,
@@ -665,7 +665,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(gridDemo);
 
             // 说明文本
-            var description = new TextBlock
+            TextBlock description = new()
             {
                 Text = "StackPanel + Grid 布局演示",
                 FontSize = 11,
@@ -683,7 +683,7 @@ namespace AetherUI.Demo
         /// <returns>控件演示UI元素</returns>
         private static UIElement CreateControlsDemo()
         {
-            var demoCard = new Card
+            Card demoCard = new()
             {
                 Background = "LightCyan",
                 CornerRadius = 6,
@@ -691,14 +691,14 @@ namespace AetherUI.Demo
                 Elevation = 1
             };
 
-            var cardContent = new StackPanel
+            StackPanel cardContent = new()
             {
                 Orientation = Orientation.Vertical,
                 Margin = new Thickness(15)
             };
 
             // 标题
-            var title = new TextBlock
+            TextBlock title = new()
             {
                 Text = "🎨 基础控件",
                 FontSize = 16,
@@ -707,14 +707,14 @@ namespace AetherUI.Demo
             cardContent.Children.Add(title);
 
             // 按钮演示
-            var buttonBorder = new Border
+            Border buttonBorder = new()
             {
                 Background = "DodgerBlue",
                 CornerRadius = 4,
                 Margin = new Thickness(0, 0, 0, 8)
             };
 
-            var demoButton = new Button
+            Button demoButton = new()
             {
                 Content = "演示按钮",
                 Padding = new Thickness(15, 8, 15, 8)
@@ -724,7 +724,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(buttonBorder);
 
             // 文本演示
-            var textDemo = new TextBlock
+            TextBlock textDemo = new()
             {
                 Text = "这是一个TextBlock控件",
                 FontSize = 12,
@@ -733,7 +733,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(textDemo);
 
             // 边框演示
-            var borderDemo = new Border
+            Border borderDemo = new()
             {
                 Background = "LightPink",
                 BorderBrush = "DeepPink",
@@ -743,7 +743,7 @@ namespace AetherUI.Demo
                 Margin = new Thickness(0, 0, 0, 8)
             };
 
-            var borderText = new TextBlock
+            TextBlock borderText = new()
             {
                 Text = "Border容器",
                 FontSize = 11,
@@ -763,7 +763,7 @@ namespace AetherUI.Demo
         /// <returns>事件演示UI元素</returns>
         private static UIElement CreateEventsDemo()
         {
-            var demoCard = new Card
+            Card demoCard = new()
             {
                 Background = "LightGreen",
                 CornerRadius = 6,
@@ -771,14 +771,14 @@ namespace AetherUI.Demo
                 Elevation = 1
             };
 
-            var cardContent = new StackPanel
+            StackPanel cardContent = new()
             {
                 Orientation = Orientation.Vertical,
                 Margin = new Thickness(15)
             };
 
             // 标题
-            var title = new TextBlock
+            TextBlock title = new()
             {
                 Text = "⚡ 事件系统",
                 FontSize = 16,
@@ -787,14 +787,14 @@ namespace AetherUI.Demo
             cardContent.Children.Add(title);
 
             // 交互按钮
-            var interactiveBorder = new Border
+            Border interactiveBorder = new()
             {
                 Background = "Orange",
                 CornerRadius = 4,
                 Margin = new Thickness(0, 0, 0, 8)
             };
 
-            var interactiveButton = new Button
+            Button interactiveButton = new()
             {
                 Content = "点击我！",
                 Padding = new Thickness(12, 6, 12, 6)
@@ -810,7 +810,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(interactiveBorder);
 
             // 状态文本
-            var statusText = new TextBlock
+            TextBlock statusText = new()
             {
                 Text = "支持鼠标和键盘事件",
                 FontSize = 11,
@@ -828,7 +828,7 @@ namespace AetherUI.Demo
         /// <returns>渲染演示UI元素</returns>
         private static UIElement CreateRenderingDemo()
         {
-            var demoCard = new Card
+            Card demoCard = new()
             {
                 Background = "Lavender",
                 CornerRadius = 6,
@@ -836,14 +836,14 @@ namespace AetherUI.Demo
                 Elevation = 1
             };
 
-            var cardContent = new StackPanel
+            StackPanel cardContent = new()
             {
                 Orientation = Orientation.Vertical,
                 Margin = new Thickness(15)
             };
 
             // 标题
-            var title = new TextBlock
+            TextBlock title = new()
             {
                 Text = "🎯 渲染效果",
                 FontSize = 16,
@@ -852,16 +852,16 @@ namespace AetherUI.Demo
             cardContent.Children.Add(title);
 
             // 渐变演示（使用多个颜色块模拟）
-            var gradientPanel = new StackPanel
+            StackPanel gradientPanel = new()
             {
                 Orientation = Orientation.Horizontal,
                 Margin = new Thickness(0, 0, 0, 8)
             };
 
-            var colors = new[] { "Red", "Orange", "Yellow", "Green", "Blue", "Purple" };
-            foreach (var color in colors)
+            string[] colors = new[] { "Red", "Orange", "Yellow", "Green", "Blue", "Purple" };
+            foreach (string? color in colors)
             {
-                var colorBlock = new Border
+                Border colorBlock = new()
                 {
                     Background = color,
                     Width = 15,
@@ -874,7 +874,7 @@ namespace AetherUI.Demo
             cardContent.Children.Add(gradientPanel);
 
             // 说明文本
-            var description = new TextBlock
+            TextBlock description = new()
             {
                 Text = "OpenGL硬件加速渲染",
                 FontSize = 11,

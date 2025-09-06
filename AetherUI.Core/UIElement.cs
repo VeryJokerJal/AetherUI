@@ -85,6 +85,11 @@ namespace AetherUI.Core
         /// </summary>
         public bool IsVisible => Visibility == Visibility.Visible;
 
+        /// <summary>
+        /// 布局矩形（元素在父容器中的位置和尺寸）
+        /// </summary>
+        public Rect LayoutRect => _arrangeRect;
+
         #endregion
 
         #region 布局方法
