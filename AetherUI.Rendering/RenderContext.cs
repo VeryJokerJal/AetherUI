@@ -149,6 +149,10 @@ namespace AetherUI.Rendering
             // 更新投影矩阵为正交投影（适合2D UI）
             ProjectionMatrix = Matrix4.CreateOrthographicOffCenter(0, width, height, 0, -1000, 1000);
 
+            // 强制刷新OpenGL状态以确保视口变化立即生效
+            GL.Flush();
+            GL.Finish();
+
             Debug.WriteLine($"Viewport set to: {width}x{height}");
         }
 

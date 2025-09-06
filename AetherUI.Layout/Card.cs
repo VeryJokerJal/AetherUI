@@ -20,28 +20,28 @@ namespace AetherUI.Layout
         /// </summary>
         public static readonly DependencyProperty PaddingProperty = DependencyProperty.Register(
             nameof(Padding), typeof(Thickness), typeof(Card),
-            new PropertyMetadata(new Thickness(16), OnPaddingChanged));
+            new PropertyMetadata(new Thickness(10), OnPaddingChanged));
 
         /// <summary>
         /// 头部内边距依赖属性
         /// </summary>
         public static readonly DependencyProperty HeaderPaddingProperty = DependencyProperty.Register(
             nameof(HeaderPadding), typeof(Thickness), typeof(Card),
-            new PropertyMetadata(new Thickness(16, 16, 16, 8), OnPaddingChanged));
+            new PropertyMetadata(new Thickness(10), OnPaddingChanged));
 
         /// <summary>
         /// 内容内边距依赖属性
         /// </summary>
         public static readonly DependencyProperty ContentPaddingProperty = DependencyProperty.Register(
             nameof(ContentPadding), typeof(Thickness), typeof(Card),
-            new PropertyMetadata(new Thickness(16, 8, 16, 8), OnPaddingChanged));
+            new PropertyMetadata(new Thickness(10), OnPaddingChanged));
 
         /// <summary>
         /// 底部内边距依赖属性
         /// </summary>
         public static readonly DependencyProperty FooterPaddingProperty = DependencyProperty.Register(
             nameof(FooterPadding), typeof(Thickness), typeof(Card),
-            new PropertyMetadata(new Thickness(16, 8, 16, 16), OnPaddingChanged));
+            new PropertyMetadata(new Thickness(10), OnPaddingChanged));
 
         /// <summary>
         /// 阴影深度依赖属性
@@ -73,7 +73,7 @@ namespace AetherUI.Layout
         /// </summary>
         public Thickness Padding
         {
-            get => (Thickness)(GetValue(PaddingProperty) ?? new Thickness(16));
+            get => (Thickness)(GetValue(PaddingProperty) ?? new Thickness(10));
             set => SetValue(PaddingProperty, value);
         }
 
@@ -82,7 +82,7 @@ namespace AetherUI.Layout
         /// </summary>
         public Thickness HeaderPadding
         {
-            get => (Thickness)(GetValue(HeaderPaddingProperty) ?? new Thickness(16, 16, 16, 8));
+            get => (Thickness)(GetValue(HeaderPaddingProperty) ?? new Thickness(10));
             set => SetValue(HeaderPaddingProperty, value);
         }
 
@@ -91,7 +91,7 @@ namespace AetherUI.Layout
         /// </summary>
         public Thickness ContentPadding
         {
-            get => (Thickness)(GetValue(ContentPaddingProperty) ?? new Thickness(16, 8, 16, 8));
+            get => (Thickness)(GetValue(ContentPaddingProperty) ?? new Thickness(10));
             set => SetValue(ContentPaddingProperty, value);
         }
 
@@ -100,7 +100,7 @@ namespace AetherUI.Layout
         /// </summary>
         public Thickness FooterPadding
         {
-            get => (Thickness)(GetValue(FooterPaddingProperty) ?? new Thickness(16, 8, 16, 16));
+            get => (Thickness)(GetValue(FooterPaddingProperty) ?? new Thickness(10));
             set => SetValue(FooterPaddingProperty, value);
         }
 

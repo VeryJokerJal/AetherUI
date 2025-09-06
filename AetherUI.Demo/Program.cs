@@ -706,31 +706,107 @@ namespace AetherUI.Demo
             };
             cardContent.Children.Add(title);
 
-            // 按钮演示
-            Border buttonBorder = new()
+            // Unicode多语言按钮演示
+            StackPanel buttonStack = new()
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(0, 0, 0, 15)
+            };
+
+            // 中文按钮
+            Border chineseButtonBorder = new()
             {
                 Background = "DodgerBlue",
                 CornerRadius = 4,
-                Margin = new Thickness(0, 0, 0, 8)
+                Margin = new Thickness(0, 0, 0, 5)
             };
 
-            Button demoButton = new()
+            Button chineseButton = new()
             {
-                Content = "演示按钮",
+                Content = "测试按钮",
                 Padding = new Thickness(15, 8, 15, 8)
             };
+            chineseButtonBorder.Child = chineseButton;
+            buttonStack.Children.Add(chineseButtonBorder);
 
-            buttonBorder.Child = demoButton;
-            cardContent.Children.Add(buttonBorder);
-
-            // 文本演示
-            TextBlock textDemo = new()
+            // 日文按钮
+            Border japaneseButtonBorder = new()
             {
-                Text = "这是一个TextBlock控件",
-                FontSize = 12,
-                Margin = new Thickness(0, 0, 0, 8)
+                Background = "ForestGreen",
+                CornerRadius = 4,
+                Margin = new Thickness(0, 0, 0, 5)
             };
-            cardContent.Children.Add(textDemo);
+
+            Button japaneseButton = new()
+            {
+                Content = "こんにちは",
+                Padding = new Thickness(15, 8, 15, 8)
+            };
+            japaneseButtonBorder.Child = japaneseButton;
+            buttonStack.Children.Add(japaneseButtonBorder);
+
+            // 韩文按钮
+            Border koreanButtonBorder = new()
+            {
+                Background = "Orange",
+                CornerRadius = 4,
+                Margin = new Thickness(0, 0, 0, 5)
+            };
+
+            Button koreanButton = new()
+            {
+                Content = "안녕하세요",
+                Padding = new Thickness(15, 8, 15, 8)
+            };
+            koreanButtonBorder.Child = koreanButton;
+            buttonStack.Children.Add(koreanButtonBorder);
+
+            cardContent.Children.Add(buttonStack);
+
+            // Unicode文本演示
+            StackPanel textStack = new()
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(0, 0, 0, 15)
+            };
+
+            // 中文文本
+            TextBlock chineseText = new()
+            {
+                Text = "中文：这是一个TextBlock控件",
+                FontSize = 12,
+                Margin = new Thickness(0, 0, 0, 3)
+            };
+            textStack.Children.Add(chineseText);
+
+            // 日文文本
+            TextBlock japaneseText = new()
+            {
+                Text = "日本語：これはTextBlockコントロールです",
+                FontSize = 12,
+                Margin = new Thickness(0, 0, 0, 3)
+            };
+            textStack.Children.Add(japaneseText);
+
+            // 韩文文本
+            TextBlock koreanText = new()
+            {
+                Text = "한국어：이것은 TextBlock 컨트롤입니다",
+                FontSize = 12,
+                Margin = new Thickness(0, 0, 0, 3)
+            };
+            textStack.Children.Add(koreanText);
+
+            // 混合文本
+            TextBlock mixedText = new()
+            {
+                Text = "Mixed: English 中文 日本語 한국어 Русский العربية",
+                FontSize = 12,
+                Margin = new Thickness(0, 0, 0, 3)
+            };
+            textStack.Children.Add(mixedText);
+
+            cardContent.Children.Add(textStack);
 
             // 边框演示
             Border borderDemo = new()

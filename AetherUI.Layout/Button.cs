@@ -38,7 +38,7 @@ namespace AetherUI.Layout
         /// </summary>
         public static readonly DependencyProperty PaddingProperty = DependencyProperty.Register(
             nameof(Padding), typeof(Thickness), typeof(Button),
-            new PropertyMetadata(new Thickness(8, 4, 8, 4), OnPaddingChanged));
+            new PropertyMetadata(new Thickness(10), OnPaddingChanged));
 
         #endregion
 
@@ -76,7 +76,7 @@ namespace AetherUI.Layout
         /// </summary>
         public Thickness Padding
         {
-            get => (Thickness)(GetValue(PaddingProperty) ?? new Thickness(8, 4, 8, 4));
+            get => (Thickness)(GetValue(PaddingProperty) ?? new Thickness(10));
             set => SetValue(PaddingProperty, value);
         }
 

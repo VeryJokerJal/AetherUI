@@ -190,8 +190,14 @@ namespace AetherUI.Rendering
             // 通知窗口大小变化管理器
             ResizeManager?.NotifyResize(new Size(e.Width, e.Height));
 
+            // 清理渲染缓存
+            ClearRenderCaches();
+
             // 标记需要重新布局
             _needsLayout = true;
+
+            // 强制立即重绘以避免黑色区域
+            ForceRedraw();
         }
 
         /// <summary>
@@ -211,6 +217,14 @@ namespace AetherUI.Rendering
             {
                 // 更新时间
                 _time += (float)e.Time;
+
+                // 确保视口尺寸与当前窗口尺寸一致
+                if (RenderContext.ViewportSize.Width != ClientSize.X || RenderContext.ViewportSize.Height != ClientSize.Y)
+                {
+                    RenderContext.SetViewport(ClientSize.X, ClientSize.Y);
+                    _needsLayout = true;
+                    Debug.WriteLine($"Viewport corrected to match window size: {ClientSize.X}x{ClientSize.Y}");
+                }
 
                 // 开始渲染帧
                 RenderContext.BeginFrame();
@@ -283,16 +297,55 @@ namespace AetherUI.Rendering
             }
 
             Size availableSize = RenderContext.ViewportSize;
+
+            // 确保可用尺寸有效
+            if (availableSize.Width <= 0 || availableSize.Height <= 0)
+            {
+                Debug.WriteLine($"Invalid available size for layout: {availableSize}");
+                return;
+            }
+
             Debug.WriteLine($"Performing layout with available size: {availableSize}");
 
-            // 测量根元素
-            _rootElement.Measure(availableSize);
-            Debug.WriteLine($"Root element desired size: {_rootElement.DesiredSize}");
+            try
+            {
+                // 测量根元素
+                _rootElement.Measure(availableSize);
+                Debug.WriteLine($"Root element desired size: {_rootElement.DesiredSize}");
 
-            // 排列根元素
-            Rect finalRect = new(0, 0, availableSize.Width, availableSize.Height);
-            _rootElement.Arrange(finalRect);
-            Debug.WriteLine($"Root element arranged to: {finalRect}");
+                // 排列根元素
+                Rect finalRect = new(0, 0, availableSize.Width, availableSize.Height);
+                _rootElement.Arrange(finalRect);
+                Debug.WriteLine($"Root element arranged to: {finalRect}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error during layout: {ex.Message}");
+                // 布局失败时不抛出异常，继续渲染
+            }
+        }
+        /// <summary>
+        /// 清理渲染缓存（在窗口大小改变时调用）
+        /// </summary>
+        private void ClearRenderCaches()
+        {
+            try
+            {
+                Debug.WriteLine("Clearing render caches after window resize");
+
+                // 清理UI渲染器缓存
+                _uiRenderer?.ClearCaches();
+
+                // 强制垃圾回收以清理可能的纹理缓存
+                GC.Collect();
+                GC.WaitForPendingFinalizers();
+
+                Debug.WriteLine("Render caches cleared successfully");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error clearing render caches: {ex.Message}");
+            }
         }
 
 
@@ -347,6 +400,54 @@ namespace AetherUI.Rendering
         public void RemoveResizeListener(IWindowResizeListener listener)
         {
             ResizeManager?.RemoveListener(listener);
+        }
+
+        /// <summary>
+        /// 强制重绘窗口
+        /// </summary>
+        public void ForceRedraw()
+        {
+            try
+            {
+                // 确保在主线程上执行
+                if (RenderContext != null)
+                {
+                    // 立即执行一次渲染循环
+                    if (_needsLayout && _rootElement != null)
+                    {
+                        PerformLayout();
+                        _needsLayout = false;
+                    }
+
+                    // 开始渲染帧
+                    RenderContext.BeginFrame();
+
+                    // 渲染背景效果
+                    if (BackgroundRenderer != null)
+                    {
+                        Vector2 resolution = new((float)RenderContext.ViewportSize.Width, (float)RenderContext.ViewportSize.Height);
+                        BackgroundRenderer.RenderBackground(RenderContext.MVPMatrix, resolution, _time);
+                    }
+
+                    // 渲染UI元素
+                    if (_rootElement != null && _uiRenderer != null)
+                    {
+                        _uiRenderer.RenderElement(_rootElement);
+                    }
+
+                    // 结束渲染帧
+                    RenderContext.EndFrame();
+
+                    // 交换缓冲区
+                    SwapBuffers();
+
+                    Debug.WriteLine("Forced redraw completed");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error during forced redraw: {ex.Message}");
+            }
         }
 
         #endregion

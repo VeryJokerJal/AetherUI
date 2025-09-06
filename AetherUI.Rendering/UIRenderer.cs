@@ -35,7 +35,7 @@ namespace AetherUI.Rendering
         public UIRenderer(RenderContext renderContext)
         {
             _renderContext = renderContext ?? throw new ArgumentNullException(nameof(renderContext));
-            
+
             // 创建着色器管理器
             _shaderManager = new ShaderManager();
             _shaderManager.CreateDefaultShaders();
@@ -254,7 +254,7 @@ namespace AetherUI.Rendering
             }
 
             // 边框
-            if (border.BorderThickness.Left > 0 || border.BorderThickness.Top > 0 || 
+            if (border.BorderThickness.Left > 0 || border.BorderThickness.Top > 0 ||
                 border.BorderThickness.Right > 0 || border.BorderThickness.Bottom > 0)
             {
                 Vector4 borderColor = new Vector4(0.6f, 0.6f, 0.6f, 1.0f);
@@ -275,7 +275,7 @@ namespace AetherUI.Rendering
         {
             // 卡片阴影（简化）
             Vector4 shadowColor = new Vector4(0.0f, 0.0f, 0.0f, 0.1f);
-            Rect shadowBounds = new Rect(bounds.X + card.Elevation, bounds.Y + card.Elevation, 
+            Rect shadowBounds = new Rect(bounds.X + card.Elevation, bounds.Y + card.Elevation,
                                        bounds.Width, bounds.Height);
             _geometryRenderer.DrawRoundedRect(shadowBounds, shadowColor, card.CornerRadius);
 
@@ -332,6 +332,27 @@ namespace AetherUI.Rendering
             Debug.WriteLine($"Rendered Default Element ({element.GetType().Name}): {bounds}");
         }
 
+        /// <summary>
+        /// 清理渲染缓存
+        /// </summary>
+        public void ClearCaches()
+        {
+            try
+            {
+                Debug.WriteLine("Clearing UIRenderer caches...");
+
+                // 清理字体渲染器缓存
+                _fontRenderer?.ClearCaches();
+
+                // 几何渲染器通常不需要清理缓存，因为它是即时渲染的
+
+                Debug.WriteLine("UIRenderer caches cleared");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error clearing UIRenderer caches: {ex.Message}");
+            }
+        }
         #endregion
 
         #region IDisposable

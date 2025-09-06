@@ -109,7 +109,7 @@ namespace AetherUI.Core
         /// </summary>
         public static readonly DependencyProperty MarginProperty = DependencyProperty.Register(
             nameof(Margin), typeof(Thickness), typeof(FrameworkElement),
-            new PropertyMetadata(Thickness.Zero, OnMarginChanged));
+            new PropertyMetadata(new Thickness(10), OnMarginChanged));
 
         /// <summary>
         /// 水平对齐依赖属性

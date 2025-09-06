@@ -39,7 +39,7 @@ namespace AetherUI.Layout
         /// </summary>
         public static readonly DependencyProperty PaddingProperty = DependencyProperty.Register(
             nameof(Padding), typeof(Thickness), typeof(Border),
-            new PropertyMetadata(Thickness.Zero, OnPaddingChanged));
+            new PropertyMetadata(new Thickness(10), OnPaddingChanged));
 
         /// <summary>
         /// 圆角半径依赖属性
@@ -84,7 +84,7 @@ namespace AetherUI.Layout
         /// </summary>
         public Thickness Padding
         {
-            get => (Thickness)(GetValue(PaddingProperty) ?? Thickness.Zero);
+            get => (Thickness)(GetValue(PaddingProperty) ?? new Thickness(10));
             set => SetValue(PaddingProperty, value);
         }
 

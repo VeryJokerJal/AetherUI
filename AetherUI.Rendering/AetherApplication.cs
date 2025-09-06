@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using OpenTK.Windowing.Common;
-using OpenTK.Windowing.Desktop;
 using AetherUI.Core;
 
 namespace AetherUI.Rendering
@@ -11,7 +9,6 @@ namespace AetherUI.Rendering
     /// </summary>
     public class AetherApplication : IDisposable
     {
-        private Window? _mainWindow;
         private bool _disposed = false;
 
         #region 事件
@@ -33,7 +30,7 @@ namespace AetherUI.Rendering
         /// <summary>
         /// 主窗口
         /// </summary>
-        public Window? MainWindow => _mainWindow;
+        public Window? MainWindow { get; private set; }
 
         /// <summary>
         /// 应用程序是否正在运行
@@ -65,20 +62,20 @@ namespace AetherUI.Rendering
         /// <returns>创建的窗口</returns>
         public Window CreateMainWindow(int width, int height, string title)
         {
-            if (_mainWindow != null)
+            if (MainWindow != null)
             {
                 throw new InvalidOperationException("Main window already created");
             }
 
             Debug.WriteLine($"Creating main window: {title} ({width}x{height})");
 
-            _mainWindow = new Window(width, height, title);
+            MainWindow = new Window(width, height, title);
 
             // 订阅窗口事件
             // 注意：OpenTK的GameWindow事件签名可能不同，这里简化处理
             Debug.WriteLine("Main window created and configured");
 
-            return _mainWindow;
+            return MainWindow;
         }
 
         /// <summary>
@@ -86,7 +83,7 @@ namespace AetherUI.Rendering
         /// </summary>
         public void Run()
         {
-            if (_mainWindow == null)
+            if (MainWindow == null)
             {
                 throw new InvalidOperationException("No main window created. Call CreateMainWindow first.");
             }
@@ -104,7 +101,7 @@ namespace AetherUI.Rendering
                 Started?.Invoke(this, EventArgs.Empty);
 
                 // 运行主窗口
-                _mainWindow.Run();
+                MainWindow.Run();
             }
             catch (Exception ex)
             {
@@ -127,7 +124,7 @@ namespace AetherUI.Rendering
 
             Exiting?.Invoke(this, EventArgs.Empty);
 
-            _mainWindow?.Close();
+            MainWindow?.Close();
         }
 
         #endregion
@@ -149,15 +146,15 @@ namespace AetherUI.Rendering
         /// <param name="rootElement">根UI元素</param>
         public static void RunSimple(int width, int height, string title, UIElement? rootElement = null)
         {
-            using AetherApplication app = new AetherApplication();
-            
+            using AetherApplication app = new();
+
             Window window = app.CreateMainWindow(width, height, title);
-            
+
             if (rootElement != null)
             {
                 window.RootElement = rootElement;
             }
-            
+
             app.Run();
         }
 
@@ -197,10 +194,10 @@ namespace AetherUI.Rendering
                     Debug.WriteLine("Disposing AetherApplication...");
 
                     // 释放主窗口
-                    if (_mainWindow != null)
+                    if (MainWindow != null)
                     {
-                        _mainWindow.Dispose();
-                        _mainWindow = null;
+                        MainWindow.Dispose();
+                        MainWindow = null;
                     }
 
                     Debug.WriteLine("AetherApplication disposed");
