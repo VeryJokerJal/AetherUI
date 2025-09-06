@@ -32,6 +32,11 @@ namespace AetherUI.Layout
                 Console.WriteLine("==========");
                 // 运行Grid测试
                 GridTest.RunAllTests();
+
+                Console.WriteLine("\nCanvas 测试:");
+                Console.WriteLine("=============");
+                // 运行Canvas测试
+                CanvasTest.RunAllTests();
             }
             catch (Exception ex)
             {
