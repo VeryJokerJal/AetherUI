@@ -66,7 +66,7 @@ namespace AetherUI.Rendering
                     _needsLayout = true;
                     _pointerInput?.SetRoot(_rootElement);
                     RootElementChanged?.Invoke(this, value);
-}
+                }
             }
         }
 
@@ -82,7 +82,7 @@ namespace AetherUI.Rendering
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
         {
-}
+        }
 
         /// <summary>
         /// 使用默认设置初始化AetherWindow
@@ -139,7 +139,7 @@ namespace AetherUI.Rendering
 
             // 设置窗口可见
             IsVisible = true;
-Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
+            Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
             RenderContext = null;
 
             base.OnUnload();
-}
+        }
 
         /// <summary>
         /// 窗口大小改变时调用
@@ -213,11 +213,11 @@ Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
                 {
                     RenderContext.SetViewport(ClientSize.X, ClientSize.Y);
                     _needsLayout = true;
-}
+                }
 
                 // 开始渲染帧
                 RenderContext.BeginFrame();
-                RenderContext.DumpGLState("BeginFrame");
+                //RenderContext.DumpGLState("BeginFrame");
                 RenderContext.CheckGLErrorStatic("BeginFrame");
 
                 // 渲染背景效果
@@ -252,9 +252,9 @@ Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
                 // 检查OpenGL错误
                 RenderContext.CheckGLError("OnRenderFrame");
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-}
+            }
         }
 
         /// <summary>
@@ -272,8 +272,8 @@ Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
             MouseState mouse = MouseState;
             if (_pointerInput != null)
             {
-                var pos = mouse.Position;
-                AetherUI.Core.Point p = new AetherUI.Core.Point(pos.X, pos.Y);
+                Vector2 pos = mouse.Position;
+                AetherUI.Core.Point p = new(pos.X, pos.Y);
 
                 if (pos != _prevMouseState.Position)
                 {
@@ -292,8 +292,8 @@ Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
             // 处理鼠标滚轮
             if (mouse.ScrollDelta != _prevMouseState.ScrollDelta)
             {
-                var pos = mouse.Position;
-                AetherUI.Core.Point p = new AetherUI.Core.Point(pos.X, pos.Y);
+                Vector2 pos = mouse.Position;
+                AetherUI.Core.Point p = new(pos.X, pos.Y);
                 double delta = mouse.ScrollDelta.Y - _prevMouseState.ScrollDelta.Y;
                 _pointerInput?.OnMouseWheel(p, delta);
             }
@@ -326,16 +326,17 @@ Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
             // 确保可用尺寸有效
             if (availableSize.Width <= 0 || availableSize.Height <= 0)
             {
-return;
+                return;
             }
-try
+
+            try
             {
                 // 测量根元素
                 _rootElement.Measure(availableSize);
                 Rect finalRect = new(0, 0, availableSize.Width, availableSize.Height);
                 _rootElement.Arrange(finalRect);
-}
-            catch (Exception ex)
+            }
+            catch (Exception)
             {
             }
         }
@@ -351,10 +352,10 @@ try
                 // 强制垃圾回收以清理可能的纹理缓存
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-}
-            catch (Exception ex)
+            }
+            catch (Exception)
             {
-}
+            }
         }
 
 
@@ -380,7 +381,7 @@ try
             if (BackgroundRenderer != null)
             {
                 BackgroundRenderer.Config = config;
-}
+            }
         }
 
         /// <summary>
@@ -448,11 +449,11 @@ try
 
                     // 交换缓冲区
                     SwapBuffers();
-}
+                }
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-}
+            }
         }
 
         #endregion
@@ -468,7 +469,7 @@ try
         {
             // 触发公共事件
             WindowResized?.Invoke(this, args);
-}
+        }
 
         #endregion
     }

@@ -241,16 +241,11 @@ namespace AetherUI.Rendering
         /// </summary>
         public static void DumpGLState(string tag)
         {
-            int currentProgram = 0;
-            GL.GetInteger(GetPName.CurrentProgram, out currentProgram);
-            int boundVAO = 0;
-            GL.GetInteger(GetPName.VertexArrayBinding, out boundVAO);
-            int arrayBuffer = 0;
-            GL.GetInteger(GetPName.ArrayBufferBinding, out arrayBuffer);
-            int elementArray = 0;
-            GL.GetInteger(GetPName.ElementArrayBufferBinding, out elementArray);
-            int boundTexture = 0;
-            GL.GetInteger(GetPName.TextureBinding2D, out boundTexture);
+            GL.GetInteger(GetPName.CurrentProgram, out int currentProgram);
+            GL.GetInteger(GetPName.VertexArrayBinding, out int boundVAO);
+            GL.GetInteger(GetPName.ArrayBufferBinding, out int arrayBuffer);
+            GL.GetInteger(GetPName.ElementArrayBufferBinding, out int elementArray);
+            GL.GetInteger(GetPName.TextureBinding2D, out int boundTexture);
             bool blendEnabled = GL.IsEnabled(EnableCap.Blend);
             bool depthTestEnabled = GL.IsEnabled(EnableCap.DepthTest);
             bool cullEnabled = GL.IsEnabled(EnableCap.CullFace);

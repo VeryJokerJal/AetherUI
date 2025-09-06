@@ -180,11 +180,44 @@ namespace AetherUI.Layout
             // 测量内容
             if (Content != null)
             {
-                // 给内容无限空间进行测量，以获取其自然尺寸
-                Content.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
-                ContentSize = Content.DesiredSize;
+                // 首先尝试在当前可用空间内测量内容
+                Size constraintSize = new Size(
+                    double.IsInfinity(availableSize.Width) ? double.PositiveInfinity : Math.Max(0, availableSize.Width - scrollBarSize),
+                    double.IsInfinity(availableSize.Height) ? double.PositiveInfinity : Math.Max(0, availableSize.Height - scrollBarSize)
+                );
 
-                Debug.WriteLine($"ScrollViewer: ContentSize = {ContentSize}, AvailableSize = {availableSize}");
+                Content.Measure(constraintSize);
+                Size measuredSize = Content.DesiredSize;
+
+                // 如果测量结果接近约束尺寸，说明内容可能需要更多空间
+                // 在这种情况下，给内容更大的空间重新测量
+                bool needsMoreWidth = !double.IsInfinity(constraintSize.Width) &&
+                                     measuredSize.Width >= constraintSize.Width * 0.95;
+                bool needsMoreHeight = !double.IsInfinity(constraintSize.Height) &&
+                                      measuredSize.Height >= constraintSize.Height * 0.95;
+
+                if (needsMoreWidth || needsMoreHeight)
+                {
+                    Size expandedConstraint = new Size(
+                        needsMoreWidth ? Math.Max(constraintSize.Width * 2, 2000) : constraintSize.Width,
+                        needsMoreHeight ? Math.Max(constraintSize.Height * 2, 2000) : constraintSize.Height
+                    );
+
+                    Content.Measure(expandedConstraint);
+                    ContentSize = Content.DesiredSize;
+                }
+                else
+                {
+                    ContentSize = measuredSize;
+                }
+
+                // 确保内容尺寸不会是无穷大
+                ContentSize = new Size(
+                    double.IsInfinity(ContentSize.Width) ? Math.Max(availableSize.Width, 1000) : ContentSize.Width,
+                    double.IsInfinity(ContentSize.Height) ? Math.Max(availableSize.Height, 1000) : ContentSize.Height
+                );
+
+                Debug.WriteLine($"ScrollViewer: ContentSize = {ContentSize}, AvailableSize = {availableSize}, Constraint = {constraintSize}");
             }
             else
             {
