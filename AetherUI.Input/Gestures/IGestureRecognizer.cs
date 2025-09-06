@@ -45,6 +45,28 @@ namespace AetherUI.Input.Gestures
     }
 
     /// <summary>
+    /// 单点手势识别器接口
+    /// </summary>
+    public interface ISinglePointerGestureRecognizer : IGestureRecognizer
+    {
+        // 继承基础接口，专门用于单点手势
+    }
+
+    /// <summary>
+    /// 多点手势识别器接口
+    /// </summary>
+    public interface IMultiPointerGestureRecognizer : IGestureRecognizer
+    {
+        /// <summary>
+        /// 处理多点指针事件
+        /// </summary>
+        /// <param name="pointerEvent">指针事件</param>
+        /// <param name="activePointers">活动指针</param>
+        /// <returns>是否处理了事件</returns>
+        bool ProcessMultiPointerEvent(PointerEvent pointerEvent, System.Collections.Generic.IReadOnlyList<PointerTracker> activePointers);
+    }
+
+    /// <summary>
     /// 手势识别事件参数
     /// </summary>
     public class GestureRecognizedEventArgs : EventArgs
