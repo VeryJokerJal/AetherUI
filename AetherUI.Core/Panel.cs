@@ -39,6 +39,17 @@ namespace AetherUI.Core
         public UIElementCollection Children => _children;
 
         /// <summary>
+        /// 用于命中测试和可视树遍历的子元素枚举
+        /// </summary>
+        public override System.Collections.Generic.IEnumerable<UIElement> GetVisualChildren()
+        {
+            foreach (UIElement child in _children)
+            {
+                yield return child;
+            }
+        }
+
+        /// <summary>
         /// 背景
         /// </summary>
         public object? Background
@@ -110,6 +121,7 @@ namespace AetherUI.Core
                 if (child.Visibility != Visibility.Collapsed)
                 {
                     child.Arrange(childRect);
+                    child.Parent = this;
                 }
             }
             return finalSize;
@@ -125,6 +137,10 @@ namespace AetherUI.Core
         /// <param name="child">被添加的子元素</param>
         internal virtual void OnChildAdded(UIElement child)
         {
+            if (child != null)
+            {
+                child.Parent = this;
+            }
             InvalidateMeasure();
             Debug.WriteLine($"Child {child.GetType().Name} added to {GetType().Name}");
         }
@@ -135,6 +151,10 @@ namespace AetherUI.Core
         /// <param name="child">被移除的子元素</param>
         internal virtual void OnChildRemoved(UIElement child)
         {
+            if (child != null && child.Parent == this)
+            {
+                child.Parent = null;
+            }
             InvalidateMeasure();
             Debug.WriteLine($"Child {child.GetType().Name} removed from {GetType().Name}");
         }

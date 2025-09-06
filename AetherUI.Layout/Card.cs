@@ -141,7 +141,15 @@ namespace AetherUI.Layout
             {
                 if (_header != value)
                 {
+                    if (_header != null && _header.Parent == this)
+                    {
+                        _header.Parent = null;
+                    }
                     _header = value;
+                    if (_header != null)
+                    {
+                        _header.Parent = this;
+                    }
                     InvalidateMeasure();
                     Debug.WriteLine($"Card header changed to: {value?.GetType().Name ?? "null"}");
                 }
@@ -158,7 +166,15 @@ namespace AetherUI.Layout
             {
                 if (_content != value)
                 {
+                    if (_content != null && _content.Parent == this)
+                    {
+                        _content.Parent = null;
+                    }
                     _content = value;
+                    if (_content != null)
+                    {
+                        _content.Parent = this;
+                    }
                     InvalidateMeasure();
                     Debug.WriteLine($"Card content changed to: {value?.GetType().Name ?? "null"}");
                 }
@@ -175,7 +191,15 @@ namespace AetherUI.Layout
             {
                 if (_footer != value)
                 {
+                    if (_footer != null && _footer.Parent == this)
+                    {
+                        _footer.Parent = null;
+                    }
                     _footer = value;
+                    if (_footer != null)
+                    {
+                        _footer.Parent = this;
+                    }
                     InvalidateMeasure();
                     Debug.WriteLine($"Card footer changed to: {value?.GetType().Name ?? "null"}");
                 }

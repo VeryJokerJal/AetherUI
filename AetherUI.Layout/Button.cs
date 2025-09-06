@@ -40,6 +40,34 @@ namespace AetherUI.Layout
             nameof(Padding), typeof(Thickness), typeof(Button),
             new PropertyMetadata(new Thickness(10), OnPaddingChanged));
 
+        /// <summary>
+        /// 背景颜色依赖属性
+        /// </summary>
+        public static readonly DependencyProperty BackgroundProperty = DependencyProperty.Register(
+            nameof(Background), typeof(string), typeof(Button),
+            new PropertyMetadata("#3498DB", OnBackgroundChanged));
+
+        /// <summary>
+        /// 前景颜色（文本颜色）依赖属性
+        /// </summary>
+        public static readonly DependencyProperty ForegroundProperty = DependencyProperty.Register(
+            nameof(Foreground), typeof(string), typeof(Button),
+            new PropertyMetadata("#FFFFFF", OnForegroundChanged));
+
+        /// <summary>
+        /// 边框颜色依赖属性
+        /// </summary>
+        public static readonly DependencyProperty BorderBrushProperty = DependencyProperty.Register(
+            nameof(BorderBrush), typeof(string), typeof(Button),
+            new PropertyMetadata("#2980B9", OnBorderBrushChanged));
+
+        /// <summary>
+        /// 圆角弧度依赖属性
+        /// </summary>
+        public static readonly DependencyProperty CornerRadiusProperty = DependencyProperty.Register(
+            nameof(CornerRadius), typeof(double), typeof(Button),
+            new PropertyMetadata(7.0, OnCornerRadiusChanged));
+
         #endregion
 
         #region 属性
@@ -78,6 +106,42 @@ namespace AetherUI.Layout
         {
             get => (Thickness)(GetValue(PaddingProperty) ?? new Thickness(10));
             set => SetValue(PaddingProperty, value);
+        }
+
+        /// <summary>
+        /// 背景颜色（支持十六进制颜色值，如 #3498DB）
+        /// </summary>
+        public string Background
+        {
+            get => (string)(GetValue(BackgroundProperty) ?? "#3498DB");
+            set => SetValue(BackgroundProperty, value);
+        }
+
+        /// <summary>
+        /// 前景颜色（文本颜色，支持十六进制颜色值，如 #FFFFFF）
+        /// </summary>
+        public string Foreground
+        {
+            get => (string)(GetValue(ForegroundProperty) ?? "#FFFFFF");
+            set => SetValue(ForegroundProperty, value);
+        }
+
+        /// <summary>
+        /// 边框颜色（支持十六进制颜色值，如 #2980B9）
+        /// </summary>
+        public string BorderBrush
+        {
+            get => (string)(GetValue(BorderBrushProperty) ?? "#2980B9");
+            set => SetValue(BorderBrushProperty, value);
+        }
+
+        /// <summary>
+        /// 圆角弧度（像素值，默认为 7 像素）
+        /// </summary>
+        public double CornerRadius
+        {
+            get => (double)(GetValue(CornerRadiusProperty) ?? 7.0);
+            set => SetValue(CornerRadiusProperty, value);
         }
 
         #endregion
@@ -206,6 +270,62 @@ namespace AetherUI.Layout
             {
                 button.InvalidateMeasure();
                 Debug.WriteLine($"Button padding changed to: {e.NewValue}");
+            }
+        }
+
+        /// <summary>
+        /// 背景颜色属性更改回调
+        /// </summary>
+        /// <param name="d">依赖对象</param>
+        /// <param name="e">属性更改事件参数</param>
+        private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Button button)
+            {
+                // 背景颜色更改时需要重新渲染，但不需要重新测量
+                Debug.WriteLine($"Button background changed from {e.OldValue} to {e.NewValue}");
+            }
+        }
+
+        /// <summary>
+        /// 前景颜色属性更改回调
+        /// </summary>
+        /// <param name="d">依赖对象</param>
+        /// <param name="e">属性更改事件参数</param>
+        private static void OnForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Button button)
+            {
+                // 前景颜色更改时需要重新渲染，但不需要重新测量
+                Debug.WriteLine($"Button foreground changed from {e.OldValue} to {e.NewValue}");
+            }
+        }
+
+        /// <summary>
+        /// 边框颜色属性更改回调
+        /// </summary>
+        /// <param name="d">依赖对象</param>
+        /// <param name="e">属性更改事件参数</param>
+        private static void OnBorderBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Button button)
+            {
+                // 边框颜色更改时需要重新渲染，但不需要重新测量
+                Debug.WriteLine($"Button border brush changed from {e.OldValue} to {e.NewValue}");
+            }
+        }
+
+        /// <summary>
+        /// 圆角弧度属性更改回调
+        /// </summary>
+        /// <param name="d">依赖对象</param>
+        /// <param name="e">属性更改事件参数</param>
+        private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            if (d is Button button)
+            {
+                // 圆角弧度更改时需要重新渲染，但不需要重新测量
+                Debug.WriteLine($"Button corner radius changed from {e.OldValue} to {e.NewValue}");
             }
         }
 

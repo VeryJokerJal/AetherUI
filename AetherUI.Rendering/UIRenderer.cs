@@ -175,15 +175,30 @@ namespace AetherUI.Rendering
         /// <param name="bounds">边界</param>
         private void RenderButton(Button button, Rect bounds)
         {
-            // 按钮背景
-            Vector4 backgroundColor = new Vector4(0.3f, 0.6f, 1.0f, 0.8f);
-            _geometryRenderer.DrawRoundedRect(bounds, backgroundColor, 4);
+            // 获取按钮的样式属性
+            string backgroundColorString = button.Background;
+            string borderColorString = button.BorderBrush;
+            double cornerRadius = button.CornerRadius;
 
-            // 按钮边框
-            Vector4 borderColor = new Vector4(0.2f, 0.4f, 0.8f, 1.0f);
+            // 解析背景颜色
+            Vector4 backgroundColor = ParseColorToVector4(backgroundColorString);
+
+            // 解析边框颜色
+            Vector4 borderColor = ParseColorToVector4(borderColorString);
+
+            // 渲染按钮背景（使用圆角）
+            _geometryRenderer.DrawRoundedRect(bounds, backgroundColor, (float)cornerRadius);
+
+            // 渲染按钮边框
             _geometryRenderer.DrawRectBorder(bounds, borderColor, 1);
 
-            Debug.WriteLine($"Rendered Button: {bounds}");
+            // 渲染按钮文本内容
+            if (button.Content != null)
+            {
+                RenderButtonContent(button, bounds);
+            }
+
+            Debug.WriteLine($"Rendered Button: {bounds}, Background: {backgroundColorString}, Border: {borderColorString}, CornerRadius: {cornerRadius}");
         }
 
         /// <summary>
@@ -330,6 +345,99 @@ namespace AetherUI.Rendering
             _geometryRenderer.DrawRectBorder(bounds, borderColor, 1);
 
             Debug.WriteLine($"Rendered Default Element ({element.GetType().Name}): {bounds}");
+        }
+
+        /// <summary>
+        /// 渲染按钮内容
+        /// </summary>
+        /// <param name="button">按钮</param>
+        /// <param name="bounds">边界</param>
+        private void RenderButtonContent(Button button, Rect bounds)
+        {
+            if (button.Content == null)
+                return;
+
+            string contentText = button.Content.ToString() ?? "";
+            if (string.IsNullOrEmpty(contentText))
+                return;
+
+            try
+            {
+                // 获取按钮的内边距
+                Thickness padding = button.Padding;
+
+                // 计算内容区域
+                Rect contentBounds = new Rect(
+                    bounds.X + padding.Left,
+                    bounds.Y + padding.Top,
+                    Math.Max(0, bounds.Width - padding.Horizontal),
+                    Math.Max(0, bounds.Height - padding.Vertical));
+
+                // 创建字体信息（使用按钮的前景色）
+                FontInfo fontInfo = new FontInfo(
+                    "Microsoft YaHei",  // 默认字体
+                    14.0,               // 默认字体大小
+                    FontWeight.Normal,  // 默认字体粗细
+                    FontStyle.Normal,   // 默认字体样式
+                    button.Foreground); // 使用按钮的前景色
+
+                // 测量文本尺寸
+                TextMetrics metrics = _fontRenderer.GetTextMetrics(contentText, fontInfo);
+
+                // 计算文本位置（居中对齐）
+                double textX = contentBounds.X + Math.Max(0, (contentBounds.Width - metrics.Width) / 2);
+                double textY = contentBounds.Y + Math.Max(0, (contentBounds.Height - metrics.Height) / 2);
+
+                // 渲染文本
+                _fontRenderer.RenderText(
+                    contentText,
+                    fontInfo,
+                    new Vector2((float)textX, (float)textY),
+                    _renderContext.MVPMatrix);
+
+                Debug.WriteLine($"Rendered Button Content: '{contentText}' at ({textX:F1}, {textY:F1}) with color {button.Foreground}");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error rendering button content: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 解析颜色字符串为Vector4
+        /// </summary>
+        /// <param name="colorString">颜色字符串（支持十六进制格式如 #3498DB 或颜色名称）</param>
+        /// <returns>Vector4颜色值</returns>
+        private Vector4 ParseColorToVector4(string colorString)
+        {
+            try
+            {
+                System.Drawing.Color color;
+
+                if (colorString.StartsWith("#"))
+                {
+                    // 解析十六进制颜色
+                    color = System.Drawing.ColorTranslator.FromHtml(colorString);
+                }
+                else
+                {
+                    // 解析颜色名称
+                    color = System.Drawing.Color.FromName(colorString);
+                }
+
+                // 转换为Vector4（归一化到0-1范围）
+                return new Vector4(
+                    color.R / 255.0f,
+                    color.G / 255.0f,
+                    color.B / 255.0f,
+                    color.A / 255.0f);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error parsing color '{colorString}': {ex.Message}");
+                // 返回默认颜色（黑色）
+                return new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+            }
         }
 
         /// <summary>

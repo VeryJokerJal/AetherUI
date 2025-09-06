@@ -8,6 +8,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <UseWindowsForms>false</UseWindowsForms>
     <UseWPF>false</UseWPF>
+    <StartupObject>AetherUI.Demo.ButtonDemoTest</StartupObject>
   </PropertyGroup>
 
   <ItemGroup>

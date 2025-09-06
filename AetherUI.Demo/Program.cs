@@ -2,6 +2,7 @@
 using AetherUI.Core;
 using AetherUI.Layout;
 using AetherUI.Rendering;
+using AetherUI.Demo.Demos;
 
 namespace AetherUI.Demo
 {
@@ -28,12 +29,35 @@ namespace AetherUI.Demo
 
             try
             {
-                // 创建演示UI
-                UIElement demoUI = CreateDemoUI();
+                // 询问用户选择演示类型
+                Console.WriteLine("请选择演示类型：");
+                Console.WriteLine("1. 主演示页面（默认）");
+                Console.WriteLine("2. 按钮控件演示");
+                Console.WriteLine("3. 演示选择器");
+                Console.WriteLine("4. 按钮样式测试（新功能）");
+                Console.Write("请输入选择 (1-4，直接回车选择1): ");
 
-                Console.WriteLine("启动AetherUI现代化窗口演示...");
+                string? choice = Console.ReadLine();
+                UIElement demoUI = choice?.Trim() switch
+                {
+                    "2" => ButtonDemo.CreateButtonDemoPage(),
+                    "3" => DemoLauncher.CreateDemoSelector(),
+                    "4" => ButtonStyleTest.CreateButtonStyleTestPage(),
+                    _ => CreateDemoUI()
+                };
+
+                string demoName = choice?.Trim() switch
+                {
+                    "2" => "按钮控件演示",
+                    "3" => "演示选择器",
+                    "4" => "按钮样式测试",
+                    _ => "主演示页面"
+                };
+
+                Console.WriteLine($"启动 {demoName}...");
                 Console.WriteLine("功能特性：");
-                Console.WriteLine("- 真实字体渲染系统");
+                Console.WriteLine("- 真实字体渲染系统（AntiAliasGridFit优化）");
+                Console.WriteLine("- 表情符号和Unicode支持");
                 Console.WriteLine("- 现代化背景效果（亚克力/云母）");
                 Console.WriteLine("- 响应式窗口大小变化");
                 Console.WriteLine("- ESC键退出程序");

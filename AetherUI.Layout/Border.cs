@@ -107,7 +107,15 @@ namespace AetherUI.Layout
             {
                 if (_child != value)
                 {
+                    if (_child != null && _child.Parent == this)
+                    {
+                        _child.Parent = null;
+                    }
                     _child = value;
+                    if (_child != null)
+                    {
+                        _child.Parent = this;
+                    }
                     InvalidateMeasure();
                     Debug.WriteLine($"Border child changed to: {value?.GetType().Name ?? "null"}");
                 }

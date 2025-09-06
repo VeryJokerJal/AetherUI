@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using AetherUI.Events;
 
 namespace AetherUI.Core
 {
@@ -15,6 +16,11 @@ namespace AetherUI.Core
         private Rect _arrangeRect = Rect.Empty;
         private bool _isArrangeValid = false;
         private bool _isMeasureValid = false;
+
+        /// <summary>
+        /// 父元素引用，用于事件路由与命中测试
+        /// </summary>
+        public UIElement? Parent { get; set; }
 
         #region 依赖属性
 
@@ -89,6 +95,15 @@ namespace AetherUI.Core
         /// 布局矩形（元素在父容器中的位置和尺寸）
         /// </summary>
         public Rect LayoutRect => _arrangeRect;
+
+        /// <summary>
+        /// 获取视觉子元素集合（用于渲染与命中测试）
+        /// </summary>
+        /// <returns>子元素枚举</returns>
+        public virtual System.Collections.Generic.IEnumerable<UIElement> GetVisualChildren()
+        {
+            yield break;
+        }
 
         #endregion
 

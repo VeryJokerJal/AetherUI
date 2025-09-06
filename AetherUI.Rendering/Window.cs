@@ -18,6 +18,8 @@ namespace AetherUI.Rendering
         private UIElement? _rootElement;
         private bool _needsLayout = true;
         private float _time = 0.0f;
+        private Rendering.Input.PointerInputManager? _pointerInput;
+        private MouseState _prevMouseState;
 
         #region 事件
 
@@ -62,6 +64,7 @@ namespace AetherUI.Rendering
                 {
                     _rootElement = value;
                     _needsLayout = true;
+                    _pointerInput?.SetRoot(_rootElement);
                     RootElementChanged?.Invoke(this, value);
                     Debug.WriteLine($"Root element changed to: {value?.GetType().Name ?? "null"}");
                 }
@@ -131,6 +134,10 @@ namespace AetherUI.Rendering
             {
                 BackgroundRenderer = new BackgroundEffectRenderer(_uiRenderer.ShaderManager, new IntPtr(WindowPtr));
             }
+
+            // 初始化指针输入
+            _pointerInput = new Rendering.Input.PointerInputManager(_rootElement);
+            _prevMouseState = MouseState;
 
             // 初始化窗口大小变化管理器
             ResizeManager = new WindowResizeManager(new Size(ClientSize.X, ClientSize.Y));
@@ -274,6 +281,28 @@ namespace AetherUI.Rendering
 
             // 更新窗口大小变化管理器
             ResizeManager?.Update();
+
+            // 轮询鼠标
+            MouseState mouse = MouseState;
+            if (_pointerInput != null)
+            {
+                var pos = mouse.Position;
+                AetherUI.Core.Point p = new AetherUI.Core.Point(pos.X, pos.Y);
+
+                if (pos != _prevMouseState.Position)
+                {
+                    _pointerInput.OnMouseMove(p);
+                }
+                if (mouse.IsButtonDown(MouseButton.Left) && !_prevMouseState.IsButtonDown(MouseButton.Left))
+                {
+                    _pointerInput.OnMouseDown(p);
+                }
+                if (!mouse.IsButtonDown(MouseButton.Left) && _prevMouseState.IsButtonDown(MouseButton.Left))
+                {
+                    _pointerInput.OnMouseUp(p);
+                }
+            }
+            _prevMouseState = mouse;
 
             // 检查退出条件
             if (KeyboardState.IsKeyDown(Keys.Escape))
