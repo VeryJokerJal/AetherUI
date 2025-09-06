@@ -22,8 +22,11 @@ namespace AetherUI.Rendering
                 // 创建测试UI
                 UIElement rootElement = CreateTestUI();
 
+                Console.WriteLine("启动渲染窗口...");
+                Console.WriteLine("按ESC键退出窗口");
+
                 // 运行应用程序
-                AetherApplication.RunSimple("AetherUI 渲染测试", rootElement);
+                AetherApplication.RunSimple("AetherUI 渲染测试 - 基础渲染管道", rootElement);
             }
             catch (Exception ex)
             {

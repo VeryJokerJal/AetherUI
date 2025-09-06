@@ -15,6 +15,7 @@ namespace AetherUI.Rendering
     public class AetherWindow : GameWindow
     {
         private RenderContext? _renderContext;
+        private UIRenderer? _uiRenderer;
         private UIElement? _rootElement;
         private bool _needsLayout = true;
 
@@ -107,6 +108,9 @@ namespace AetherUI.Rendering
             _renderContext = new RenderContext();
             _renderContext.SetViewport(ClientSize.X, ClientSize.Y);
 
+            // 初始化UI渲染器
+            _uiRenderer = new UIRenderer(_renderContext);
+
             // 设置窗口可见
             IsVisible = true;
 
@@ -120,6 +124,10 @@ namespace AetherUI.Rendering
         protected override void OnUnload()
         {
             Debug.WriteLine("AetherWindow unloading...");
+
+            // 释放UI渲染器
+            _uiRenderer?.Dispose();
+            _uiRenderer = null;
 
             // 释放渲染上下文
             _renderContext?.Dispose();
@@ -171,9 +179,9 @@ namespace AetherUI.Rendering
                 }
 
                 // 渲染UI元素
-                if (_rootElement != null)
+                if (_rootElement != null && _uiRenderer != null)
                 {
-                    RenderElement(_rootElement);
+                    _uiRenderer.RenderElement(_rootElement);
                 }
 
                 // 结束渲染帧
@@ -231,68 +239,7 @@ namespace AetherUI.Rendering
             Debug.WriteLine($"Root element arranged to: {finalRect}");
         }
 
-        /// <summary>
-        /// 渲染UI元素
-        /// </summary>
-        /// <param name="element">要渲染的元素</param>
-        private void RenderElement(UIElement element)
-        {
-            if (_renderContext == null || element.Visibility == Visibility.Collapsed)
-                return;
 
-            // 这里是基础的渲染框架
-            // 实际的渲染逻辑将在后续的渲染管道中实现
-
-            // 渲染一个简单的矩形作为占位符
-            RenderElementPlaceholder(element);
-        }
-
-        /// <summary>
-        /// 渲染元素占位符（简单矩形）
-        /// </summary>
-        /// <param name="element">元素</param>
-        private void RenderElementPlaceholder(UIElement element)
-        {
-            if (_renderContext == null)
-                return;
-
-            // 获取元素的渲染边界
-            Rect bounds = new Rect(0, 0, element.RenderSize.Width, element.RenderSize.Height);
-
-            // 设置颜色（根据元素类型）
-            Vector4 color = element.GetType().Name switch
-            {
-                "Button" => new Vector4(0.3f, 0.6f, 1.0f, 0.8f), // 蓝色
-                "TextBlock" => new Vector4(0.2f, 0.2f, 0.2f, 1.0f), // 深灰色
-                "StackPanel" => new Vector4(1.0f, 0.8f, 0.6f, 0.3f), // 浅橙色
-                "Grid" => new Vector4(0.8f, 1.0f, 0.8f, 0.3f), // 浅绿色
-                "Canvas" => new Vector4(1.0f, 0.9f, 0.9f, 0.3f), // 浅粉色
-                "DockPanel" => new Vector4(0.9f, 0.9f, 1.0f, 0.3f), // 浅蓝色
-                _ => new Vector4(0.7f, 0.7f, 0.7f, 0.5f) // 默认灰色
-            };
-
-            // 渲染简单的有色矩形
-            RenderColoredRect(bounds, color);
-        }
-
-        /// <summary>
-        /// 渲染有色矩形
-        /// </summary>
-        /// <param name="rect">矩形区域</param>
-        /// <param name="color">颜色</param>
-        private void RenderColoredRect(Rect rect, Vector4 color)
-        {
-            // 这是一个简化的矩形渲染实现
-            // 在实际应用中，应该使用现代OpenGL的着色器和顶点缓冲区
-            // 这里为了简单起见，暂时跳过实际渲染
-
-            Debug.WriteLine($"Rendering rect: {rect} with color: {color}");
-
-            // TODO: 实现现代OpenGL渲染
-            // 1. 创建顶点缓冲区
-            // 2. 编写顶点和片段着色器
-            // 3. 使用VAO/VBO进行渲染
-        }
 
         #endregion
 
