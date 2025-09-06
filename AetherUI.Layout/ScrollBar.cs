@@ -76,14 +76,14 @@ namespace AetherUI.Layout
         /// </summary>
         public static readonly DependencyProperty SmallChangeProperty = DependencyProperty.Register(
             nameof(SmallChange), typeof(double), typeof(ScrollBar),
-            new PropertyMetadata(1.0));
+            new PropertyMetadata(20.0));
 
         /// <summary>
         /// 大步长依赖属性
         /// </summary>
         public static readonly DependencyProperty LargeChangeProperty = DependencyProperty.Register(
             nameof(LargeChange), typeof(double), typeof(ScrollBar),
-            new PropertyMetadata(10.0));
+            new PropertyMetadata(100.0));
 
         #endregion
 

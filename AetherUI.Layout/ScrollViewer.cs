@@ -175,13 +175,16 @@ namespace AetherUI.Layout
         protected override Size MeasureCore(Size availableSize)
         {
             Size desiredSize = availableSize;
+            double scrollBarSize = 16;
 
             // 测量内容
             if (Content != null)
             {
-                // 给内容无限空间进行测量
+                // 给内容无限空间进行测量，以获取其自然尺寸
                 Content.Measure(new Size(double.PositiveInfinity, double.PositiveInfinity));
                 ContentSize = Content.DesiredSize;
+
+                Debug.WriteLine($"ScrollViewer: ContentSize = {ContentSize}, AvailableSize = {availableSize}");
             }
             else
             {
@@ -189,8 +192,8 @@ namespace AetherUI.Layout
             }
 
             // 测量滚动条
-            VerticalScrollBar.Measure(new Size(16, availableSize.Height));
-            HorizontalScrollBar.Measure(new Size(availableSize.Width, 16));
+            VerticalScrollBar.Measure(new Size(scrollBarSize, availableSize.Height));
+            HorizontalScrollBar.Measure(new Size(availableSize.Width, scrollBarSize));
 
             return desiredSize;
         }
@@ -296,18 +299,51 @@ namespace AetherUI.Layout
             try
             {
                 double scrollBarSize = 16;
-                bool needVerticalScrollBar = ShouldShowVerticalScrollBar();
-                bool needHorizontalScrollBar = ShouldShowHorizontalScrollBar();
 
-                // 计算视口区域
-                double viewportWidth = RenderSize.Width - (needVerticalScrollBar ? scrollBarSize : 0);
-                double viewportHeight = RenderSize.Height - (needHorizontalScrollBar ? scrollBarSize : 0);
+                // 先计算不考虑滚动条的视口尺寸
+                double baseViewportWidth = RenderSize.Width;
+                double baseViewportHeight = RenderSize.Height;
+
+                // 判断是否需要滚动条（考虑滚动条占用空间的循环依赖）
+                bool needVerticalScrollBar = ShouldShowVerticalScrollBar(baseViewportWidth, baseViewportHeight);
+                bool needHorizontalScrollBar = ShouldShowHorizontalScrollBar(baseViewportWidth, baseViewportHeight);
+
+                // 如果需要垂直滚动条，重新检查是否需要水平滚动条
+                if (needVerticalScrollBar && !needHorizontalScrollBar)
+                {
+                    needHorizontalScrollBar = ShouldShowHorizontalScrollBar(baseViewportWidth - scrollBarSize, baseViewportHeight);
+                }
+
+                // 如果需要水平滚动条，重新检查是否需要垂直滚动条
+                if (needHorizontalScrollBar && !needVerticalScrollBar)
+                {
+                    needVerticalScrollBar = ShouldShowVerticalScrollBar(baseViewportWidth, baseViewportHeight - scrollBarSize);
+                }
+
+                // 计算最终视口区域
+                double viewportWidth = baseViewportWidth - (needVerticalScrollBar ? scrollBarSize : 0);
+                double viewportHeight = baseViewportHeight - (needHorizontalScrollBar ? scrollBarSize : 0);
                 ViewportRect = new Rect(0, 0, viewportWidth, viewportHeight);
 
                 // 计算可滚动尺寸
                 ScrollableSize = new Size(
                     Math.Max(0, ContentSize.Width - viewportWidth),
                     Math.Max(0, ContentSize.Height - viewportHeight));
+
+                Debug.WriteLine($"ScrollViewer: ContentSize={ContentSize}, ViewportSize=({viewportWidth},{viewportHeight}), ScrollableSize={ScrollableSize}");
+
+                // 约束偏移量在有效范围内
+                double maxHorizontalOffset = Math.Max(0, ScrollableSize.Width);
+                double maxVerticalOffset = Math.Max(0, ScrollableSize.Height);
+
+                if (HorizontalOffset > maxHorizontalOffset)
+                {
+                    HorizontalOffset = maxHorizontalOffset;
+                }
+                if (VerticalOffset > maxVerticalOffset)
+                {
+                    VerticalOffset = maxVerticalOffset;
+                }
 
                 // 排列内容
                 if (Content != null)
@@ -320,13 +356,15 @@ namespace AetherUI.Layout
                 if (needVerticalScrollBar)
                 {
                     VerticalScrollBar.Visibility = Visibility.Visible;
-                    VerticalScrollBar.Maximum = ScrollableSize.Height;
+                    VerticalScrollBar.Maximum = Math.Max(0, ScrollableSize.Height);
                     VerticalScrollBar.ViewportSize = viewportHeight;
                     VerticalScrollBar.Value = VerticalOffset;
 
                     Rect vScrollRect = new Rect(RenderSize.Width - scrollBarSize, 0, scrollBarSize,
                         RenderSize.Height - (needHorizontalScrollBar ? scrollBarSize : 0));
                     VerticalScrollBar.Arrange(vScrollRect);
+
+                    Debug.WriteLine($"VerticalScrollBar: Max={VerticalScrollBar.Maximum}, ViewportSize={VerticalScrollBar.ViewportSize}, Value={VerticalScrollBar.Value}");
                 }
                 else
                 {
@@ -336,13 +374,15 @@ namespace AetherUI.Layout
                 if (needHorizontalScrollBar)
                 {
                     HorizontalScrollBar.Visibility = Visibility.Visible;
-                    HorizontalScrollBar.Maximum = ScrollableSize.Width;
+                    HorizontalScrollBar.Maximum = Math.Max(0, ScrollableSize.Width);
                     HorizontalScrollBar.ViewportSize = viewportWidth;
                     HorizontalScrollBar.Value = HorizontalOffset;
 
                     Rect hScrollRect = new Rect(0, RenderSize.Height - scrollBarSize,
                         RenderSize.Width - (needVerticalScrollBar ? scrollBarSize : 0), scrollBarSize);
                     HorizontalScrollBar.Arrange(hScrollRect);
+
+                    Debug.WriteLine($"HorizontalScrollBar: Max={HorizontalScrollBar.Maximum}, ViewportSize={HorizontalScrollBar.ViewportSize}, Value={HorizontalScrollBar.Value}");
                 }
                 else
                 {
@@ -360,12 +400,22 @@ namespace AetherUI.Layout
         /// </summary>
         private bool ShouldShowVerticalScrollBar()
         {
+            return ShouldShowVerticalScrollBar(RenderSize.Width, RenderSize.Height);
+        }
+
+        /// <summary>
+        /// 判断是否需要显示垂直滚动条
+        /// </summary>
+        /// <param name="availableWidth">可用宽度</param>
+        /// <param name="availableHeight">可用高度</param>
+        private bool ShouldShowVerticalScrollBar(double availableWidth, double availableHeight)
+        {
             return VerticalScrollBarVisibility switch
             {
                 ScrollBarVisibility.Visible => true,
                 ScrollBarVisibility.Hidden => false,
                 ScrollBarVisibility.Disabled => false,
-                ScrollBarVisibility.Auto => ContentSize.Height > RenderSize.Height,
+                ScrollBarVisibility.Auto => ContentSize.Height > availableHeight,
                 _ => false
             };
         }
@@ -375,17 +425,29 @@ namespace AetherUI.Layout
         /// </summary>
         private bool ShouldShowHorizontalScrollBar()
         {
+            return ShouldShowHorizontalScrollBar(RenderSize.Width, RenderSize.Height);
+        }
+
+        /// <summary>
+        /// 判断是否需要显示水平滚动条
+        /// </summary>
+        /// <param name="availableWidth">可用宽度</param>
+        /// <param name="availableHeight">可用高度</param>
+        private bool ShouldShowHorizontalScrollBar(double availableWidth, double availableHeight)
+        {
             return HorizontalScrollBarVisibility switch
             {
                 ScrollBarVisibility.Visible => true,
                 ScrollBarVisibility.Hidden => false,
                 ScrollBarVisibility.Disabled => false,
-                ScrollBarVisibility.Auto => ContentSize.Width > RenderSize.Width,
+                ScrollBarVisibility.Auto => ContentSize.Width > availableWidth,
                 _ => false
             };
         }
 
         #endregion
+
+
 
         #region 事件处理
 
