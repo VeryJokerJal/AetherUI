@@ -19,6 +19,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AetherUI.Xaml", "AetherUI.X
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AetherUI.Compiler", "AetherUI.Compiler\AetherUI.Compiler.csproj", "{DB283EAE-C559-4090-94B7-A56B9DFF6628}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AetherUI.Demo", "AetherUI.Demo\AetherUI.Demo.csproj", "{2F8A9B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}"
+EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AetherUI.Designer", "AetherUI.Designer\AetherUI.Designer.csproj", "{2DACD763-D30A-4CAD-B2B5-9F6B3B14DF25}"
 EndProject
 Global
@@ -59,6 +61,10 @@ Global
 		{DB283EAE-C559-4090-94B7-A56B9DFF6628}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DB283EAE-C559-4090-94B7-A56B9DFF6628}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DB283EAE-C559-4090-94B7-A56B9DFF6628}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2F8A9B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2F8A9B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2F8A9B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2F8A9B3C-4D5E-6F7A-8B9C-0D1E2F3A4B5C}.Release|Any CPU.Build.0 = Release|Any CPU
 		{2DACD763-D30A-4CAD-B2B5-9F6B3B14DF25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{2DACD763-D30A-4CAD-B2B5-9F6B3B14DF25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DACD763-D30A-4CAD-B2B5-9F6B3B14DF25}.Release|Any CPU.ActiveCfg = Release|Any CPU

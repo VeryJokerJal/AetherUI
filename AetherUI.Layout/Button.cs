@@ -23,7 +23,7 @@ namespace AetherUI.Layout
         /// 命令依赖属性
         /// </summary>
         public static readonly DependencyProperty CommandProperty = DependencyProperty.Register(
-            nameof(Command), typeof(ICommand), typeof(Button),
+            nameof(Command), typeof(AetherUI.Core.ICommand), typeof(Button),
             new PropertyMetadata(null, OnCommandChanged));
 
         /// <summary>
@@ -56,9 +56,9 @@ namespace AetherUI.Layout
         /// <summary>
         /// 命令
         /// </summary>
-        public ICommand? Command
+        public AetherUI.Core.ICommand? Command
         {
-            get => (ICommand?)GetValue(CommandProperty);
+            get => (AetherUI.Core.ICommand?)GetValue(CommandProperty);
             set => SetValue(CommandProperty, value);
         }
 
