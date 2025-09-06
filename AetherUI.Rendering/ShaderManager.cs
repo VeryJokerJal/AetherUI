@@ -1,7 +1,5 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
-using System.IO;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
 
@@ -16,6 +14,7 @@ namespace AetherUI.Rendering
         private readonly Dictionary<string, int> _uniformLocations;
         private int _currentProgram = -1;
         private bool _disposed = false;
+        private string _lastShaderErrorLog = string.Empty;
 
         #region 构造函数
 
@@ -24,10 +23,8 @@ namespace AetherUI.Rendering
         /// </summary>
         public ShaderManager()
         {
-            _shaderPrograms = new Dictionary<string, int>();
-            _uniformLocations = new Dictionary<string, int>();
-
-            Debug.WriteLine("ShaderManager initialized");
+            _shaderPrograms = [];
+            _uniformLocations = [];
         }
 
         #endregion
@@ -43,19 +40,19 @@ namespace AetherUI.Rendering
         /// <returns>着色器程序ID</returns>
         public int CreateShaderProgram(string name, string vertexSource, string fragmentSource)
         {
-            Debug.WriteLine($"Creating shader program: {name}");
-
-            // 编译顶点着色器
             int vertexShader = CompileShader(ShaderType.VertexShader, vertexSource);
             if (vertexShader == 0)
+            {
                 throw new InvalidOperationException($"Failed to compile vertex shader for {name}");
+            }
 
             // 编译片段着色器
             int fragmentShader = CompileShader(ShaderType.FragmentShader, fragmentSource);
             if (fragmentShader == 0)
             {
+                // 注意：fragmentShader==0时无法再从该句柄读取InfoLog，这里输出CompileShader阶段已缓存的日志
                 GL.DeleteShader(vertexShader);
-                string fragmentLog = GL.GetShaderInfoLog(fragmentShader);
+                string fragmentLog = string.IsNullOrEmpty(_lastShaderErrorLog) ? "<empty log>" : _lastShaderErrorLog;
                 throw new InvalidOperationException($"Failed to compile fragment shader for {name}: {fragmentLog}");
             }
 
@@ -84,8 +81,6 @@ namespace AetherUI.Rendering
 
             // 存储程序
             _shaderPrograms[name] = program;
-
-            Debug.WriteLine($"Shader program {name} created successfully (ID: {program})");
             return program;
         }
 
@@ -105,9 +100,10 @@ namespace AetherUI.Rendering
             GL.GetShader(shader, ShaderParameter.CompileStatus, out int compileStatus);
             if (compileStatus == 0)
             {
-                string infoLog = GL.GetShaderInfoLog(shader);
+                string info = GL.GetShaderInfoLog(shader);
+                System.Diagnostics.Debug.WriteLine($"Shader compile failed: {info}");
+                _lastShaderErrorLog = info ?? string.Empty;
                 GL.DeleteShader(shader);
-                Debug.WriteLine($"Shader compilation failed ({type}): {infoLog}");
                 return 0;
             }
 
@@ -125,7 +121,9 @@ namespace AetherUI.Rendering
         public void UseShader(string name)
         {
             if (!_shaderPrograms.TryGetValue(name, out int program))
+            {
                 throw new ArgumentException($"Shader program not found: {name}");
+            }
 
             if (_currentProgram != program)
             {
@@ -157,12 +155,16 @@ namespace AetherUI.Rendering
         public int GetUniformLocation(string shaderName, string uniformName)
         {
             string key = $"{shaderName}.{uniformName}";
-            
+
             if (_uniformLocations.TryGetValue(key, out int location))
+            {
                 return location;
+            }
 
             if (!_shaderPrograms.TryGetValue(shaderName, out int program))
+            {
                 return -1;
+            }
 
             location = GL.GetUniformLocation(program, uniformName);
             _uniformLocations[key] = location;
@@ -269,9 +271,6 @@ namespace AetherUI.Rendering
         /// </summary>
         public void CreateDefaultShaders()
         {
-            Debug.WriteLine("Creating default shaders...");
-
-            // 基础颜色着色器
             string basicVertexShader = @"
 #version 330 core
 
@@ -299,9 +298,7 @@ void main()
     FragColor = vColor;
 }";
 
-            CreateShaderProgram("basic", basicVertexShader, basicFragmentShader);
-
-            Debug.WriteLine("Default shaders created");
+            _ = CreateShaderProgram("basic", basicVertexShader, basicFragmentShader);
         }
 
         #endregion
@@ -327,18 +324,13 @@ void main()
             {
                 if (disposing)
                 {
-                    Debug.WriteLine("Disposing ShaderManager...");
-
-                    // 删除所有着色器程序
-                    foreach (var program in _shaderPrograms.Values)
+                    foreach (int program in _shaderPrograms.Values)
                     {
                         GL.DeleteProgram(program);
                     }
 
                     _shaderPrograms.Clear();
                     _uniformLocations.Clear();
-
-                    Debug.WriteLine("ShaderManager disposed");
                 }
 
                 _disposed = true;

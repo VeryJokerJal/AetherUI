@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 using AetherUI.Layout;
@@ -48,9 +48,7 @@ namespace AetherUI.Demo
             {
                 Console.WriteLine($"按钮样式测试运行失败: {ex.Message}");
                 Console.WriteLine($"详细错误: {ex}");
-                Debug.WriteLine($"ButtonStyleTest error: {ex}");
-
-                Console.WriteLine("\n按任意键退出...");
+Console.WriteLine("\n按任意键退出...");
                 try
                 {
                     _ = Console.ReadKey();

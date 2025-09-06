@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using AetherUI.Core;
@@ -75,9 +75,7 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureChildren(Size availableSize)
         {
-            Debug.WriteLine($"WrapPanel measuring {Children.Count} children, Orientation: {Orientation}, Available size: {availableSize}");
-
-            Size childAvailableSize = new Size(
+Size childAvailableSize = new Size(
                 double.IsNaN(ItemWidth) ? double.PositiveInfinity : ItemWidth,
                 double.IsNaN(ItemHeight) ? double.PositiveInfinity : ItemHeight);
 
@@ -101,9 +99,6 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeChildren(Size finalSize)
         {
-            Debug.WriteLine($"WrapPanel arranging {Children.Count} children, Final size: {finalSize}");
-
-            // 重新计算布局并排列子元素
             return CalculateWrapLayout(finalSize, false);
         }
 
@@ -211,8 +206,7 @@ namespace AetherUI.Layout
             }
 
             Size result = isHorizontal ? new Size(totalSize, totalThickness) : new Size(totalThickness, totalSize);
-            Debug.WriteLine($"WrapPanel calculated size: {result}");
-            return result;
+return result;
         }
 
         /// <summary>
@@ -246,9 +240,7 @@ namespace AetherUI.Layout
                 }
 
                 child.Arrange(childRect);
-                Debug.WriteLine($"WrapPanel child arranged to: {childRect}");
-
-                currentPosition += size;
+currentPosition += size;
             }
         }
 
@@ -261,8 +253,7 @@ namespace AetherUI.Layout
             if (d is WrapPanel wrapPanel)
             {
                 wrapPanel.InvalidateMeasure();
-                Debug.WriteLine($"WrapPanel orientation changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnItemSizeChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -270,8 +261,7 @@ namespace AetherUI.Layout
             if (d is WrapPanel wrapPanel)
             {
                 wrapPanel.InvalidateMeasure();
-                Debug.WriteLine($"WrapPanel item size property {e.Property.Name} changed to: {e.NewValue}");
-            }
+}
         }
 
         #endregion

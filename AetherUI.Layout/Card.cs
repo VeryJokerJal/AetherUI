@@ -1,5 +1,4 @@
-using System;
-using System.Diagnostics;
+﻿using System;
 using AetherUI.Core;
 
 namespace AetherUI.Layout
@@ -151,7 +150,6 @@ namespace AetherUI.Layout
                         _header.Parent = this;
                     }
                     InvalidateMeasure();
-                    Debug.WriteLine($"Card header changed to: {value?.GetType().Name ?? "null"}");
                 }
             }
         }
@@ -176,7 +174,6 @@ namespace AetherUI.Layout
                         _content.Parent = this;
                     }
                     InvalidateMeasure();
-                    Debug.WriteLine($"Card content changed to: {value?.GetType().Name ?? "null"}");
                 }
             }
         }
@@ -201,7 +198,6 @@ namespace AetherUI.Layout
                         _footer.Parent = this;
                     }
                     InvalidateMeasure();
-                    Debug.WriteLine($"Card footer changed to: {value?.GetType().Name ?? "null"}");
                 }
             }
         }
@@ -216,11 +212,19 @@ namespace AetherUI.Layout
         public override System.Collections.Generic.IEnumerable<UIElement> GetVisualChildren()
         {
             if (_header != null)
+            {
                 yield return _header;
+            }
+
             if (_content != null)
+            {
                 yield return _content;
+            }
+
             if (_footer != null)
+            {
                 yield return _footer;
+            }
         }
 
         #endregion
@@ -234,8 +238,6 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            Debug.WriteLine($"Card measuring, Available size: {availableSize}");
-
             double totalWidth = 0;
             double totalHeight = 0;
 
@@ -243,7 +245,7 @@ namespace AetherUI.Layout
             if (_header != null && _header.Visibility != Visibility.Collapsed)
             {
                 Thickness headerPadding = HeaderPadding;
-                Size headerAvailableSize = new Size(
+                Size headerAvailableSize = new(
                     Math.Max(0, availableSize.Width - headerPadding.Horizontal),
                     double.PositiveInfinity);
 
@@ -252,15 +254,13 @@ namespace AetherUI.Layout
 
                 totalWidth = Math.Max(totalWidth, headerDesiredSize.Width + headerPadding.Horizontal);
                 totalHeight += headerDesiredSize.Height + headerPadding.Vertical;
-
-                Debug.WriteLine($"Card header desired size: {headerDesiredSize}");
             }
 
             // 测量内容
             if (_content != null && _content.Visibility != Visibility.Collapsed)
             {
                 Thickness contentPadding = ContentPadding;
-                Size contentAvailableSize = new Size(
+                Size contentAvailableSize = new(
                     Math.Max(0, availableSize.Width - contentPadding.Horizontal),
                     Math.Max(0, availableSize.Height - totalHeight - contentPadding.Vertical));
 
@@ -269,15 +269,13 @@ namespace AetherUI.Layout
 
                 totalWidth = Math.Max(totalWidth, contentDesiredSize.Width + contentPadding.Horizontal);
                 totalHeight += contentDesiredSize.Height + contentPadding.Vertical;
-
-                Debug.WriteLine($"Card content desired size: {contentDesiredSize}");
             }
 
             // 测量底部
             if (_footer != null && _footer.Visibility != Visibility.Collapsed)
             {
                 Thickness footerPadding = FooterPadding;
-                Size footerAvailableSize = new Size(
+                Size footerAvailableSize = new(
                     Math.Max(0, availableSize.Width - footerPadding.Horizontal),
                     double.PositiveInfinity);
 
@@ -286,13 +284,9 @@ namespace AetherUI.Layout
 
                 totalWidth = Math.Max(totalWidth, footerDesiredSize.Width + footerPadding.Horizontal);
                 totalHeight += footerDesiredSize.Height + footerPadding.Vertical;
-
-                Debug.WriteLine($"Card footer desired size: {footerDesiredSize}");
             }
 
-            Size desiredSize = new Size(totalWidth, totalHeight);
-            Debug.WriteLine($"Card desired size: {desiredSize}");
-
+            Size desiredSize = new(totalWidth, totalHeight);
             return desiredSize;
         }
 
@@ -303,8 +297,6 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Debug.WriteLine($"Card arranging, Final size: {finalSize}");
-
             double currentY = 0;
 
             // 排列头部
@@ -314,7 +306,7 @@ namespace AetherUI.Layout
                 double headerWidth = Math.Max(0, finalSize.Width - headerPadding.Horizontal);
                 double headerHeight = _header.DesiredSize.Height;
 
-                Rect headerRect = new Rect(
+                Rect headerRect = new(
                     headerPadding.Left,
                     currentY + headerPadding.Top,
                     headerWidth,
@@ -322,8 +314,6 @@ namespace AetherUI.Layout
 
                 _header.Arrange(headerRect);
                 currentY += headerHeight + headerPadding.Vertical;
-
-                Debug.WriteLine($"Card header arranged to: {headerRect}");
             }
 
             // 排列内容
@@ -341,16 +331,14 @@ namespace AetherUI.Layout
                     contentHeight = Math.Max(0, contentHeight - footerHeight);
                 }
 
-                Rect contentRect = new Rect(
+                Rect contentRect = new(
                     contentPadding.Left,
                     currentY + contentPadding.Top,
                     contentWidth,
                     contentHeight);
 
                 _content.Arrange(contentRect);
-                currentY += contentHeight + contentPadding.Vertical;
-
-                Debug.WriteLine($"Card content arranged to: {contentRect}");
+                _ = contentHeight + contentPadding.Vertical;
             }
 
             // 排列底部
@@ -360,15 +348,13 @@ namespace AetherUI.Layout
                 double footerWidth = Math.Max(0, finalSize.Width - footerPadding.Horizontal);
                 double footerHeight = _footer.DesiredSize.Height;
 
-                Rect footerRect = new Rect(
+                Rect footerRect = new(
                     footerPadding.Left,
                     finalSize.Height - footerHeight - footerPadding.Bottom,
                     footerWidth,
                     footerHeight);
 
                 _footer.Arrange(footerRect);
-
-                Debug.WriteLine($"Card footer arranged to: {footerRect}");
             }
 
             return finalSize;
@@ -383,34 +369,27 @@ namespace AetherUI.Layout
             if (d is Card card)
             {
                 card.InvalidateMeasure();
-                Debug.WriteLine($"Card {e.Property.Name} changed to: {e.NewValue}");
             }
         }
 
         private static void OnElevationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Card card)
+            if (d is Card)
             {
-                Debug.WriteLine($"Card elevation changed to: {e.NewValue}");
-                // 阴影更改不影响布局，只需要重绘
             }
         }
 
         private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Card card)
+            if (d is Card)
             {
-                Debug.WriteLine($"Card corner radius changed to: {e.NewValue}");
-                // 圆角更改不影响布局，只需要重绘
             }
         }
 
         private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Card card)
+            if (d is Card)
             {
-                Debug.WriteLine($"Card background changed to: {e.NewValue}");
-                // 背景更改不影响布局，只需要重绘
             }
         }
 

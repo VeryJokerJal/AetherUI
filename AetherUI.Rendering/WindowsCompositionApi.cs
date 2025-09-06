@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Runtime.InteropServices;
 using System.Diagnostics;
 
@@ -308,8 +308,7 @@ namespace AetherUI.Rendering
         {
             if (windowHandle == IntPtr.Zero || !IsCompositionEnabled())
             {
-                Debug.WriteLine("Window handle is null or composition is not enabled");
-                return false;
+return false;
             }
 
             try
@@ -334,8 +333,7 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set window background effect: {ex.Message}");
-                return false;
+return false;
             }
         }
 
@@ -381,8 +379,7 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to disable background effect: {ex.Message}");
-                return false;
+return false;
             }
         }
 
@@ -440,8 +437,7 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set acrylic effect: {ex.Message}");
-                return false;
+return false;
             }
         }
 
@@ -456,8 +452,7 @@ namespace AetherUI.Rendering
             {
                 if (!IsWindows11OrLater())
                 {
-                    Debug.WriteLine("Mica effect requires Windows 11 or later");
-                    return false;
+return false;
                 }
 
                 int backdropType = (int)SystemBackdropType.Mica;
@@ -466,8 +461,7 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set mica effect: {ex.Message}");
-                return false;
+return false;
             }
         }
 
@@ -482,8 +476,7 @@ namespace AetherUI.Rendering
             {
                 if (!IsWindows11OrLater())
                 {
-                    Debug.WriteLine("Mica Alt effect requires Windows 11 or later");
-                    return false;
+return false;
                 }
 
                 int backdropType = (int)SystemBackdropType.MicaAlt;
@@ -492,8 +485,7 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set mica alt effect: {ex.Message}");
-                return false;
+return false;
             }
         }
 
@@ -518,8 +510,7 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set window corner preference: {ex.Message}");
-                return false;
+return false;
             }
         }
 
@@ -543,8 +534,7 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set dark mode: {ex.Message}");
-                return false;
+return false;
             }
         }
 

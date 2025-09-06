@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
@@ -114,13 +114,9 @@ namespace AetherUI.Rendering
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Failed to initialize gradient shader: {ex.Message}");
-                    // 渐变着色器初始化失败，但不影响Windows原生效果
                 }
             }
-
-            Debug.WriteLine($"BackgroundEffectRenderer initialized with window handle: {windowHandle}");
-        }
+}
 
         #endregion
 
@@ -194,11 +190,11 @@ void main()
 {
     vec2 uv = TexCoord;
 
-    // 渐变效果
+    // Gradient factor along vertical axis
     float gradientFactor = uv.y;
     vec4 finalColor = mix(uGradientStart, uGradientEnd, gradientFactor);
 
-    // 添加微妙的水平变化
+    // Subtle horizontal variation
     float horizontalVariation = sin(uv.x * 3.14159 + uTime * 0.1) * 0.05;
     finalColor.rgb += horizontalVariation;
 
@@ -207,8 +203,7 @@ void main()
 }";
 
             _gradientShaderProgram = _shaderManager.CreateShaderProgram("gradient", vertexShader, fragmentShader);
-            Debug.WriteLine($"Gradient shader program created: {_gradientShaderProgram}");
-        }
+}
 
         /// <summary>
         /// 初始化缓冲区
@@ -241,9 +236,7 @@ void main()
             GL.EnableVertexAttribArray(1);
 
             GL.BindVertexArray(0);
-            
-            Debug.WriteLine("Background effect buffers initialized");
-        }
+}
 
         #endregion
 
@@ -256,8 +249,7 @@ void main()
         {
             if (_windowHandle == IntPtr.Zero)
             {
-                Debug.WriteLine("Window handle is null, cannot apply background effect");
-                return;
+return;
             }
 
             try
@@ -294,17 +286,14 @@ void main()
 
                 if (success)
                 {
-                    Debug.WriteLine($"Successfully applied {_config.Type} background effect");
-                }
+}
                 else
                 {
-                    Debug.WriteLine($"Failed to apply {_config.Type} background effect");
-                }
+}
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error applying background effect: {ex.Message}");
-                _windowEffectApplied = false;
+_windowEffectApplied = false;
             }
         }
 
@@ -407,9 +396,6 @@ void main()
             {
                 if (disposing)
                 {
-                    Debug.WriteLine("Disposing BackgroundEffectRenderer...");
-
-                    // 清理Windows背景效果
                     if (_windowHandle != IntPtr.Zero && _windowEffectApplied)
                     {
                         WindowsCompositionApi.SetWindowBackgroundEffect(_windowHandle, WindowCompositionType.Disabled);
@@ -419,9 +405,7 @@ void main()
                     if (_vao != 0) GL.DeleteVertexArray(_vao);
                     if (_vbo != 0) GL.DeleteBuffer(_vbo);
                     if (_gradientShaderProgram != 0) GL.DeleteProgram(_gradientShaderProgram);
-
-                    Debug.WriteLine("BackgroundEffectRenderer disposed");
-                }
+}
 
                 _disposed = true;
             }

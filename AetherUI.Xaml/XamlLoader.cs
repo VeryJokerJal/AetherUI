@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.IO;
 using AetherUI.Core;
@@ -23,9 +23,7 @@ namespace AetherUI.Xaml
         {
             if (string.IsNullOrWhiteSpace(xaml))
                 throw new ArgumentException("XAML content cannot be null or empty", nameof(xaml));
-
-            Debug.WriteLine("Loading XAML from string...");
-            return _parser.Parse(xaml);
+return _parser.Parse(xaml);
         }
 
         /// <summary>
@@ -56,9 +54,7 @@ namespace AetherUI.Xaml
 
             if (!File.Exists(filePath))
                 throw new FileNotFoundException($"XAML file not found: {filePath}");
-
-            Debug.WriteLine($"Loading XAML from file: {filePath}");
-            return _parser.ParseFile(filePath);
+return _parser.ParseFile(filePath);
         }
 
         /// <summary>
@@ -89,10 +85,7 @@ namespace AetherUI.Xaml
                 throw new ArgumentException("Resource name cannot be null or empty", nameof(resourceName));
 
             assembly ??= System.Reflection.Assembly.GetCallingAssembly();
-
-            Debug.WriteLine($"Loading XAML from resource: {resourceName}");
-
-            using Stream? stream = assembly.GetManifestResourceStream(resourceName);
+using Stream? stream = assembly.GetManifestResourceStream(resourceName);
             if (stream == null)
                 throw new XamlParseException($"Resource not found: {resourceName}");
 

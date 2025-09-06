@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Drawing;
@@ -34,9 +34,7 @@ namespace AetherUI.Rendering
 
             InitializeTextShader();
             InitializeBuffers();
-
-            Debug.WriteLine("FontRenderer initialized");
-        }
+}
 
         #endregion
 
@@ -79,8 +77,7 @@ namespace AetherUI.Rendering
                 }";
 
             _textShaderProgram = _shaderManager.CreateShaderProgram("text", vertexShader, fragmentShader);
-            Debug.WriteLine($"Text shader program created: {_textShaderProgram}");
-        }
+}
 
         /// <summary>
         /// 初始化缓冲区
@@ -102,9 +99,7 @@ namespace AetherUI.Rendering
             GL.EnableVertexAttribArray(1);
 
             GL.BindVertexArray(0);
-
-            Debug.WriteLine("Font renderer buffers initialized");
-        }
+}
 
         #endregion
 
@@ -137,13 +132,10 @@ namespace AetherUI.Rendering
 
                 // 渲染文本纹理
                 RenderTextTexture(textureId, position, metrics.ToSize(), fontInfo.Color, mvpMatrix);
-
-                Debug.WriteLine($"Rendered text: '{text}' at {position}");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error rendering text '{text}': {ex.Message}");
-            }
+}
         }
 
         /// <summary>
@@ -184,10 +176,7 @@ namespace AetherUI.Rendering
                             var fontMetrics = font.FontFamily.GetCellAscent(font.Style) / (float)font.FontFamily.GetEmHeight(font.Style);
                             var baseline = fontInfo.Size * fontMetrics;
                             var lineHeight = fontInfo.Size * 1.2; // 行高为字体大小的1.2倍
-
-                            Debug.WriteLine($"Measured Unicode text '{text}': {size.Width:F1}x{size.Height:F1} with font {font.Name}");
-
-                            var metrics = new TextMetrics(size.Width, size.Height, baseline, lineHeight);
+var metrics = new TextMetrics(size.Width, size.Height, baseline, lineHeight);
                             _metricsCache[cacheKey] = metrics;
                             return metrics;
                         }
@@ -196,8 +185,6 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error measuring text '{text}': {ex.Message}");
-                // 返回估算尺寸
                 double estimatedWidth = text.Length * fontInfo.Size * 0.6;
                 double estimatedHeight = fontInfo.Size * 1.2;
                 return new TextMetrics(estimatedWidth, estimatedHeight, fontInfo.Size * 0.8, fontInfo.Size * 1.2);
@@ -257,17 +244,13 @@ namespace AetherUI.Rendering
                         graphics.CompositingQuality = System.Drawing.Drawing2D.CompositingQuality.HighQuality;
 
                         // 添加Unicode字符调试信息
-                        Debug.WriteLine($"Rendering Unicode text: '{text}' with font: {font.Name} {font.Size}pt");
-
-                        // 创建OpenGL纹理
                         return CreateOpenGLTexture(bitmap);
                     }
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error creating text texture for '{text}': {ex.Message}");
-                return 0;
+return 0;
             }
         }
 
@@ -303,19 +286,16 @@ namespace AetherUI.Rendering
                 try
                 {
                     var font = new Font(fontFamily, (float)fontInfo.Size, style);
-                    Debug.WriteLine($"Successfully created font: {fontFamily} for Unicode text rendering");
-                    return font;
+return font;
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Font '{fontFamily}' not available: {ex.Message}");
-                    continue;
+continue;
                 }
             }
 
             // 如果所有字体都失败，使用系统默认字体
-            Debug.WriteLine("All Unicode fonts failed, using system default font");
-            return new Font(FontFamily.GenericSansSerif, (float)fontInfo.Size, style);
+return new Font(FontFamily.GenericSansSerif, (float)fontInfo.Size, style);
         }
 
 
@@ -362,8 +342,7 @@ namespace AetherUI.Rendering
                     try
                     {
                         var f = new Font(ff, (float)fontInfo.Size, style);
-                        Debug.WriteLine($"Using emoji fallback font: {ff}");
-                        return f;
+return f;
                     }
                     catch { /* ignore */ }
                 }
@@ -505,9 +484,6 @@ namespace AetherUI.Rendering
         {
             try
             {
-                Debug.WriteLine("Clearing FontRenderer caches...");
-
-                // 清理纹理缓存
                 foreach (int textureId in _textureCache.Values)
                 {
                     if (textureId != 0)
@@ -517,13 +493,10 @@ namespace AetherUI.Rendering
 
                 // 清理度量缓存
                 _metricsCache.Clear();
-
-                Debug.WriteLine("FontRenderer caches cleared");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error clearing FontRenderer caches: {ex.Message}");
-            }
+}
         }
 
         #endregion
@@ -549,9 +522,6 @@ namespace AetherUI.Rendering
             {
                 if (disposing)
                 {
-                    Debug.WriteLine("Disposing FontRenderer...");
-
-                    // 清理纹理缓存
                     foreach (var textureId in _textureCache.Values)
                     {
                         if (textureId != 0)
@@ -564,9 +534,7 @@ namespace AetherUI.Rendering
                     if (_vao != 0) GL.DeleteVertexArray(_vao);
                     if (_vbo != 0) GL.DeleteBuffer(_vbo);
                     if (_textShaderProgram != 0) GL.DeleteProgram(_textShaderProgram);
-
-                    Debug.WriteLine("FontRenderer disposed");
-                }
+}
 
                 _disposed = true;
             }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 
@@ -117,8 +117,7 @@ namespace AetherUI.Layout
                         _child.Parent = this;
                     }
                     InvalidateMeasure();
-                    Debug.WriteLine($"Border child changed to: {value?.GetType().Name ?? "null"}");
-                }
+}
             }
         }
 
@@ -148,9 +147,7 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            Debug.WriteLine($"Border measuring, Available size: {availableSize}");
-
-            Thickness borderThickness = BorderThickness;
+Thickness borderThickness = BorderThickness;
             Thickness padding = Padding;
 
             // 计算边框和内边距占用的空间
@@ -171,16 +168,13 @@ namespace AetherUI.Layout
             {
                 _child.Measure(childAvailableSize);
                 childDesiredSize = _child.DesiredSize;
-                Debug.WriteLine($"Border child desired size: {childDesiredSize}");
-            }
+}
 
             // Border的期望尺寸是子元素尺寸加上边框和内边距
             Size desiredSize = new Size(
                 childDesiredSize.Width + combinedThickness.Horizontal,
                 childDesiredSize.Height + combinedThickness.Vertical);
-
-            Debug.WriteLine($"Border desired size: {desiredSize}");
-            return desiredSize;
+return desiredSize;
         }
 
         /// <summary>
@@ -190,9 +184,7 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Debug.WriteLine($"Border arranging, Final size: {finalSize}");
-
-            if (_child != null && _child.Visibility != Visibility.Collapsed)
+if (_child != null && _child.Visibility != Visibility.Collapsed)
             {
                 Thickness borderThickness = BorderThickness;
                 Thickness padding = Padding;
@@ -205,9 +197,7 @@ namespace AetherUI.Layout
 
                 Rect childRect = new Rect(childX, childY, childWidth, childHeight);
                 _child.Arrange(childRect);
-
-                Debug.WriteLine($"Border child arranged to: {childRect}");
-            }
+}
 
             return finalSize;
         }
@@ -221,16 +211,13 @@ namespace AetherUI.Layout
             if (d is Border border)
             {
                 border.InvalidateMeasure();
-                Debug.WriteLine($"Border {e.Property.Name} changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is Border border)
             {
-                Debug.WriteLine($"Border background changed to: {e.NewValue}");
-                // 背景更改不影响布局，只需要重绘
             }
         }
 
@@ -239,16 +226,13 @@ namespace AetherUI.Layout
             if (d is Border border)
             {
                 border.InvalidateMeasure();
-                Debug.WriteLine($"Border padding changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
             if (d is Border border)
             {
-                Debug.WriteLine($"Border corner radius changed to: {e.NewValue}");
-                // 圆角更改不影响布局，只需要重绘
             }
         }
 

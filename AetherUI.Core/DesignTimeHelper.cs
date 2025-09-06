@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Reflection;
@@ -40,8 +40,7 @@ namespace AetherUI.Core
                 // 检查是否在Visual Studio设计器中
                 if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 {
-                    Debug.WriteLine("Design mode detected: LicenseManager.UsageMode");
-                    return true;
+return true;
                 }
 
                 // 检查进程名称
@@ -51,8 +50,7 @@ namespace AetherUI.Core
                     processName.Contains("xdesproc") ||
                     processName.Contains("designer"))
                 {
-                    Debug.WriteLine($"Design mode detected: Process name {processName}");
-                    return true;
+return true;
                 }
 
                 // 检查是否在调试器中
@@ -62,8 +60,7 @@ namespace AetherUI.Core
                     string? debuggerName = Environment.GetEnvironmentVariable("VS_DEBUGGER_CAUSAL_SESSION_ID");
                     if (!string.IsNullOrEmpty(debuggerName))
                     {
-                        Debug.WriteLine("Design mode detected: Visual Studio debugger");
-                        return true;
+return true;
                     }
                 }
 
@@ -73,17 +70,13 @@ namespace AetherUI.Core
                     (designModeEnv.Equals("true", StringComparison.OrdinalIgnoreCase) ||
                      designModeEnv.Equals("1", StringComparison.OrdinalIgnoreCase)))
                 {
-                    Debug.WriteLine("Design mode detected: Environment variable");
-                    return true;
+return true;
                 }
-
-                Debug.WriteLine("Runtime mode detected");
-                return false;
+return false;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error detecting design mode: {ex.Message}");
-                return false;
+return false;
             }
         }
 
@@ -94,8 +87,7 @@ namespace AetherUI.Core
         public static void SetDesignMode(bool isDesignMode)
         {
             _isInDesignMode = isDesignMode;
-            Debug.WriteLine($"Design mode manually set to: {isDesignMode}");
-        }
+}
 
         #endregion
 
@@ -114,8 +106,7 @@ namespace AetherUI.Core
             if (IsInDesignMode)
             {
                 DesignTimeBinding.SetDesignTimeDataContext(element, dataContext);
-                Debug.WriteLine($"Set design time data context for {element.GetType().Name}");
-            }
+}
         }
 
         /// <summary>
@@ -135,8 +126,7 @@ namespace AetherUI.Core
             {
                 var designTimeContext = DesignTimeDataContext.CreateFor(viewModelType);
                 DesignTimeBinding.SetDesignTimeDataContext(element, designTimeContext);
-                Debug.WriteLine($"Set generated design time data context for {element.GetType().Name}");
-            }
+}
         }
 
         /// <summary>
@@ -256,10 +246,6 @@ namespace AetherUI.Core
 
             if (!IsInDesignMode)
                 return;
-
-            Debug.WriteLine($"Applying design time style '{styleName}' to {element.GetType().Name}");
-
-            // 这里可以实现设计时样式应用逻辑
             // 目前只是记录日志
         }
 
@@ -276,8 +262,7 @@ namespace AetherUI.Core
             if (IsInDesignMode)
             {
                 element.Visibility = visibility;
-                Debug.WriteLine($"Set design time visibility to {visibility} for {element.GetType().Name}");
-            }
+}
         }
 
         #endregion
@@ -303,18 +288,15 @@ namespace AetherUI.Core
                 object? dataContext = DesignTimeBinding.GetDesignTimeDataContext(element);
                 if (dataContext == null)
                 {
-                    Debug.WriteLine($"Warning: No DataContext set for {element.GetType().Name}");
-                    return false;
+return false;
                 }
 
                 // 检查绑定表达式（这里是简化实现）
-                Debug.WriteLine($"Design time binding validation passed for {element.GetType().Name}");
-                return true;
+return true;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Design time binding validation failed: {ex.Message}");
-                return false;
+return false;
             }
         }
 

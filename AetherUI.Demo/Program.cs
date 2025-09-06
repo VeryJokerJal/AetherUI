@@ -72,9 +72,7 @@ namespace AetherUI.Demo
             {
                 Console.WriteLine($"演示程序运行失败: {ex.Message}");
                 Console.WriteLine($"详细错误: {ex}");
-                Debug.WriteLine($"Demo error: {ex}");
-
-                Console.WriteLine("\n按任意键退出...");
+Console.WriteLine("\n按任意键退出...");
                 try
                 {
                     _ = Console.ReadKey();

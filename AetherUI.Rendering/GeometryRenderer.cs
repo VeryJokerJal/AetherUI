@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using OpenTK.Graphics.OpenGL4;
@@ -33,8 +33,7 @@ namespace AetherUI.Rendering
             _indices = new List<uint>();
 
             InitializeBuffers();
-            Debug.WriteLine("GeometryRenderer initialized");
-        }
+}
 
         #endregion
 
@@ -67,9 +66,7 @@ namespace AetherUI.Rendering
             GL.EnableVertexAttribArray(1);
 
             GL.BindVertexArray(0);
-
-            Debug.WriteLine("Geometry buffers initialized");
-        }
+}
 
         #endregion
 
@@ -109,9 +106,7 @@ namespace AetherUI.Rendering
             GL.BindVertexArray(_vao);
             GL.DrawElements(PrimitiveType.Triangles, _indices.Count, DrawElementsType.UnsignedInt, 0);
             GL.BindVertexArray(0);
-
-            Debug.WriteLine($"Rendered batch: {_vertices.Count / 7} vertices, {_indices.Count / 3} triangles");
-        }
+}
 
         /// <summary>
         /// 渲染矩形
@@ -120,8 +115,7 @@ namespace AetherUI.Rendering
         /// <param name="color">颜色</param>
         public void DrawRect(Rect rect, Vector4 color)
         {
-            Debug.WriteLine($"DrawRect called: rect({rect.X}, {rect.Y}, {rect.Width}, {rect.Height}), color({color.X}, {color.Y}, {color.Z}, {color.W})");
-            uint baseIndex = (uint)(_vertices.Count / 7);
+uint baseIndex = (uint)(_vertices.Count / 7);
 
             // 添加四个顶点 (x, y, z, r, g, b, a)
             _vertices.AddRange(new float[]
@@ -152,8 +146,6 @@ namespace AetherUI.Rendering
         /// <param name="thickness">边框厚度</param>
         public void DrawRectBorder(Rect rect, Vector4 color, double thickness)
         {
-            Debug.WriteLine($"DrawRectBorder called: rect({rect.X}, {rect.Y}, {rect.Width}, {rect.Height}), color({color.X}, {color.Y}, {color.Z}, {color.W}), thickness({thickness})");
-            // 顶边
             DrawRect(new Rect(rect.X, rect.Y, rect.Width, thickness), color);
             // 底边
             DrawRect(new Rect(rect.X, rect.Y + rect.Height - thickness, rect.Width, thickness), color);
@@ -171,12 +163,9 @@ namespace AetherUI.Rendering
         /// <param name="cornerRadius">圆角半径</param>
         public void DrawRoundedRect(Rect rect, Vector4 color, double cornerRadius)
         {
-            Debug.WriteLine($"DrawRoundedRect called: rect({rect.X}, {rect.Y}, {rect.Width}, {rect.Height}), color({color.X}, {color.Y}, {color.Z}, {color.W}), radius({cornerRadius})");
-
-            if (cornerRadius <= 0)
+if (cornerRadius <= 0)
             {
-                Debug.WriteLine("Corner radius <= 0, drawing regular rect");
-                DrawRect(rect, color);
+DrawRect(rect, color);
                 return;
             }
 
@@ -311,9 +300,6 @@ namespace AetherUI.Rendering
             {
                 if (disposing)
                 {
-                    Debug.WriteLine("Disposing GeometryRenderer...");
-
-                    // 删除OpenGL资源
                     if (_vao != 0)
                     {
                         GL.DeleteVertexArray(_vao);
@@ -331,9 +317,7 @@ namespace AetherUI.Rendering
                         GL.DeleteBuffer(_ebo);
                         _ebo = 0;
                     }
-
-                    Debug.WriteLine("GeometryRenderer disposed");
-                }
+}
 
                 _disposed = true;
             }

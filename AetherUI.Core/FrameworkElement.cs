@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 
 namespace AetherUI.Core
@@ -386,8 +386,7 @@ namespace AetherUI.Core
             if (d is FrameworkElement element)
             {
                 element.InvalidateMeasure();
-                Debug.WriteLine($"Size property changed for {element.GetType().Name}: {e.Property.Name} = {e.NewValue}");
-            }
+}
         }
 
         private static void OnMarginChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -395,8 +394,7 @@ namespace AetherUI.Core
             if (d is FrameworkElement element)
             {
                 element.InvalidateMeasure();
-                Debug.WriteLine($"Margin changed for {element.GetType().Name}: {e.NewValue}");
-            }
+}
         }
 
         private static void OnAlignmentChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -404,8 +402,7 @@ namespace AetherUI.Core
             if (d is FrameworkElement element)
             {
                 element.InvalidateArrange();
-                Debug.WriteLine($"Alignment changed for {element.GetType().Name}: {e.Property.Name} = {e.NewValue}");
-            }
+}
         }
 
         #endregion

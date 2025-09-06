@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 
 namespace AetherUI.Core
@@ -36,8 +36,7 @@ namespace AetherUI.Core
         public bool CanExecute(object? parameter)
         {
             bool canExecute = _canExecute?.Invoke() ?? true;
-            Debug.WriteLine($"Command CanExecute: {canExecute}");
-            return canExecute;
+return canExecute;
         }
 
         /// <summary>
@@ -46,8 +45,7 @@ namespace AetherUI.Core
         /// <param name="parameter">命令参数</param>
         public void Execute(object? parameter)
         {
-            Debug.WriteLine("Command Execute called");
-            if (CanExecute(parameter))
+if (CanExecute(parameter))
             {
                 _execute();
             }
@@ -58,8 +56,7 @@ namespace AetherUI.Core
         /// </summary>
         public void RaiseCanExecuteChanged()
         {
-            Debug.WriteLine("Command RaiseCanExecuteChanged called");
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 
@@ -98,8 +95,7 @@ namespace AetherUI.Core
         {
             T? typedParameter = parameter is T param ? param : default;
             bool canExecute = _canExecute?.Invoke(typedParameter) ?? true;
-            Debug.WriteLine($"Command<{typeof(T).Name}> CanExecute: {canExecute}");
-            return canExecute;
+return canExecute;
         }
 
         /// <summary>
@@ -108,8 +104,7 @@ namespace AetherUI.Core
         /// <param name="parameter">命令参数</param>
         public void Execute(object? parameter)
         {
-            Debug.WriteLine($"Command<{typeof(T).Name}> Execute called");
-            if (CanExecute(parameter))
+if (CanExecute(parameter))
             {
                 T? typedParameter = parameter is T param ? param : default;
                 _execute(typedParameter);
@@ -121,8 +116,7 @@ namespace AetherUI.Core
         /// </summary>
         public void RaiseCanExecuteChanged()
         {
-            Debug.WriteLine($"Command<{typeof(T).Name}> RaiseCanExecuteChanged called");
-            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
@@ -69,9 +69,6 @@ namespace AetherUI.Core
         /// <returns>期望尺寸</returns>
         protected override Size MeasureOverride(Size availableSize)
         {
-            Debug.WriteLine($"Panel {GetType().Name} measuring {_children.Count} children");
-
-            // 测量所有可见的子元素
             foreach (UIElement child in _children)
             {
                 if (child.Visibility != Visibility.Collapsed)
@@ -91,9 +88,6 @@ namespace AetherUI.Core
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Debug.WriteLine($"Panel {GetType().Name} arranging {_children.Count} children");
-
-            // 调用子类的排列逻辑
             return ArrangeChildren(finalSize);
         }
 
@@ -142,8 +136,7 @@ namespace AetherUI.Core
                 child.Parent = this;
             }
             InvalidateMeasure();
-            Debug.WriteLine($"Child {child.GetType().Name} added to {GetType().Name}");
-        }
+}
 
         /// <summary>
         /// 当子元素被移除时调用
@@ -156,8 +149,7 @@ namespace AetherUI.Core
                 child.Parent = null;
             }
             InvalidateMeasure();
-            Debug.WriteLine($"Child {child.GetType().Name} removed from {GetType().Name}");
-        }
+}
 
         #endregion
 
@@ -167,8 +159,7 @@ namespace AetherUI.Core
         {
             if (d is Panel panel)
             {
-                Debug.WriteLine($"Background changed for {panel.GetType().Name}: {e.NewValue}");
-            }
+}
         }
 
         #endregion

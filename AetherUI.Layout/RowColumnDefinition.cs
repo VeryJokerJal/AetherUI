@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using AetherUI.Core;
@@ -103,8 +103,7 @@ namespace AetherUI.Layout
         {
             if (d is RowDefinition row)
             {
-                Debug.WriteLine($"RowDefinition height changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnMinHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -112,8 +111,7 @@ namespace AetherUI.Layout
             if (d is RowDefinition row)
             {
                 row.MinSize = (double)(e.NewValue ?? 0.0);
-                Debug.WriteLine($"RowDefinition min height changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnMaxHeightChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -121,8 +119,7 @@ namespace AetherUI.Layout
             if (d is RowDefinition row)
             {
                 row.MaxSize = (double)(e.NewValue ?? double.PositiveInfinity);
-                Debug.WriteLine($"RowDefinition max height changed to: {e.NewValue}");
-            }
+}
         }
 
         #endregion
@@ -200,8 +197,7 @@ namespace AetherUI.Layout
         {
             if (d is ColumnDefinition column)
             {
-                Debug.WriteLine($"ColumnDefinition width changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnMinWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -209,8 +205,7 @@ namespace AetherUI.Layout
             if (d is ColumnDefinition column)
             {
                 column.MinSize = (double)(e.NewValue ?? 0.0);
-                Debug.WriteLine($"ColumnDefinition min width changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnMaxWidthChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -218,8 +213,7 @@ namespace AetherUI.Layout
             if (d is ColumnDefinition column)
             {
                 column.MaxSize = (double)(e.NewValue ?? double.PositiveInfinity);
-                Debug.WriteLine($"ColumnDefinition max width changed to: {e.NewValue}");
-            }
+}
         }
 
         #endregion

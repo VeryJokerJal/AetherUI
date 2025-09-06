@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -43,18 +43,13 @@ namespace AetherUI.Xaml
         {
             if (string.IsNullOrWhiteSpace(json))
                 throw new ArgumentException("JSON content cannot be null or empty", nameof(json));
-
-            Debug.WriteLine("Parsing JSON content...");
-
-            try
+try
             {
                 using JsonDocument doc = JsonDocument.Parse(json);
                 JsonElement root = doc.RootElement;
 
                 object result = ParseElement(root);
-                Debug.WriteLine($"JSON parsing completed. Root type: {result.GetType().Name}");
-
-                return result;
+return result;
             }
             catch (JsonException ex)
             {
@@ -75,10 +70,7 @@ namespace AetherUI.Xaml
         {
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
-
-            Debug.WriteLine($"Parsing JSON file: {filePath}");
-
-            try
+try
             {
                 string json = System.IO.File.ReadAllText(filePath);
                 return Parse(json);
@@ -108,9 +100,6 @@ namespace AetherUI.Xaml
                 throw new XamlParseException("JSON element must have a 'Type' property");
 
             string typeName = typeElement.GetString() ?? throw new XamlParseException("Type property cannot be null");
-            Debug.WriteLine($"Parsing element: {typeName}");
-
-            // 解析命名空间和类型名
             (string namespaceName, string localTypeName) = ParseTypeName(typeName);
 
             // 获取类型
@@ -120,9 +109,6 @@ namespace AetherUI.Xaml
 
             // 创建实例
             object instance = CreateInstance(type);
-            Debug.WriteLine($"Created instance of type: {type.Name}");
-
-            // 解析属性
             ParseProperties(element, instance);
 
             // 解析子元素
@@ -161,17 +147,12 @@ namespace AetherUI.Xaml
                 // 跳过特殊属性
                 if (property.Name == "Type" || property.Name == "Children" || property.Name == "Content")
                     continue;
-
-                Debug.WriteLine($"Setting property: {property.Name}");
-
-                try
+try
                 {
                     SetProperty(instance, property.Name, property.Value);
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Failed to set property {property.Name}: {ex.Message}");
-                    // 继续处理其他属性
                 }
             }
         }
@@ -319,8 +300,7 @@ namespace AetherUI.Xaml
 
             if (property == null || !property.CanWrite)
             {
-                Debug.WriteLine($"Property {propertyName} not found or not writable on type {type.Name}");
-                return;
+return;
             }
 
             try
@@ -331,8 +311,7 @@ namespace AetherUI.Xaml
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set property {propertyName}: {ex.Message}");
-            }
+}
         }
 
         /// <summary>
@@ -348,8 +327,7 @@ namespace AetherUI.Xaml
 
             if (property == null || !property.CanWrite)
             {
-                Debug.WriteLine($"Property {propertyName} not found or not writable on type {type.Name}");
-                return;
+return;
             }
 
             try
@@ -360,8 +338,7 @@ namespace AetherUI.Xaml
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set property {propertyName}: {ex.Message}");
-            }
+}
         }
 
         #endregion

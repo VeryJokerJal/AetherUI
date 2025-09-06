@@ -1,8 +1,7 @@
-using System;
-using System.Diagnostics;
+﻿using System;
+using AetherUI.Core;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Mathematics;
-using AetherUI.Core;
 
 namespace AetherUI.Rendering
 {
@@ -102,9 +101,6 @@ namespace AetherUI.Rendering
         /// </summary>
         private void Initialize()
         {
-            Debug.WriteLine("Initializing RenderContext...");
-
-            // 设置默认矩阵
             _viewMatrix = Matrix4.Identity;
             _projectionMatrix = Matrix4.Identity;
             _modelMatrix = Matrix4.Identity;
@@ -128,8 +124,6 @@ namespace AetherUI.Rendering
 
             // 设置线宽
             GL.LineWidth(1.0f);
-
-            Debug.WriteLine("RenderContext initialized successfully");
         }
 
         #endregion
@@ -152,8 +146,6 @@ namespace AetherUI.Rendering
             // 强制刷新OpenGL状态以确保视口变化立即生效
             GL.Flush();
             GL.Finish();
-
-            Debug.WriteLine($"Viewport set to: {width}x{height}");
         }
 
         /// <summary>
@@ -196,7 +188,7 @@ namespace AetherUI.Rendering
         /// <param name="transform">变换矩阵</param>
         public void PushTransform(Matrix4 transform)
         {
-            ModelMatrix = ModelMatrix * transform;
+            ModelMatrix *= transform;
         }
 
         /// <summary>
@@ -256,7 +248,7 @@ namespace AetherUI.Rendering
                 {
                     message += $" during {operation}";
                 }
-                Debug.WriteLine(message);
+
                 throw new InvalidOperationException(message);
             }
         }
@@ -284,7 +276,6 @@ namespace AetherUI.Rendering
             {
                 if (disposing)
                 {
-                    Debug.WriteLine("RenderContext disposed");
                 }
 
                 _disposed = true;

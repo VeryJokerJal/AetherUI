@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using AetherUI.Core;
@@ -92,9 +92,7 @@ namespace AetherUI.Events
 
             RoutedEvent routedEvent = new RoutedEvent(name, routingStrategy, handlerType, ownerType);
             _registeredEvents[key] = routedEvent;
-
-            Debug.WriteLine($"Registered routed event: {key}, Strategy: {routingStrategy}");
-            return routedEvent;
+return routedEvent;
         }
 
         /// <summary>
@@ -127,9 +125,7 @@ namespace AetherUI.Events
 
             RoutedEvent newEvent = new RoutedEvent(Name, RoutingStrategy, HandlerType, ownerType);
             _registeredEvents[key] = newEvent;
-
-            Debug.WriteLine($"Added owner for routed event: {key}");
-            return newEvent;
+return newEvent;
         }
 
         public override string ToString()

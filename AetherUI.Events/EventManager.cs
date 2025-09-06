@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using AetherUI.Core;
@@ -26,10 +26,7 @@ namespace AetherUI.Events
 
             args.Source = source;
             args.OriginalSource ??= source;
-
-            Debug.WriteLine($"Raising event: {args.RoutedEvent.Name} from {source.GetType().Name}");
-
-            switch (args.RoutedEvent.RoutingStrategy)
+switch (args.RoutedEvent.RoutingStrategy)
             {
                 case RoutingStrategy.Direct:
                     RaiseDirectEvent(source, args);
@@ -64,19 +61,14 @@ namespace AetherUI.Events
         private static void RaiseBubbleEvent(object source, RoutedEventArgs args)
         {
             List<IInputElement> route = BuildEventRoute(source, true);
-            
-            Debug.WriteLine($"Bubble route length: {route.Count}");
-            
-            foreach (IInputElement element in route)
+foreach (IInputElement element in route)
             {
                 if (args.Handled)
                     break;
 
                 args.Source = element;
                 element.RaiseEvent(args);
-                
-                Debug.WriteLine($"Bubbled to: {element.GetType().Name}, Handled: {args.Handled}");
-            }
+}
         }
 
         /// <summary>
@@ -87,19 +79,14 @@ namespace AetherUI.Events
         private static void RaiseTunnelEvent(object source, RoutedEventArgs args)
         {
             List<IInputElement> route = BuildEventRoute(source, false);
-            
-            Debug.WriteLine($"Tunnel route length: {route.Count}");
-            
-            foreach (IInputElement element in route)
+foreach (IInputElement element in route)
             {
                 if (args.Handled)
                     break;
 
                 args.Source = element;
                 element.RaiseEvent(args);
-                
-                Debug.WriteLine($"Tunneled to: {element.GetType().Name}, Handled: {args.Handled}");
-            }
+}
         }
 
         /// <summary>

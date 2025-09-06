@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -84,10 +84,7 @@ namespace AetherUI.Compiler
         {
             if (!File.Exists(xamlFilePath))
                 return CompilationResult.Error($"XAML file not found: {xamlFilePath}");
-
-            Debug.WriteLine($"Compiling XAML file: {xamlFilePath}");
-
-            try
+try
             {
                 string xamlContent = File.ReadAllText(xamlFilePath);
                 string className = Path.GetFileNameWithoutExtension(xamlFilePath);
@@ -109,9 +106,7 @@ namespace AetherUI.Compiler
         /// <returns>编译结果</returns>
         public CompilationResult CompileXaml(string xamlContent, string className, string? outputPath = null)
         {
-            Debug.WriteLine($"Compiling XAML to class: {className}");
-
-            try
+try
             {
                 // 解析XAML
                 object rootElement = XamlLoader.Load(xamlContent);
@@ -153,10 +148,7 @@ namespace AetherUI.Compiler
         {
             if (!File.Exists(jsonFilePath))
                 return CompilationResult.Error($"JSON file not found: {jsonFilePath}");
-
-            Debug.WriteLine($"Compiling JSON file: {jsonFilePath}");
-
-            try
+try
             {
                 string jsonContent = File.ReadAllText(jsonFilePath);
                 string className = Path.GetFileNameWithoutExtension(jsonFilePath);
@@ -178,9 +170,7 @@ namespace AetherUI.Compiler
         /// <returns>编译结果</returns>
         public CompilationResult CompileJson(string jsonContent, string className, string? outputPath = null)
         {
-            Debug.WriteLine($"Compiling JSON to class: {className}");
-
-            try
+try
             {
                 // 解析JSON
                 object rootElement = JsonLoader.Load(jsonContent);
@@ -396,9 +386,7 @@ namespace AetherUI.Compiler
         /// <returns>编译结果</returns>
         private CompilationResult CompileCSharp(string csharpCode, string assemblyName)
         {
-            Debug.WriteLine($"Compiling C# code for assembly: {assemblyName}");
-
-            try
+try
             {
                 // 解析语法树
                 SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(csharpCode);

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -22,8 +22,7 @@ namespace AetherUI.Core
         /// <param name="propertyName">属性名称，自动获取调用者名称</param>
         protected virtual void OnPropertyChanged([CallerMemberName] string? propertyName = null)
         {
-            Debug.WriteLine($"Property changed: {propertyName}");
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
 
         /// <summary>

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -27,14 +27,12 @@ namespace AetherUI.Core
             {
                 if (_values.TryGetValue(dp, out object? value))
                 {
-                    Debug.WriteLine($"GetValue: {dp.Name} = {value}");
-                    return value;
+return value;
                 }
             }
 
             object? defaultValue = dp.DefaultValue;
-            Debug.WriteLine($"GetValue: {dp.Name} = {defaultValue} (default)");
-            return defaultValue;
+return defaultValue;
         }
 
         /// <summary>
@@ -84,9 +82,6 @@ namespace AetherUI.Core
             }
 
             object? newValue = dp.DefaultValue;
-            Debug.WriteLine($"ClearValue: {dp.Name}, old={oldValue}, new={newValue}");
-
-            // 触发属性更改事件
             OnPropertyChanged(new DependencyPropertyChangedEventArgs(dp, oldValue, newValue));
         }
 
@@ -161,9 +156,6 @@ namespace AetherUI.Core
 
             if (hasChanged)
             {
-                Debug.WriteLine($"SetValue: {dp.Name}, old={oldValue}, new={value}");
-
-                // 触发属性更改事件
                 DependencyPropertyChangedEventArgs args = new DependencyPropertyChangedEventArgs(dp, oldValue, value);
                 OnPropertyChanged(args);
 

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -59,8 +59,7 @@ namespace AetherUI.Core
             }
 
             properties[propertyName] = value;
-            Debug.WriteLine($"Set design time property: {propertyName} = {value}");
-        }
+}
 
         /// <summary>
         /// 获取设计时数据上下文
@@ -112,13 +111,10 @@ namespace AetherUI.Core
                     contentProperty.SetValue(element, text);
                     return;
                 }
-
-                Debug.WriteLine($"Could not set text for element type: {element.GetType().Name}");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error setting element text: {ex.Message}");
-            }
+}
         }
 
         /// <summary>
@@ -132,9 +128,6 @@ namespace AetherUI.Core
             {
                 // 这里可以实现设计时资源加载逻辑
                 // 例如加载图片、样式等
-                Debug.WriteLine($"Loading design time source '{source}' for {element.GetType().Name}");
-                
-                // 简化实现：设置一个占位符
                 if (source.EndsWith(".png") || source.EndsWith(".jpg") || source.EndsWith(".jpeg"))
                 {
                     // 图片资源
@@ -153,8 +146,7 @@ namespace AetherUI.Core
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error loading design time source: {ex.Message}");
-            }
+}
         }
 
         #endregion
@@ -172,8 +164,7 @@ namespace AetherUI.Core
                 return;
 
             _designTimeValues[key] = value;
-            Debug.WriteLine($"Set design time value: {key} = {value}");
-        }
+}
 
         /// <summary>
         /// 获取设计时值
@@ -210,8 +201,7 @@ namespace AetherUI.Core
         public static void ClearDesignTimeValues()
         {
             _designTimeValues.Clear();
-            Debug.WriteLine("Cleared all design time values");
-        }
+}
 
         #endregion
     }

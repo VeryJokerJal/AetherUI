@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using AetherUI.Core;
 
 namespace AetherUI.Rendering
@@ -46,7 +45,6 @@ namespace AetherUI.Rendering
         /// </summary>
         public AetherApplication()
         {
-            Debug.WriteLine("AetherApplication created");
         }
 
         #endregion
@@ -66,15 +64,10 @@ namespace AetherUI.Rendering
             {
                 throw new InvalidOperationException("Main window already created");
             }
-
-            Debug.WriteLine($"Creating main window: {title} ({width}x{height})");
-
             MainWindow = new Window(width, height, title);
 
             // 订阅窗口事件
             // 注意：OpenTK的GameWindow事件签名可能不同，这里简化处理
-            Debug.WriteLine("Main window created and configured");
-
             return MainWindow;
         }
 
@@ -92,9 +85,6 @@ namespace AetherUI.Rendering
             {
                 throw new InvalidOperationException("Application is already running");
             }
-
-            Debug.WriteLine("Starting AetherApplication...");
-
             try
             {
                 IsRunning = true;
@@ -103,15 +93,13 @@ namespace AetherUI.Rendering
                 // 运行主窗口
                 MainWindow.Run();
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.WriteLine($"Application error: {ex.Message}");
                 throw;
             }
             finally
             {
                 IsRunning = false;
-                Debug.WriteLine("AetherApplication stopped");
             }
         }
 
@@ -120,8 +108,6 @@ namespace AetherUI.Rendering
         /// </summary>
         public void Exit()
         {
-            Debug.WriteLine("Exiting AetherApplication...");
-
             Exiting?.Invoke(this, EventArgs.Empty);
 
             MainWindow?.Close();
@@ -191,16 +177,11 @@ namespace AetherUI.Rendering
             {
                 if (disposing)
                 {
-                    Debug.WriteLine("Disposing AetherApplication...");
-
-                    // 释放主窗口
                     if (MainWindow != null)
                     {
                         MainWindow.Dispose();
                         MainWindow = null;
                     }
-
-                    Debug.WriteLine("AetherApplication disposed");
                 }
 
                 _disposed = true;

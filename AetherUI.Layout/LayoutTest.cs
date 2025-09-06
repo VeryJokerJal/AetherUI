@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 
@@ -102,18 +102,13 @@ namespace AetherUI.Layout
 
             // 执行布局
             PerformLayout(stackPanel, new Size(400, 50));
-
-            Debug.WriteLine("=== Horizontal StackPanel Test Complete ===\n");
-        }
+}
 
         /// <summary>
         /// 测试嵌套StackPanel
         /// </summary>
         public static void TestNestedStackPanel()
         {
-            Debug.WriteLine("=== Testing Nested StackPanel ===");
-
-            // 创建主垂直StackPanel
             StackPanel mainPanel = new StackPanel
             {
                 Orientation = Orientation.Vertical,
@@ -163,9 +158,7 @@ namespace AetherUI.Layout
 
             // 执行布局
             PerformLayout(mainPanel, new Size(300, 200));
-
-            Debug.WriteLine("=== Nested StackPanel Test Complete ===\n");
-        }
+}
 
         /// <summary>
         /// 执行布局测试
@@ -174,19 +167,13 @@ namespace AetherUI.Layout
         /// <param name="availableSize">可用尺寸</param>
         private static void PerformLayout(UIElement element, Size availableSize)
         {
-            Debug.WriteLine($"Starting layout for {element.GetType().Name}");
-            Debug.WriteLine($"Available size: {availableSize}");
+Debug.WriteLine($"Available size: {availableSize}");
 
             // 测量阶段
             element.Measure(availableSize);
-            Debug.WriteLine($"Desired size: {element.DesiredSize}");
-
-            // 排列阶段
             Rect finalRect = new Rect(0, 0, availableSize.Width, availableSize.Height);
             element.Arrange(finalRect);
-            Debug.WriteLine($"Render size: {element.RenderSize}");
-
-            Debug.WriteLine("Layout complete");
+Debug.WriteLine("Layout complete");
         }
 
         /// <summary>
@@ -194,20 +181,15 @@ namespace AetherUI.Layout
         /// </summary>
         public static void RunAllTests()
         {
-            Debug.WriteLine("Starting StackPanel Layout Tests...\n");
-
-            try
+try
             {
                 TestVerticalStackPanel();
                 TestHorizontalStackPanel();
                 TestNestedStackPanel();
-
-                Debug.WriteLine("All tests completed successfully!");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Test failed with exception: {ex.Message}");
-                Debug.WriteLine($"Stack trace: {ex.StackTrace}");
+Debug.WriteLine($"Stack trace: {ex.StackTrace}");
             }
         }
     }

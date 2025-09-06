@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
@@ -43,10 +43,7 @@ namespace AetherUI.Xaml
         {
             if (string.IsNullOrWhiteSpace(xaml))
                 throw new ArgumentException("XAML content cannot be null or empty", nameof(xaml));
-
-            Debug.WriteLine("Parsing XAML content...");
-
-            try
+try
             {
                 XmlDocument doc = new XmlDocument();
                 doc.LoadXml(xaml);
@@ -55,9 +52,7 @@ namespace AetherUI.Xaml
                     throw new XamlParseException("XAML document has no root element");
 
                 object result = ParseElement(doc.DocumentElement);
-                Debug.WriteLine($"XAML parsing completed. Root type: {result.GetType().Name}");
-
-                return result;
+return result;
             }
             catch (XmlException ex)
             {
@@ -78,10 +73,7 @@ namespace AetherUI.Xaml
         {
             if (string.IsNullOrWhiteSpace(filePath))
                 throw new ArgumentException("File path cannot be null or empty", nameof(filePath));
-
-            Debug.WriteLine($"Parsing XAML file: {filePath}");
-
-            try
+try
             {
                 string xaml = System.IO.File.ReadAllText(filePath);
                 return Parse(xaml);
@@ -103,9 +95,6 @@ namespace AetherUI.Xaml
         /// <returns>解析后的对象</returns>
         private object ParseElement(XmlElement element)
         {
-            Debug.WriteLine($"Parsing element: {element.Name}");
-
-            // 解析命名空间和类型名
             (string namespaceName, string typeName) = ParseElementName(element.Name);
 
             // 获取类型
@@ -115,9 +104,6 @@ namespace AetherUI.Xaml
 
             // 创建实例
             object instance = CreateInstance(type);
-            Debug.WriteLine($"Created instance of type: {type.Name}");
-
-            // 解析属性
             ParseAttributes(element, instance);
 
             // 解析子元素
@@ -156,17 +142,12 @@ namespace AetherUI.Xaml
                 // 跳过命名空间声明
                 if (attribute.Name.StartsWith("xmlns"))
                     continue;
-
-                Debug.WriteLine($"Setting property: {attribute.Name} = {attribute.Value}");
-
-                try
+try
                 {
                     SetProperty(instance, attribute.Name, attribute.Value);
                 }
                 catch (Exception ex)
                 {
-                    Debug.WriteLine($"Failed to set property {attribute.Name}: {ex.Message}");
-                    // 继续处理其他属性
                 }
             }
         }
@@ -218,9 +199,6 @@ namespace AetherUI.Xaml
                 return;
 
             string propertyName = parts[1];
-            Debug.WriteLine($"Setting complex property: {propertyName}");
-
-            // 解析属性值
             if (element.ChildNodes.Count == 1 && element.FirstChild is XmlElement valueElement)
             {
                 object value = ParseElement(valueElement);
@@ -335,8 +313,7 @@ namespace AetherUI.Xaml
 
             if (property == null || !property.CanWrite)
             {
-                Debug.WriteLine($"Property {propertyName} not found or not writable on type {type.Name}");
-                return;
+return;
             }
 
             try
@@ -347,8 +324,7 @@ namespace AetherUI.Xaml
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set property {propertyName}: {ex.Message}");
-            }
+}
         }
 
         /// <summary>
@@ -364,8 +340,7 @@ namespace AetherUI.Xaml
 
             if (property == null || !property.CanWrite)
             {
-                Debug.WriteLine($"Property {propertyName} not found or not writable on type {type.Name}");
-                return;
+return;
             }
 
             try
@@ -376,8 +351,7 @@ namespace AetherUI.Xaml
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to set property {propertyName}: {ex.Message}");
-            }
+}
         }
 
         #endregion

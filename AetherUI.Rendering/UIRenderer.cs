@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using OpenTK.Mathematics;
 using AetherUI.Core;
@@ -45,9 +45,7 @@ namespace AetherUI.Rendering
 
             // 创建字体渲染器
             _fontRenderer = new FontRenderer(_shaderManager);
-
-            Debug.WriteLine("UIRenderer initialized");
-        }
+}
 
         #endregion
 
@@ -61,10 +59,6 @@ namespace AetherUI.Rendering
         {
             if (element == null || element.Visibility == Visibility.Collapsed)
                 return;
-
-            Debug.WriteLine($"Rendering element: {element.GetType().Name}");
-
-            // 渲染元素及其子元素
             RenderElementRecursive(element, Matrix4.Identity);
         }
 
@@ -175,20 +169,10 @@ namespace AetherUI.Rendering
         /// <param name="bounds">边界</param>
         private void RenderButton(Button button, Rect bounds)
         {
-            Debug.WriteLine($"RenderButton called for: {button.Content} at bounds ({bounds.X}, {bounds.Y}, {bounds.Width}, {bounds.Height})");
-
-            // 获取按钮的样式属性
             string backgroundColorString = button.Background;
             string borderColorString = button.BorderBrush;
             double cornerRadius = button.CornerRadius;
-
-            Debug.WriteLine($"Button styles - Background: {backgroundColorString}, Border: {borderColorString}, CornerRadius: {cornerRadius}");
-
-            // 解析背景颜色
             Vector4 backgroundColor = ParseColorToVector4(backgroundColorString);
-            Debug.WriteLine($"Parsed background color: ({backgroundColor.X}, {backgroundColor.Y}, {backgroundColor.Z}, {backgroundColor.W})");
-
-            // 解析边框颜色
             Vector4 borderColor = ParseColorToVector4(borderColorString);
 
             // 渲染按钮背景（使用圆角）
@@ -202,9 +186,7 @@ namespace AetherUI.Rendering
             {
                 RenderButtonContent(button, bounds);
             }
-
-            Debug.WriteLine($"Rendered Button: {bounds}, Background: {backgroundColorString}, Border: {borderColorString}, CornerRadius: {cornerRadius}");
-        }
+}
 
         /// <summary>
         /// 渲染文本块
@@ -239,14 +221,9 @@ namespace AetherUI.Rendering
                     fontInfo,
                     new Vector2((float)textX, (float)textY),
                     _renderContext.MVPMatrix);
-
-                Debug.WriteLine($"Rendered TextBlock: '{textBlock.Text}' at {bounds} with font {fontInfo.Family} {fontInfo.Size}px");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error rendering TextBlock '{textBlock.Text}': {ex.Message}");
-
-                // 降级到简单矩形渲染
                 Vector4 textColor = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
                 double textHeight = Math.Min(bounds.Height * 0.6, textBlock.FontSize);
                 Rect textRect = new Rect(
@@ -282,9 +259,7 @@ namespace AetherUI.Rendering
                                           Math.Max(border.BorderThickness.Right, border.BorderThickness.Bottom));
                 _geometryRenderer.DrawRectBorder(bounds, borderColor, thickness);
             }
-
-            Debug.WriteLine($"Rendered Border: {bounds}");
-        }
+}
 
         /// <summary>
         /// 渲染卡片
@@ -306,9 +281,7 @@ namespace AetherUI.Rendering
             // 卡片边框
             Vector4 borderColor = new Vector4(0.9f, 0.9f, 0.9f, 1.0f);
             _geometryRenderer.DrawRectBorder(bounds, borderColor, 1);
-
-            Debug.WriteLine($"Rendered Card: {bounds}");
-        }
+}
 
         /// <summary>
         /// 渲染面板
@@ -330,9 +303,7 @@ namespace AetherUI.Rendering
             };
 
             _geometryRenderer.DrawRect(bounds, backgroundColor);
-
-            Debug.WriteLine($"Rendered Panel ({panel.GetType().Name}): {bounds}");
-        }
+}
 
         /// <summary>
         /// 渲染默认元素
@@ -348,9 +319,7 @@ namespace AetherUI.Rendering
             // 默认元素边框
             Vector4 borderColor = new Vector4(0.5f, 0.5f, 0.5f, 0.8f);
             _geometryRenderer.DrawRectBorder(bounds, borderColor, 1);
-
-            Debug.WriteLine($"Rendered Default Element ({element.GetType().Name}): {bounds}");
-        }
+}
 
         /// <summary>
         /// 渲染按钮内容
@@ -399,13 +368,10 @@ namespace AetherUI.Rendering
                     fontInfo,
                     new Vector2((float)textX, (float)textY),
                     _renderContext.MVPMatrix);
-
-                Debug.WriteLine($"Rendered Button Content: '{contentText}' at ({textX:F1}, {textY:F1}) with color {button.Foreground}");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error rendering button content: {ex.Message}");
-            }
+}
         }
 
         /// <summary>
@@ -439,8 +405,6 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error parsing color '{colorString}': {ex.Message}");
-                // 返回默认颜色（黑色）
                 return new Vector4(0.0f, 0.0f, 0.0f, 1.0f);
             }
         }
@@ -452,19 +416,13 @@ namespace AetherUI.Rendering
         {
             try
             {
-                Debug.WriteLine("Clearing UIRenderer caches...");
-
-                // 清理字体渲染器缓存
                 _fontRenderer?.ClearCaches();
 
                 // 几何渲染器通常不需要清理缓存，因为它是即时渲染的
-
-                Debug.WriteLine("UIRenderer caches cleared");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error clearing UIRenderer caches: {ex.Message}");
-            }
+}
         }
         #endregion
 
@@ -489,14 +447,10 @@ namespace AetherUI.Rendering
             {
                 if (disposing)
                 {
-                    Debug.WriteLine("Disposing UIRenderer...");
-
-                    _fontRenderer?.Dispose();
+_fontRenderer?.Dispose();
                     _geometryRenderer?.Dispose();
                     _shaderManager?.Dispose();
-
-                    Debug.WriteLine("UIRenderer disposed");
-                }
+}
 
                 _disposed = true;
             }

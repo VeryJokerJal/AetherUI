@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using AetherUI.Core;
@@ -108,8 +108,7 @@ namespace AetherUI.Rendering
         public WindowResizeManager(Size initialSize)
         {
             _currentSize = initialSize;
-            Debug.WriteLine($"WindowResizeManager initialized with size: {initialSize}");
-        }
+}
 
         #endregion
 
@@ -124,8 +123,7 @@ namespace AetherUI.Rendering
             if (listener != null && !_listeners.Contains(listener))
             {
                 _listeners.Add(listener);
-                Debug.WriteLine($"Added resize listener: {listener.GetType().Name}");
-            }
+}
         }
 
         /// <summary>
@@ -136,8 +134,7 @@ namespace AetherUI.Rendering
         {
             if (listener != null && _listeners.Remove(listener))
             {
-                Debug.WriteLine($"Removed resize listener: {listener.GetType().Name}");
-            }
+}
         }
 
         /// <summary>
@@ -149,8 +146,7 @@ namespace AetherUI.Rendering
             if (callback != null && !_callbacks.Contains(callback))
             {
                 _callbacks.Add(callback);
-                Debug.WriteLine("Added resize callback");
-            }
+}
         }
 
         /// <summary>
@@ -161,8 +157,7 @@ namespace AetherUI.Rendering
         {
             if (callback != null && _callbacks.Remove(callback))
             {
-                Debug.WriteLine("Removed resize callback");
-            }
+}
         }
 
         /// <summary>
@@ -172,8 +167,7 @@ namespace AetherUI.Rendering
         {
             _listeners.Clear();
             _callbacks.Clear();
-            Debug.WriteLine("Cleared all resize listeners and callbacks");
-        }
+}
 
         #endregion
 
@@ -187,8 +181,7 @@ namespace AetherUI.Rendering
         {
             if (newSize.Width <= 0 || newSize.Height <= 0)
             {
-                Debug.WriteLine($"Invalid window size: {newSize}");
-                return;
+return;
             }
 
             Size oldSize = _currentSize;
@@ -214,9 +207,7 @@ namespace AetherUI.Rendering
 
             // 通知大小变化
             OnResize(args);
-
-            Debug.WriteLine($"Window resized from {oldSize} to {newSize}");
-        }
+}
 
         /// <summary>
         /// 更新调整大小状态（应该在每帧调用）
@@ -267,8 +258,7 @@ namespace AetherUI.Rendering
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine($"Error in resize listener {listener.GetType().Name}: {ex.Message}");
-                    }
+}
                 }
 
                 // 调用回调
@@ -280,14 +270,12 @@ namespace AetherUI.Rendering
                     }
                     catch (Exception ex)
                     {
-                        Debug.WriteLine($"Error in resize callback: {ex.Message}");
-                    }
+}
                 }
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error in OnResize: {ex.Message}");
-            }
+}
         }
 
         /// <summary>
@@ -299,12 +287,10 @@ namespace AetherUI.Rendering
             try
             {
                 WindowResizeStarted?.Invoke(this, args);
-                Debug.WriteLine("Window resize started");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error in OnResizeStarted: {ex.Message}");
-            }
+}
         }
 
         /// <summary>
@@ -316,12 +302,10 @@ namespace AetherUI.Rendering
             try
             {
                 WindowResizeCompleted?.Invoke(this, args);
-                Debug.WriteLine("Window resize completed");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error in OnResizeCompleted: {ex.Message}");
-            }
+}
         }
 
         #endregion

@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 
@@ -42,9 +42,7 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureChildren(Size availableSize)
         {
-            Debug.WriteLine($"StackPanel measuring {Children.Count} children, Orientation: {Orientation}");
-
-            double totalWidth = 0;
+double totalWidth = 0;
             double totalHeight = 0;
             double maxWidth = 0;
             double maxHeight = 0;
@@ -71,10 +69,7 @@ namespace AetherUI.Layout
 
                 child.Measure(childAvailableSize);
                 Size childDesiredSize = child.DesiredSize;
-
-                Debug.WriteLine($"Child {child.GetType().Name} desired size: {childDesiredSize}");
-
-                if (Orientation == Orientation.Horizontal)
+if (Orientation == Orientation.Horizontal)
                 {
                     // 水平堆叠：累加宽度，取最大高度
                     totalWidth += childDesiredSize.Width;
@@ -97,9 +92,7 @@ namespace AetherUI.Layout
             {
                 desiredSize = new Size(maxWidth, totalHeight);
             }
-
-            Debug.WriteLine($"StackPanel desired size: {desiredSize}");
-            return desiredSize;
+return desiredSize;
         }
 
         /// <summary>
@@ -109,9 +102,7 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeChildren(Size finalSize)
         {
-            Debug.WriteLine($"StackPanel arranging {Children.Count} children, Final size: {finalSize}");
-
-            double currentPosition = 0;
+double currentPosition = 0;
 
             foreach (UIElement child in Children)
             {
@@ -137,9 +128,7 @@ namespace AetherUI.Layout
                         finalSize.Width, childDesiredSize.Height);
                     currentPosition += childDesiredSize.Height;
                 }
-
-                Debug.WriteLine($"Arranging child {child.GetType().Name} to rect: {childRect}");
-                child.Arrange(childRect);
+child.Arrange(childRect);
             }
 
             return finalSize;
@@ -154,8 +143,7 @@ namespace AetherUI.Layout
             if (d is StackPanel stackPanel)
             {
                 stackPanel.InvalidateMeasure();
-                Debug.WriteLine($"StackPanel orientation changed to: {e.NewValue}");
-            }
+}
         }
 
         #endregion

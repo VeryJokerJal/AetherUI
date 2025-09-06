@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 using AetherUI.Layout;
@@ -364,8 +364,7 @@ namespace AetherUI.Demo.Demos
                 RelayCommand testCommand = new(() =>
                 {
                     Console.WriteLine("命令按钮执行了RelayCommand");
-                    Debug.WriteLine("Command executed successfully");
-                });
+});
 
                 Button commandButton = CreateStyledButton("命令按钮", "#16A085", "#FFFFFF");
                 commandButton.Command = testCommand;

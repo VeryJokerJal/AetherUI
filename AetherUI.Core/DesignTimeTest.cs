@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.ComponentModel;
 using System.Diagnostics;
 
@@ -254,8 +254,7 @@ namespace AetherUI.Core
         private void ExecuteTest()
         {
             Count++;
-            Debug.WriteLine($"Test command executed, count: {Count}");
-        }
+}
 
         /// <summary>
         /// 测试命令是否可执行
@@ -277,7 +276,6 @@ namespace AetherUI.Core
         /// </summary>
         public TestFrameworkElement()
         {
-            Debug.WriteLine("TestFrameworkElement created");
-        }
+}
     }
 }

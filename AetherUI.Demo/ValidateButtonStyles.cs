@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 using AetherUI.Layout;
@@ -47,8 +47,7 @@ namespace AetherUI.Demo
             {
                 Console.WriteLine($"验证失败: {ex.Message}");
                 Console.WriteLine($"详细错误: {ex}");
-                Debug.WriteLine($"Validation error: {ex}");
-            }
+}
 
             Console.WriteLine("\n按任意键退出...");
             try

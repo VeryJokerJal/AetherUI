@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -178,9 +178,6 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureChildren(Size availableSize)
         {
-            Debug.WriteLine($"Grid measuring {Children.Count} children, Available size: {availableSize}");
-
-            // 确保至少有一行一列
             int rowCount = Math.Max(1, _rowDefinitions.Count);
             int columnCount = Math.Max(1, _columnDefinitions.Count);
 
@@ -215,18 +212,14 @@ namespace AetherUI.Layout
 
                 Size childAvailableSize = new Size(childWidth, childHeight);
                 child.Measure(childAvailableSize);
-
-                Debug.WriteLine($"Child at ({row},{column}) span ({rowSpan},{columnSpan}) measured: {child.DesiredSize}");
-            }
+}
 
             // 计算Grid的期望尺寸
             double totalWidth = columnSizes.Sum();
             double totalHeight = rowSizes.Sum();
 
             Size desiredSize = new Size(totalWidth, totalHeight);
-            Debug.WriteLine($"Grid desired size: {desiredSize}");
-
-            return desiredSize;
+return desiredSize;
         }
 
         /// <summary>
@@ -236,9 +229,6 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeChildren(Size finalSize)
         {
-            Debug.WriteLine($"Grid arranging {Children.Count} children, Final size: {finalSize}");
-
-            // 确保至少有一行一列
             int rowCount = Math.Max(1, _rowDefinitions.Count);
             int columnCount = Math.Max(1, _columnDefinitions.Count);
 
@@ -293,9 +283,7 @@ namespace AetherUI.Layout
 
                 Rect childRect = new Rect(x, y, width, height);
                 child.Arrange(childRect);
-
-                Debug.WriteLine($"Child at ({row},{column}) arranged to: {childRect}");
-            }
+}
 
             return finalSize;
         }
@@ -447,8 +435,7 @@ namespace AetherUI.Layout
             {
                 // 查找父Grid并使其布局无效
                 // 这里简化处理，实际应该遍历可视树查找父Grid
-                Debug.WriteLine($"Grid attached property {e.Property.Name} changed to: {e.NewValue}");
-            }
+}
         }
 
         #endregion

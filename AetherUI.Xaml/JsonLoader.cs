@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -25,9 +25,7 @@ namespace AetherUI.Xaml
         {
             if (string.IsNullOrWhiteSpace(json))
                 throw new ArgumentException("JSON content cannot be null or empty", nameof(json));
-
-            Debug.WriteLine("Loading JSON from string...");
-            return _parser.Parse(json);
+return _parser.Parse(json);
         }
 
         /// <summary>
@@ -58,9 +56,7 @@ namespace AetherUI.Xaml
 
             if (!File.Exists(filePath))
                 throw new FileNotFoundException($"JSON file not found: {filePath}");
-
-            Debug.WriteLine($"Loading JSON from file: {filePath}");
-            return _parser.ParseFile(filePath);
+return _parser.ParseFile(filePath);
         }
 
         /// <summary>
@@ -91,10 +87,7 @@ namespace AetherUI.Xaml
                 throw new ArgumentException("Resource name cannot be null or empty", nameof(resourceName));
 
             assembly ??= System.Reflection.Assembly.GetCallingAssembly();
-
-            Debug.WriteLine($"Loading JSON from resource: {resourceName}");
-
-            using Stream? stream = assembly.GetManifestResourceStream(resourceName);
+using Stream? stream = assembly.GetManifestResourceStream(resourceName);
             if (stream == null)
                 throw new XamlParseException($"Resource not found: {resourceName}");
 

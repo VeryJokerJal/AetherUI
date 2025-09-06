@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 
@@ -74,37 +74,25 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureChildren(Size availableSize)
         {
-            Debug.WriteLine($"UniformGrid measuring {Children.Count} children, Available size: {availableSize}");
-
-            // 计算网格尺寸
             (int rows, int columns) = CalculateGridSize();
-            Debug.WriteLine($"UniformGrid calculated grid size: {rows}x{columns}");
-
-            if (rows == 0 || columns == 0)
+if (rows == 0 || columns == 0)
                 return Size.Empty;
 
             // 计算每个单元格的尺寸
             double cellWidth = availableSize.Width / columns;
             double cellHeight = availableSize.Height / rows;
             Size cellSize = new Size(cellWidth, cellHeight);
-
-            Debug.WriteLine($"UniformGrid cell size: {cellSize}");
-
-            // 测量所有可见的子元素
             foreach (UIElement child in Children)
             {
                 if (child.Visibility == Visibility.Collapsed)
                     continue;
 
                 child.Measure(cellSize);
-                Debug.WriteLine($"Child desired size: {child.DesiredSize}");
-            }
+}
 
             // UniformGrid的期望尺寸是网格的总尺寸
             Size desiredSize = new Size(columns * cellWidth, rows * cellHeight);
-            Debug.WriteLine($"UniformGrid desired size: {desiredSize}");
-
-            return desiredSize;
+return desiredSize;
         }
 
         /// <summary>
@@ -114,9 +102,6 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeChildren(Size finalSize)
         {
-            Debug.WriteLine($"UniformGrid arranging {Children.Count} children, Final size: {finalSize}");
-
-            // 重新计算网格尺寸
             (int rows, int columns) = CalculateGridSize();
 
             if (rows == 0 || columns == 0)
@@ -125,10 +110,7 @@ namespace AetherUI.Layout
             // 计算每个单元格的实际尺寸
             double cellWidth = finalSize.Width / columns;
             double cellHeight = finalSize.Height / rows;
-
-            Debug.WriteLine($"UniformGrid final cell size: {cellWidth}x{cellHeight}");
-
-            int childIndex = 0;
+int childIndex = 0;
             int currentColumn = FirstColumn;
             int currentRow = 0;
 
@@ -143,10 +125,6 @@ namespace AetherUI.Layout
 
                 Rect childRect = new Rect(x, y, cellWidth, cellHeight);
                 child.Arrange(childRect);
-
-                Debug.WriteLine($"Child {childIndex} arranged to cell ({currentRow},{currentColumn}): {childRect}");
-
-                // 移动到下一个位置
                 currentColumn++;
                 if (currentColumn >= columns)
                 {
@@ -222,8 +200,7 @@ namespace AetherUI.Layout
             if (d is UniformGrid uniformGrid)
             {
                 uniformGrid.InvalidateMeasure();
-                Debug.WriteLine($"UniformGrid {e.Property.Name} changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnFirstColumnChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -231,8 +208,7 @@ namespace AetherUI.Layout
             if (d is UniformGrid uniformGrid)
             {
                 uniformGrid.InvalidateArrange();
-                Debug.WriteLine($"UniformGrid FirstColumn changed to: {e.NewValue}");
-            }
+}
         }
 
         #endregion

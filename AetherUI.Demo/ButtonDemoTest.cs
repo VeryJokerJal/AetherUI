@@ -1,9 +1,6 @@
-using System;
-using System.Diagnostics;
-using AetherUI.Core;
-using AetherUI.Layout;
-using AetherUI.Rendering;
+﻿using AetherUI.Core;
 using AetherUI.Demo.Demos;
+using AetherUI.Rendering;
 
 namespace AetherUI.Demo
 {
@@ -49,8 +46,6 @@ namespace AetherUI.Demo
             {
                 Console.WriteLine($"按钮演示运行失败: {ex.Message}");
                 Console.WriteLine($"详细错误: {ex}");
-                Debug.WriteLine($"ButtonDemo error: {ex}");
-
                 Console.WriteLine("\n按任意键退出...");
                 try
                 {

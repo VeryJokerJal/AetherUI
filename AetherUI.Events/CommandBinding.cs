@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Windows.Input;
 using System.Diagnostics;
@@ -165,8 +165,7 @@ namespace AetherUI.Events
                 throw new ArgumentNullException(nameof(commandBinding));
 
             _globalCommandBindings.Add(commandBinding);
-            Debug.WriteLine($"Registered global command binding for: {commandBinding.Command}");
-        }
+}
 
         /// <summary>
         /// 移除全局命令绑定
@@ -178,8 +177,7 @@ namespace AetherUI.Events
                 throw new ArgumentNullException(nameof(commandBinding));
 
             _globalCommandBindings.Remove(commandBinding);
-            Debug.WriteLine($"Unregistered global command binding for: {commandBinding.Command}");
-        }
+}
 
         /// <summary>
         /// 执行命令
@@ -194,14 +192,9 @@ namespace AetherUI.Events
                 throw new ArgumentNullException(nameof(command));
             if (target == null)
                 throw new ArgumentNullException(nameof(target));
-
-            Debug.WriteLine($"Executing command: {command} with parameter: {parameter}");
-
-            // 首先检查命令是否可以执行
             if (!CanExecuteCommand(command, parameter, target))
             {
-                Debug.WriteLine("Command cannot be executed");
-                return false;
+return false;
             }
 
             // 查找命令绑定并执行
@@ -210,16 +203,14 @@ namespace AetherUI.Events
             {
                 ExecutedRoutedEventArgs args = new ExecutedRoutedEventArgs(command, parameter);
                 binding.Executed(target, args);
-                Debug.WriteLine("Command executed via binding");
-                return true;
+return true;
             }
 
             // 如果没有找到绑定，直接执行命令
             if (command.CanExecute(parameter))
             {
                 command.Execute(parameter);
-                Debug.WriteLine("Command executed directly");
-                return true;
+return true;
             }
 
             return false;
@@ -245,14 +236,12 @@ namespace AetherUI.Events
             {
                 CanExecuteRoutedEventArgs args = new CanExecuteRoutedEventArgs(command, parameter);
                 binding.CanExecute(target, args);
-                Debug.WriteLine($"Command CanExecute via binding: {args.CanExecute}");
-                return args.CanExecute;
+return args.CanExecute;
             }
 
             // 如果没有找到绑定，使用命令自身的CanExecute
             bool canExecute = command.CanExecute(parameter);
-            Debug.WriteLine($"Command CanExecute directly: {canExecute}");
-            return canExecute;
+return canExecute;
         }
 
         /// <summary>

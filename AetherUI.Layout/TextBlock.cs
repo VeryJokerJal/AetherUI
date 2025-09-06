@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 
@@ -144,15 +144,10 @@ namespace AetherUI.Layout
                 double height = Math.Min(estimatedHeight, availableSize.Height);
 
                 Size measuredSize = new Size(width, height);
-                Debug.WriteLine($"TextBlock '{text}' measured size: {measuredSize} (Font: {fontInfo.Family} {fontInfo.Size}px)");
-
-                return measuredSize;
+return measuredSize;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error measuring TextBlock '{text}': {ex.Message}");
-
-                // 降级到简单估算
                 double estimatedWidth = text.Length * FontSize * 0.6;
                 double estimatedHeight = FontSize * 1.2;
                 double width = Math.Min(estimatedWidth, availableSize.Width);
@@ -198,8 +193,7 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Debug.WriteLine($"TextBlock '{Text}' arranged to size: {finalSize}");
-            return finalSize;
+return finalSize;
         }
 
         #endregion
@@ -211,8 +205,7 @@ namespace AetherUI.Layout
             if (d is TextBlock textBlock)
             {
                 textBlock.InvalidateMeasure();
-                Debug.WriteLine($"TextBlock text changed to: '{e.NewValue}'");
-            }
+}
         }
 
         private static void OnFontChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -220,8 +213,7 @@ namespace AetherUI.Layout
             if (d is TextBlock textBlock)
             {
                 textBlock.InvalidateMeasure();
-                Debug.WriteLine($"TextBlock font size changed to: {e.NewValue}");
-            }
+}
         }
 
         #endregion

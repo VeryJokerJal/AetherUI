@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 
@@ -34,8 +34,7 @@ namespace AetherUI.Core
 
             Type serviceType = typeof(TInterface);
             _services[serviceType] = implementation;
-            Debug.WriteLine($"Registered service instance: {serviceType.Name}");
-        }
+}
 
         /// <summary>
         /// 注册服务工厂
@@ -49,8 +48,7 @@ namespace AetherUI.Core
 
             Type serviceType = typeof(TInterface);
             _factories[serviceType] = () => factory();
-            Debug.WriteLine($"Registered service factory: {serviceType.Name}");
-        }
+}
 
         /// <summary>
         /// 注册单例服务
@@ -73,8 +71,7 @@ namespace AetherUI.Core
                 _services[serviceType] = newInstance;
                 return newInstance;
             };
-            Debug.WriteLine($"Registered singleton service: {serviceType.Name} -> {typeof(TImplementation).Name}");
-        }
+}
 
         /// <summary>
         /// 注册瞬态服务
@@ -87,8 +84,7 @@ namespace AetherUI.Core
         {
             Type serviceType = typeof(TInterface);
             _factories[serviceType] = () => new TImplementation();
-            Debug.WriteLine($"Registered transient service: {serviceType.Name} -> {typeof(TImplementation).Name}");
-        }
+}
 
         /// <summary>
         /// 获取服务实例
@@ -103,16 +99,14 @@ namespace AetherUI.Core
             // 首先检查是否有已注册的实例
             if (_services.TryGetValue(serviceType, out object? instance))
             {
-                Debug.WriteLine($"Retrieved service instance: {serviceType.Name}");
-                return (TInterface)instance;
+return (TInterface)instance;
             }
 
             // 然后检查是否有工厂
             if (_factories.TryGetValue(serviceType, out Func<object>? factory))
             {
                 object newInstance = factory();
-                Debug.WriteLine($"Created service instance: {serviceType.Name}");
-                return (TInterface)newInstance;
+return (TInterface)newInstance;
             }
 
             throw new InvalidOperationException($"Service of type '{serviceType.Name}' is not registered");
@@ -158,8 +152,7 @@ namespace AetherUI.Core
             Type serviceType = typeof(TInterface);
             _services.TryRemove(serviceType, out _);
             _factories.TryRemove(serviceType, out _);
-            Debug.WriteLine($"Unregistered service: {serviceType.Name}");
-        }
+}
 
         /// <summary>
         /// 清除所有注册的服务
@@ -168,7 +161,6 @@ namespace AetherUI.Core
         {
             _services.Clear();
             _factories.Clear();
-            Debug.WriteLine("Cleared all registered services");
-        }
+}
     }
 }

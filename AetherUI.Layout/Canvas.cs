@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 
@@ -181,9 +181,6 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureChildren(Size availableSize)
         {
-            Debug.WriteLine($"Canvas measuring {Children.Count} children, Available size: {availableSize}");
-
-            // Canvas给每个子元素无限的空间进行测量
             Size infiniteSize = new Size(double.PositiveInfinity, double.PositiveInfinity);
 
             double maxRight = 0;
@@ -197,10 +194,6 @@ namespace AetherUI.Layout
                 // 测量子元素
                 child.Measure(infiniteSize);
                 Size childDesiredSize = child.DesiredSize;
-
-                Debug.WriteLine($"Child {child.GetType().Name} desired size: {childDesiredSize}");
-
-                // 计算子元素的位置和边界
                 double left = GetLeft(child);
                 double top = GetTop(child);
                 double right = GetRight(child);
@@ -227,15 +220,11 @@ namespace AetherUI.Layout
                 // 更新Canvas的边界
                 maxRight = Math.Max(maxRight, childLeft + childWidth);
                 maxBottom = Math.Max(maxBottom, childTop + childHeight);
-
-                Debug.WriteLine($"Child positioned at ({childLeft}, {childTop}) with size ({childWidth}, {childHeight})");
-            }
+}
 
             // Canvas的期望尺寸是包含所有子元素的最小尺寸
             Size desiredSize = new Size(maxRight, maxBottom);
-            Debug.WriteLine($"Canvas desired size: {desiredSize}");
-
-            return desiredSize;
+return desiredSize;
         }
 
         /// <summary>
@@ -245,9 +234,7 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeChildren(Size finalSize)
         {
-            Debug.WriteLine($"Canvas arranging {Children.Count} children, Final size: {finalSize}");
-
-            foreach (UIElement child in Children)
+foreach (UIElement child in Children)
             {
                 if (child.Visibility == Visibility.Collapsed)
                     continue;
@@ -303,9 +290,7 @@ namespace AetherUI.Layout
                 // 排列子元素
                 Rect childRect = new Rect(x, y, width, height);
                 child.Arrange(childRect);
-
-                Debug.WriteLine($"Child arranged to: {childRect}");
-            }
+}
 
             return finalSize;
         }
@@ -321,8 +306,7 @@ namespace AetherUI.Layout
             {
                 // 查找父Canvas并使其布局无效
                 // 这里简化处理，实际应该遍历可视树查找父Canvas
-                Debug.WriteLine($"Canvas position property {e.Property.Name} changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnZIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -330,8 +314,6 @@ namespace AetherUI.Layout
             // 当Z轴顺序更改时，需要重新排序渲染
             if (d is UIElement element)
             {
-                Debug.WriteLine($"Canvas ZIndex changed to: {e.NewValue}");
-                // 这里应该触发重新排序和重绘
             }
         }
 

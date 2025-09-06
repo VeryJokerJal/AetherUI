@@ -86,9 +86,7 @@ namespace AetherUI.Core
 
             DependencyProperty property = new(name, propertyType, ownerType, metadata);
             _registeredProperties[key] = property;
-
-            Debug.WriteLine($"Registered dependency property: {key}");
-            return property;
+return property;
         }
 
         /// <summary>

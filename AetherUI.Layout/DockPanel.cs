@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using AetherUI.Core;
 
@@ -103,9 +103,7 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureChildren(Size availableSize)
         {
-            Debug.WriteLine($"DockPanel measuring {Children.Count} children, Available size: {availableSize}");
-
-            double usedWidth = 0;
+double usedWidth = 0;
             double usedHeight = 0;
             double maxWidth = 0;
             double maxHeight = 0;
@@ -149,10 +147,7 @@ namespace AetherUI.Layout
 
                 child.Measure(childAvailableSize);
                 Size childDesiredSize = child.DesiredSize;
-
-                Debug.WriteLine($"Child {i} dock {dock} desired size: {childDesiredSize}");
-
-                if (isLastChild && LastChildFill)
+if (isLastChild && LastChildFill)
                 {
                     // 最后一个子元素填充剩余空间，不影响DockPanel的尺寸计算
                     maxWidth = Math.Max(maxWidth, usedWidth + childDesiredSize.Width);
@@ -186,9 +181,7 @@ namespace AetherUI.Layout
             Size desiredSize = new Size(
                 Math.Max(maxWidth, usedWidth),
                 Math.Max(maxHeight, usedHeight));
-
-            Debug.WriteLine($"DockPanel desired size: {desiredSize}");
-            return desiredSize;
+return desiredSize;
         }
 
         /// <summary>
@@ -198,9 +191,7 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeChildren(Size finalSize)
         {
-            Debug.WriteLine($"DockPanel arranging {Children.Count} children, Final size: {finalSize}");
-
-            double left = 0;
+double left = 0;
             double top = 0;
             double right = finalSize.Width;
             double bottom = finalSize.Height;
@@ -250,8 +241,7 @@ namespace AetherUI.Layout
                 }
 
                 child.Arrange(childRect);
-                Debug.WriteLine($"Child {i} dock {dock} arranged to: {childRect}");
-            }
+}
 
             return finalSize;
         }
@@ -265,8 +255,7 @@ namespace AetherUI.Layout
             if (d is DockPanel dockPanel)
             {
                 dockPanel.InvalidateMeasure();
-                Debug.WriteLine($"DockPanel LastChildFill changed to: {e.NewValue}");
-            }
+}
         }
 
         private static void OnDockChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
@@ -274,8 +263,7 @@ namespace AetherUI.Layout
             // 当停靠方向更改时，需要重新布局父DockPanel
             if (d is UIElement element)
             {
-                Debug.WriteLine($"DockPanel Dock property changed to: {e.NewValue}");
-            }
+}
         }
 
         #endregion

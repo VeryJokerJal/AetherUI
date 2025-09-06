@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -39,9 +39,7 @@ namespace AetherUI.Compiler
             
             // 创建防抖动计时器
             _debounceTimer = new Timer(OnDebounceTimerElapsed, null, Timeout.Infinite, Timeout.Infinite);
-
-            Debug.WriteLine("FileWatcher initialized");
-        }
+}
 
         #endregion
 
@@ -64,13 +62,9 @@ namespace AetherUI.Compiler
             {
                 if (_watchers.ContainsKey(path))
                 {
-                    Debug.WriteLine($"Path already being watched: {path}");
-                    return;
+return;
                 }
-
-                Debug.WriteLine($"Adding watch for path: {path}, filter: {filter}");
-
-                FileSystemWatcher watcher = new FileSystemWatcher(path, filter)
+FileSystemWatcher watcher = new FileSystemWatcher(path, filter)
                 {
                     IncludeSubdirectories = true,
                     NotifyFilter = NotifyFilters.LastWrite | NotifyFilters.FileName | NotifyFilters.DirectoryName
@@ -83,9 +77,7 @@ namespace AetherUI.Compiler
 
                 watcher.EnableRaisingEvents = true;
                 _watchers[path] = watcher;
-
-                Debug.WriteLine($"Watch added successfully for: {path}");
-            }
+}
         }
 
         /// <summary>
@@ -101,14 +93,10 @@ namespace AetherUI.Compiler
             {
                 if (_watchers.TryGetValue(path, out FileSystemWatcher? watcher))
                 {
-                    Debug.WriteLine($"Removing watch for path: {path}");
-
-                    watcher.EnableRaisingEvents = false;
+watcher.EnableRaisingEvents = false;
                     watcher.Dispose();
                     _watchers.Remove(path);
-
-                    Debug.WriteLine($"Watch removed for: {path}");
-                }
+}
             }
         }
 
@@ -119,9 +107,7 @@ namespace AetherUI.Compiler
         {
             lock (_lock)
             {
-                Debug.WriteLine("Clearing all watches");
-
-                foreach (var watcher in _watchers.Values)
+foreach (var watcher in _watchers.Values)
                 {
                     watcher.EnableRaisingEvents = false;
                     watcher.Dispose();
@@ -129,9 +115,7 @@ namespace AetherUI.Compiler
 
                 _watchers.Clear();
                 _lastChangeTime.Clear();
-
-                Debug.WriteLine("All watches cleared");
-            }
+}
         }
 
         #endregion
@@ -150,10 +134,7 @@ namespace AetherUI.Compiler
                 // 忽略临时文件和隐藏文件
                 if (IsIgnoredFile(e.FullPath))
                     return;
-
-                Debug.WriteLine($"File system event: {e.ChangeType} - {e.FullPath}");
-
-                lock (_lock)
+lock (_lock)
                 {
                     // 防抖动处理
                     DateTime now = DateTime.Now;
@@ -161,8 +142,7 @@ namespace AetherUI.Compiler
                     {
                         if ((now - lastTime).TotalMilliseconds < 500) // 500ms防抖动
                         {
-                            Debug.WriteLine($"Debouncing file change: {e.FullPath}");
-                            return;
+return;
                         }
                     }
 
@@ -174,8 +154,7 @@ namespace AetherUI.Compiler
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error handling file system event: {ex.Message}");
-            }
+}
         }
 
         /// <summary>
@@ -203,9 +182,7 @@ namespace AetherUI.Compiler
                 // 触发文件变化事件
                 foreach (string filePath in changedFiles)
                 {
-                    Debug.WriteLine($"Triggering file changed event: {filePath}");
-                    
-                    FileChanged?.Invoke(this, new FileChangedEventArgs
+FileChanged?.Invoke(this, new FileChangedEventArgs
                     {
                         FilePath = filePath,
                         ChangeType = GetFileChangeType(filePath),
@@ -215,8 +192,7 @@ namespace AetherUI.Compiler
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error in debounce timer: {ex.Message}");
-            }
+}
         }
 
         #endregion
@@ -292,13 +268,9 @@ namespace AetherUI.Compiler
             {
                 if (disposing)
                 {
-                    Debug.WriteLine("Disposing FileWatcher...");
-
-                    _debounceTimer?.Dispose();
+_debounceTimer?.Dispose();
                     ClearWatches();
-
-                    Debug.WriteLine("FileWatcher disposed");
-                }
+}
 
                 _disposed = true;
             }

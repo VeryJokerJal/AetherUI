@@ -1,6 +1,4 @@
-using System;
-using System.Diagnostics;
-using System.Windows.Input;
+﻿using System;
 using AetherUI.Core;
 
 namespace AetherUI.Layout
@@ -156,20 +154,18 @@ namespace AetherUI.Layout
         protected override Size MeasureOverride(Size availableSize)
         {
             Thickness padding = Padding;
-            
+
             // 计算内容区域的可用尺寸
-            Size contentAvailableSize = new Size(
+            Size contentAvailableSize = new(
                 Math.Max(0, availableSize.Width - padding.Horizontal),
                 Math.Max(0, availableSize.Height - padding.Vertical));
 
             Size contentSize = MeasureContent(contentAvailableSize);
 
             // 添加内边距
-            Size totalSize = new Size(
+            Size totalSize = new(
                 contentSize.Width + padding.Horizontal,
                 contentSize.Height + padding.Vertical);
-
-            Debug.WriteLine($"Button measured size: {totalSize}");
             return totalSize;
         }
 
@@ -180,7 +176,6 @@ namespace AetherUI.Layout
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeOverride(Size finalSize)
         {
-            Debug.WriteLine($"Button arranged to size: {finalSize}");
             return finalSize;
         }
 
@@ -192,7 +187,9 @@ namespace AetherUI.Layout
         private Size MeasureContent(Size availableSize)
         {
             if (Content == null)
+            {
                 return Size.Empty;
+            }
 
             // 如果内容是字符串，估算文本尺寸
             if (Content is string text)
@@ -246,9 +243,6 @@ namespace AetherUI.Layout
         /// </summary>
         protected virtual void OnClick()
         {
-            Debug.WriteLine($"Button clicked: {Content}");
-            
-            // 触发点击事件
             Click?.Invoke(this, EventArgs.Empty);
 
             // 执行命令
@@ -267,15 +261,13 @@ namespace AetherUI.Layout
             if (d is Button button)
             {
                 button.InvalidateMeasure();
-                Debug.WriteLine($"Button content changed to: {e.NewValue}");
             }
         }
 
         private static void OnCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Button button)
+            if (d is Button)
             {
-                Debug.WriteLine($"Button command changed to: {e.NewValue}");
             }
         }
 
@@ -284,7 +276,6 @@ namespace AetherUI.Layout
             if (d is Button button)
             {
                 button.InvalidateMeasure();
-                Debug.WriteLine($"Button padding changed to: {e.NewValue}");
             }
         }
 
@@ -295,10 +286,9 @@ namespace AetherUI.Layout
         /// <param name="e">属性更改事件参数</param>
         private static void OnBackgroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Button button)
+            if (d is Button)
             {
                 // 背景颜色更改时需要重新渲染，但不需要重新测量
-                Debug.WriteLine($"Button background changed from {e.OldValue} to {e.NewValue}");
             }
         }
 
@@ -309,10 +299,9 @@ namespace AetherUI.Layout
         /// <param name="e">属性更改事件参数</param>
         private static void OnForegroundChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Button button)
+            if (d is Button)
             {
                 // 前景颜色更改时需要重新渲染，但不需要重新测量
-                Debug.WriteLine($"Button foreground changed from {e.OldValue} to {e.NewValue}");
             }
         }
 
@@ -323,10 +312,9 @@ namespace AetherUI.Layout
         /// <param name="e">属性更改事件参数</param>
         private static void OnBorderBrushChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Button button)
+            if (d is Button)
             {
                 // 边框颜色更改时需要重新渲染，但不需要重新测量
-                Debug.WriteLine($"Button border brush changed from {e.OldValue} to {e.NewValue}");
             }
         }
 
@@ -337,10 +325,9 @@ namespace AetherUI.Layout
         /// <param name="e">属性更改事件参数</param>
         private static void OnCornerRadiusChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is Button button)
+            if (d is Button)
             {
                 // 圆角弧度更改时需要重新渲染，但不需要重新测量
-                Debug.WriteLine($"Button corner radius changed from {e.OldValue} to {e.NewValue}");
             }
         }
 

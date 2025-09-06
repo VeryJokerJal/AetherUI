@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -60,9 +60,7 @@ namespace AetherUI.Compiler
             _lastCompileTime = new Dictionary<string, DateTime>();
 
             _fileWatcher.FileChanged += OnFileChanged;
-
-            Debug.WriteLine("HotReloadManager initialized");
-        }
+}
 
         #endregion
 
@@ -81,30 +79,20 @@ namespace AetherUI.Compiler
                 throw new DirectoryNotFoundException($"Directory not found: {rootDirectory}");
 
             RootDirectory = rootDirectory;
-
-            Debug.WriteLine($"Starting hot reload watching for: {rootDirectory}");
-
-            // 监控XAML文件
             _fileWatcher.AddWatch(rootDirectory, "*.xaml");
             
             // 监控JSON文件
             _fileWatcher.AddWatch(rootDirectory, "*.json");
-
-            Debug.WriteLine("Hot reload watching started");
-        }
+}
 
         /// <summary>
         /// 停止监控
         /// </summary>
         public void StopWatching()
         {
-            Debug.WriteLine("Stopping hot reload watching");
-
-            _fileWatcher.ClearWatches();
+_fileWatcher.ClearWatches();
             RootDirectory = null;
-
-            Debug.WriteLine("Hot reload watching stopped");
-        }
+}
 
         /// <summary>
         /// 注册已加载的元素
@@ -122,9 +110,7 @@ namespace AetherUI.Compiler
             string normalizedPath = Path.GetFullPath(filePath);
             _loadedElements[normalizedPath] = element;
             _lastCompileTime[normalizedPath] = DateTime.Now;
-
-            Debug.WriteLine($"Registered element for hot reload: {normalizedPath}");
-        }
+}
 
         /// <summary>
         /// 取消注册元素
@@ -138,9 +124,7 @@ namespace AetherUI.Compiler
             string normalizedPath = Path.GetFullPath(filePath);
             _loadedElements.Remove(normalizedPath);
             _lastCompileTime.Remove(normalizedPath);
-
-            Debug.WriteLine($"Unregistered element from hot reload: {normalizedPath}");
-        }
+}
 
         #endregion
 
@@ -158,13 +142,9 @@ namespace AetherUI.Compiler
 
             try
             {
-                Debug.WriteLine($"Processing file change for hot reload: {e.FilePath}");
-
-                // 检查是否需要重新编译
                 if (!ShouldRecompile(e.FilePath))
                 {
-                    Debug.WriteLine($"Skipping recompile for: {e.FilePath}");
-                    return;
+return;
                 }
 
                 // 异步处理热重载
@@ -172,9 +152,7 @@ namespace AetherUI.Compiler
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error processing hot reload: {ex.Message}");
-                
-                HotReloadError?.Invoke(this, new HotReloadErrorEventArgs
+HotReloadError?.Invoke(this, new HotReloadErrorEventArgs
                 {
                     FilePath = e.FilePath,
                     Error = ex,
@@ -190,9 +168,7 @@ namespace AetherUI.Compiler
         /// <param name="changeType">变化类型</param>
         private void ProcessHotReload(string filePath, FileChangeType changeType)
         {
-            Debug.WriteLine($"Processing hot reload: {filePath}, type: {changeType}");
-
-            try
+try
             {
                 object? newElement = null;
                 CompilationResult? compilationResult = null;
@@ -212,8 +188,7 @@ namespace AetherUI.Compiler
                         return;
 
                     default:
-                        Debug.WriteLine($"Unsupported file type for hot reload: {changeType}");
-                        return;
+return;
                 }
 
                 if (newElement != null)
@@ -221,10 +196,6 @@ namespace AetherUI.Compiler
                     // 更新注册的元素
                     _loadedElements[filePath] = newElement;
                     _lastCompileTime[filePath] = DateTime.Now;
-
-                    Debug.WriteLine($"Hot reload completed successfully: {filePath}");
-
-                    // 触发热重载完成事件
                     HotReloadCompleted?.Invoke(this, new HotReloadEventArgs
                     {
                         FilePath = filePath,
@@ -236,9 +207,7 @@ namespace AetherUI.Compiler
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Hot reload failed: {ex.Message}");
-                
-                HotReloadError?.Invoke(this, new HotReloadErrorEventArgs
+HotReloadError?.Invoke(this, new HotReloadErrorEventArgs
                 {
                     FilePath = filePath,
                     Error = ex,
@@ -255,9 +224,7 @@ namespace AetherUI.Compiler
         /// <returns>新的UI元素</returns>
         private object? ReloadXamlFile(string filePath, out CompilationResult? compilationResult)
         {
-            Debug.WriteLine($"Reloading XAML file: {filePath}");
-
-            try
+try
             {
                 string xamlContent = File.ReadAllText(filePath);
                 string className = Path.GetFileNameWithoutExtension(filePath);
@@ -267,20 +234,16 @@ namespace AetherUI.Compiler
                 
                 if (!compilationResult.Success)
                 {
-                    Debug.WriteLine($"XAML compilation failed: {compilationResult.Message}");
-                    return null;
+return null;
                 }
 
                 // 解析XAML
                 object element = XamlLoader.Load(xamlContent);
-                Debug.WriteLine($"XAML reloaded successfully: {filePath}");
-
-                return element;
+return element;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to reload XAML: {ex.Message}");
-                compilationResult = CompilationResult.Error($"XAML reload failed: {ex.Message}");
+compilationResult = CompilationResult.Error($"XAML reload failed: {ex.Message}");
                 return null;
             }
         }
@@ -293,9 +256,7 @@ namespace AetherUI.Compiler
         /// <returns>新的UI元素</returns>
         private object? ReloadJsonFile(string filePath, out CompilationResult? compilationResult)
         {
-            Debug.WriteLine($"Reloading JSON file: {filePath}");
-
-            try
+try
             {
                 string jsonContent = File.ReadAllText(filePath);
                 string className = Path.GetFileNameWithoutExtension(filePath);
@@ -305,20 +266,16 @@ namespace AetherUI.Compiler
                 
                 if (!compilationResult.Success)
                 {
-                    Debug.WriteLine($"JSON compilation failed: {compilationResult.Message}");
-                    return null;
+return null;
                 }
 
                 // 解析JSON
                 object element = JsonLoader.Load(jsonContent);
-                Debug.WriteLine($"JSON reloaded successfully: {filePath}");
-
-                return element;
+return element;
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Failed to reload JSON: {ex.Message}");
-                compilationResult = CompilationResult.Error($"JSON reload failed: {ex.Message}");
+compilationResult = CompilationResult.Error($"JSON reload failed: {ex.Message}");
                 return null;
             }
         }
@@ -329,9 +286,7 @@ namespace AetherUI.Compiler
         /// <param name="filePath">文件路径</param>
         private void HandleFileDeleted(string filePath)
         {
-            Debug.WriteLine($"Handling file deletion: {filePath}");
-
-            UnregisterElement(filePath);
+UnregisterElement(filePath);
 
             HotReloadCompleted?.Invoke(this, new HotReloadEventArgs
             {
@@ -393,16 +348,12 @@ namespace AetherUI.Compiler
             {
                 if (disposing)
                 {
-                    Debug.WriteLine("Disposing HotReloadManager...");
-
-                    StopWatching();
+StopWatching();
                     _fileWatcher?.Dispose();
 
                     _loadedElements.Clear();
                     _lastCompileTime.Clear();
-
-                    Debug.WriteLine("HotReloadManager disposed");
-                }
+}
 
                 _disposed = true;
             }

@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 
 namespace AetherUI.Core
 {
@@ -117,14 +116,9 @@ namespace AetherUI.Core
                 _isMeasureValid = true;
                 return;
             }
-
-            Debug.WriteLine($"Measuring {GetType().Name} with available size: {availableSize}");
-
             Size measuredSize = MeasureCore(availableSize);
             DesiredSize = measuredSize;
             _isMeasureValid = true;
-
-            Debug.WriteLine($"Measured {GetType().Name} desired size: {DesiredSize}");
         }
 
         /// <summary>
@@ -140,15 +134,10 @@ namespace AetherUI.Core
                 _isArrangeValid = true;
                 return;
             }
-
-            Debug.WriteLine($"Arranging {GetType().Name} to rect: {finalRect}");
-
             LayoutRect = finalRect;
             Size arrangedSize = ArrangeCore(finalRect);
             RenderSize = arrangedSize;
             _isArrangeValid = true;
-
-            Debug.WriteLine($"Arranged {GetType().Name} render size: {RenderSize}");
         }
 
         /// <summary>
@@ -166,7 +155,6 @@ namespace AetherUI.Core
         public void InvalidateMeasure()
         {
             _isMeasureValid = false;
-            Debug.WriteLine($"Invalidated measure for {GetType().Name}");
         }
 
         /// <summary>
@@ -175,7 +163,6 @@ namespace AetherUI.Core
         public void InvalidateArrange()
         {
             _isArrangeValid = false;
-            Debug.WriteLine($"Invalidated arrange for {GetType().Name}");
         }
 
         /// <summary>
@@ -220,7 +207,6 @@ namespace AetherUI.Core
             }
 
             _eventHandlers.Add(new EventHandlerInfo(routedEvent, handler));
-            Debug.WriteLine($"Added handler for {routedEvent} to {GetType().Name}");
         }
 
         /// <summary>
@@ -246,7 +232,6 @@ namespace AetherUI.Core
                 if (info.RoutedEvent == routedEvent && info.Handler == handler)
                 {
                     _eventHandlers.RemoveAt(i);
-                    Debug.WriteLine($"Removed handler for {routedEvent} from {GetType().Name}");
                     break;
                 }
             }
@@ -269,9 +254,6 @@ namespace AetherUI.Core
                 {
                     return;
                 }
-
-                Debug.WriteLine($"Raising event {routedArgs.RoutedEvent} on {GetType().Name}");
-
                 foreach (EventHandlerInfo info in _eventHandlers)
                 {
                     if (info.RoutedEvent == routedArgs.RoutedEvent)
@@ -284,11 +266,9 @@ namespace AetherUI.Core
                         try
                         {
                             _ = info.Handler.DynamicInvoke(this, routedArgs);
-                            Debug.WriteLine($"Invoked handler for {routedArgs.RoutedEvent}");
                         }
-                        catch (Exception ex)
+                        catch (Exception)
                         {
-                            Debug.WriteLine($"Error invoking handler: {ex.Message}");
                         }
                     }
                 }
@@ -304,23 +284,20 @@ namespace AetherUI.Core
             if (d is UIElement element)
             {
                 element.InvalidateLayout();
-                Debug.WriteLine($"Visibility changed for {element.GetType().Name}: {e.NewValue}");
             }
         }
 
         private static void OnOpacityChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is UIElement element)
+            if (d is UIElement)
             {
-                Debug.WriteLine($"Opacity changed for {element.GetType().Name}: {e.NewValue}");
             }
         }
 
         private static void OnIsEnabledChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            if (d is UIElement element)
+            if (d is UIElement)
             {
-                Debug.WriteLine($"IsEnabled changed for {element.GetType().Name}: {e.NewValue}");
             }
         }
 

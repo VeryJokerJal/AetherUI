@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using AetherUI.Core;
 
 namespace AetherUI.Rendering.Input
@@ -27,23 +26,18 @@ namespace AetherUI.Rendering.Input
         /// <returns>命中结果</returns>
         public static HitTestResult HitTest(UIElement? root, AetherUI.Core.Point point)
         {
-            Debug.WriteLine($"HitTestService.HitTest at ({point.X}, {point.Y})");
-
             if (root == null)
             {
-                Debug.WriteLine("Root is null, no hit");
                 return new HitTestResult { HitElement = null, HitPoint = point };
             }
 
             try
             {
                 UIElement? hit = HitTestRecursive(root, point, new AetherUI.Core.Point(0, 0));
-                Debug.WriteLine($"Hit test result: {hit?.GetType().Name ?? "null"}");
                 return new HitTestResult { HitElement = hit, HitPoint = point };
             }
-            catch (Exception ex)
+            catch (Exception)
             {
-                Debug.WriteLine($"HitTest error: {ex.Message}");
                 return new HitTestResult { HitElement = null, HitPoint = point };
             }
         }
@@ -60,30 +54,18 @@ namespace AetherUI.Rendering.Input
                 accumulatedOffset.Y + localRect.Y,
                 localRect.Width,
                 localRect.Height);
-
-            Debug.WriteLine($"Testing {element.GetType().Name} at rect ({rectInWindow.X}, {rectInWindow.Y}, {rectInWindow.Width}, {rectInWindow.Height})");
-
-            // 若点不在当前元素范围内，直接返回
             if (!rectInWindow.Contains(windowPoint))
             {
-                Debug.WriteLine($"Point ({windowPoint.X}, {windowPoint.Y}) not in rect - no hit");
                 return null;
             }
-
-            Debug.WriteLine($"Point ({windowPoint.X}, {windowPoint.Y}) is in rect - checking children");
-
-            // 从后往前（Z序：后添加的在上方）遍历子元素，优先命中更上层的子
             List<UIElement> children = [.. element.GetVisualChildren()];
-            Debug.WriteLine($"Element {element.GetType().Name} has {children.Count} visual children");
             children.Reverse();
 
             foreach (UIElement child in children)
             {
-                Debug.WriteLine($"Testing child: {child.GetType().Name}");
                 UIElement? hitChild = HitTestRecursive(child, windowPoint, new AetherUI.Core.Point(rectInWindow.X, rectInWindow.Y));
                 if (hitChild != null)
                 {
-                    Debug.WriteLine($"Child hit: {hitChild.GetType().Name}");
                     return hitChild;
                 }
             }

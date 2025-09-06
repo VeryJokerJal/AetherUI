@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
@@ -23,9 +23,7 @@ namespace AetherUI.Core
         {
             _designTimeData = new Dictionary<string, object?>();
             _propertyTypes = new Dictionary<string, Type>();
-
-            Debug.WriteLine("DesignTimeDataContext initialized");
-        }
+}
 
         #endregion
 
@@ -52,9 +50,7 @@ namespace AetherUI.Core
             {
                 _propertyTypes[propertyName] = value.GetType();
             }
-
-            Debug.WriteLine($"Set design time property: {propertyName} = {value}");
-            OnPropertyChanged(propertyName);
+OnPropertyChanged(propertyName);
         }
 
         /// <summary>
@@ -118,8 +114,7 @@ namespace AetherUI.Core
             if (_designTimeData.Remove(propertyName))
             {
                 _propertyTypes.Remove(propertyName);
-                Debug.WriteLine($"Removed design time property: {propertyName}");
-                OnPropertyChanged(propertyName);
+OnPropertyChanged(propertyName);
             }
         }
 
@@ -132,10 +127,7 @@ namespace AetherUI.Core
             
             _designTimeData.Clear();
             _propertyTypes.Clear();
-
-            Debug.WriteLine("Cleared all design time properties");
-
-            foreach (string propertyName in propertyNames)
+foreach (string propertyName in propertyNames)
             {
                 OnPropertyChanged(propertyName);
             }
@@ -153,10 +145,7 @@ namespace AetherUI.Core
         {
             if (viewModelType == null)
                 throw new ArgumentNullException(nameof(viewModelType));
-
-            Debug.WriteLine($"Generating design time data from type: {viewModelType.Name}");
-
-            PropertyInfo[] properties = viewModelType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+PropertyInfo[] properties = viewModelType.GetProperties(BindingFlags.Public | BindingFlags.Instance);
             
             foreach (PropertyInfo property in properties)
             {
@@ -171,9 +160,7 @@ namespace AetherUI.Core
                 object? mockValue = GenerateMockValue(property.PropertyType, property.Name);
                 SetDesignTimeProperty(property.Name, mockValue, property.PropertyType);
             }
-
-            Debug.WriteLine($"Generated design time data for {properties.Length} properties");
-        }
+}
 
         /// <summary>
         /// 生成模拟值

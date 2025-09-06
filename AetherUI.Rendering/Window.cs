@@ -66,8 +66,7 @@ namespace AetherUI.Rendering
                     _needsLayout = true;
                     _pointerInput?.SetRoot(_rootElement);
                     RootElementChanged?.Invoke(this, value);
-                    Debug.WriteLine($"Root element changed to: {value?.GetType().Name ?? "null"}");
-                }
+}
             }
         }
 
@@ -83,8 +82,7 @@ namespace AetherUI.Rendering
         public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
         {
-            Debug.WriteLine("AetherWindow created");
-        }
+}
 
         /// <summary>
         /// 使用默认设置初始化AetherWindow
@@ -119,10 +117,6 @@ namespace AetherUI.Rendering
         protected override void OnLoad()
         {
             base.OnLoad();
-
-            Debug.WriteLine("AetherWindow loading...");
-
-            // 初始化渲染上下文
             RenderContext = new RenderContext();
             RenderContext.SetViewport(ClientSize.X, ClientSize.Y);
 
@@ -145,9 +139,7 @@ namespace AetherUI.Rendering
 
             // 设置窗口可见
             IsVisible = true;
-
-            Debug.WriteLine($"AetherWindow loaded. OpenGL Version: {GL.GetString(StringName.Version)}");
-            Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
+Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
         }
 
         /// <summary>
@@ -155,9 +147,6 @@ namespace AetherUI.Rendering
         /// </summary>
         protected override void OnUnload()
         {
-            Debug.WriteLine("AetherWindow unloading...");
-
-            // 释放背景效果渲染器
             BackgroundRenderer?.Dispose();
             BackgroundRenderer = null;
 
@@ -177,9 +166,7 @@ namespace AetherUI.Rendering
             RenderContext = null;
 
             base.OnUnload();
-
-            Debug.WriteLine("AetherWindow unloaded");
-        }
+}
 
         /// <summary>
         /// 窗口大小改变时调用
@@ -188,10 +175,6 @@ namespace AetherUI.Rendering
         protected override void OnResize(ResizeEventArgs e)
         {
             base.OnResize(e);
-
-            Debug.WriteLine($"AetherWindow resized to: {e.Width}x{e.Height}");
-
-            // 更新渲染上下文视口
             RenderContext?.SetViewport(e.Width, e.Height);
 
             // 通知窗口大小变化管理器
@@ -230,8 +213,7 @@ namespace AetherUI.Rendering
                 {
                     RenderContext.SetViewport(ClientSize.X, ClientSize.Y);
                     _needsLayout = true;
-                    Debug.WriteLine($"Viewport corrected to match window size: {ClientSize.X}x{ClientSize.Y}");
-                }
+}
 
                 // 开始渲染帧
                 RenderContext.BeginFrame();
@@ -267,8 +249,7 @@ namespace AetherUI.Rendering
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Render error: {ex.Message}");
-            }
+}
         }
 
         /// <summary>
@@ -330,27 +311,17 @@ namespace AetherUI.Rendering
             // 确保可用尺寸有效
             if (availableSize.Width <= 0 || availableSize.Height <= 0)
             {
-                Debug.WriteLine($"Invalid available size for layout: {availableSize}");
-                return;
+return;
             }
-
-            Debug.WriteLine($"Performing layout with available size: {availableSize}");
-
-            try
+try
             {
                 // 测量根元素
                 _rootElement.Measure(availableSize);
-                Debug.WriteLine($"Root element desired size: {_rootElement.DesiredSize}");
-
-                // 排列根元素
                 Rect finalRect = new(0, 0, availableSize.Width, availableSize.Height);
                 _rootElement.Arrange(finalRect);
-                Debug.WriteLine($"Root element arranged to: {finalRect}");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error during layout: {ex.Message}");
-                // 布局失败时不抛出异常，继续渲染
             }
         }
         /// <summary>
@@ -360,21 +331,15 @@ namespace AetherUI.Rendering
         {
             try
             {
-                Debug.WriteLine("Clearing render caches after window resize");
-
-                // 清理UI渲染器缓存
                 _uiRenderer?.ClearCaches();
 
                 // 强制垃圾回收以清理可能的纹理缓存
                 GC.Collect();
                 GC.WaitForPendingFinalizers();
-
-                Debug.WriteLine("Render caches cleared successfully");
-            }
+}
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error clearing render caches: {ex.Message}");
-            }
+}
         }
 
 
@@ -400,8 +365,7 @@ namespace AetherUI.Rendering
             if (BackgroundRenderer != null)
             {
                 BackgroundRenderer.Config = config;
-                Debug.WriteLine($"Background effect set to: {config.Type}");
-            }
+}
         }
 
         /// <summary>
@@ -469,14 +433,11 @@ namespace AetherUI.Rendering
 
                     // 交换缓冲区
                     SwapBuffers();
-
-                    Debug.WriteLine("Forced redraw completed");
-                }
+}
             }
             catch (Exception ex)
             {
-                Debug.WriteLine($"Error during forced redraw: {ex.Message}");
-            }
+}
         }
 
         #endregion
@@ -492,9 +453,7 @@ namespace AetherUI.Rendering
         {
             // 触发公共事件
             WindowResized?.Invoke(this, args);
-
-            Debug.WriteLine($"Window resize event: {args.OldSize} -> {args.NewSize}");
-        }
+}
 
         #endregion
     }
