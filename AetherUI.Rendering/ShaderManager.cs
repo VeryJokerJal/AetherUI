@@ -125,11 +125,9 @@ namespace AetherUI.Rendering
                 throw new ArgumentException($"Shader program not found: {name}");
             }
 
-            if (_currentProgram != program)
-            {
-                GL.UseProgram(program);
-                _currentProgram = program;
-            }
+            // 始终绑定，避免与外部 GL.UseProgram 调用导致的状态不同步
+            GL.UseProgram(program);
+            _currentProgram = program;
         }
 
         /// <summary>

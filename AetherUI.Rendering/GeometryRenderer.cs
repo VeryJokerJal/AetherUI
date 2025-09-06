@@ -102,11 +102,17 @@ namespace AetherUI.Rendering
 
             // 使用着色器
             _shaderManager.UseShader("basic");
-            _shaderManager.SetUniformMatrix4("basic", "uMVP", mvpMatrix);
-            RenderContext.CheckGLErrorStatic("Geometry:UseShader+SetUniform");
+            RenderContext.CheckGLErrorStatic("Geometry:UseShader");
 
-            // 绑定VAO并渲染
+            // 绑定VAO（Core Profile 必需）
             GL.BindVertexArray(_vao);
+            RenderContext.CheckGLErrorStatic("Geometry:BindVAO");
+
+            // 设uniform必须在使用了program之后
+            _shaderManager.SetUniformMatrix4("basic", "uMVP", mvpMatrix);
+            RenderContext.CheckGLErrorStatic("Geometry:SetUniform");
+
+            // 渲染
             GL.DrawElements(PrimitiveType.Triangles, _indices.Count, DrawElementsType.UnsignedInt, 0);
             RenderContext.CheckGLErrorStatic("Geometry:DrawElements");
             GL.BindVertexArray(0);
