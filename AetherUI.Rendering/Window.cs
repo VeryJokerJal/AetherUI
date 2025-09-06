@@ -133,6 +133,14 @@ namespace AetherUI.Rendering
             _pointerInput = new Rendering.Input.PointerInputManager(_rootElement);
             _prevMouseState = MouseState;
 
+            // 订阅OpenTK鼠标事件
+            MouseMove += OnMouseMoveEvent;
+            MouseDown += OnMouseDownEvent;
+            MouseUp += OnMouseUpEvent;
+            MouseWheel += OnMouseWheelEvent;
+
+            System.Diagnostics.Debug.WriteLine("Window: OpenTK mouse events subscribed");
+
             // 初始化窗口大小变化管理器
             ResizeManager = new WindowResizeManager(new Size(ClientSize.X, ClientSize.Y));
             ResizeManager.WindowResized += OnWindowResizedInternal;
@@ -147,6 +155,14 @@ namespace AetherUI.Rendering
         /// </summary>
         protected override void OnUnload()
         {
+            // 取消OpenTK鼠标事件订阅
+            MouseMove -= OnMouseMoveEvent;
+            MouseDown -= OnMouseDownEvent;
+            MouseUp -= OnMouseUpEvent;
+            MouseWheel -= OnMouseWheelEvent;
+
+            System.Diagnostics.Debug.WriteLine("Window: OpenTK mouse events unsubscribed");
+
             BackgroundRenderer?.Dispose();
             BackgroundRenderer = null;
 
@@ -473,6 +489,70 @@ namespace AetherUI.Rendering
         {
             // 触发公共事件
             WindowResized?.Invoke(this, args);
+        }
+
+        /// <summary>
+        /// OpenTK鼠标移动事件处理器
+        /// </summary>
+        /// <param name="e">鼠标移动事件参数</param>
+        private void OnMouseMoveEvent(MouseMoveEventArgs e)
+        {
+            System.Diagnostics.Debug.WriteLine($"Window: OpenTK MouseMove event at ({e.X}, {e.Y})");
+
+            if (_pointerInput != null)
+            {
+                AetherUI.Core.Point point = new(e.X, e.Y);
+                _pointerInput.OnMouseMove(point);
+            }
+        }
+
+        /// <summary>
+        /// OpenTK鼠标按下事件处理器
+        /// </summary>
+        /// <param name="e">鼠标按下事件参数</param>
+        private void OnMouseDownEvent(MouseButtonEventArgs e)
+        {
+            Vector2 mousePos = MouseState.Position;
+            System.Diagnostics.Debug.WriteLine($"Window: OpenTK MouseDown event - Button: {e.Button}, Position: ({mousePos.X}, {mousePos.Y})");
+
+            if (_pointerInput != null && e.Button == MouseButton.Left)
+            {
+                AetherUI.Core.Point point = new(mousePos.X, mousePos.Y);
+                _pointerInput.OnMouseDown(point);
+            }
+        }
+
+        /// <summary>
+        /// OpenTK鼠标释放事件处理器
+        /// </summary>
+        /// <param name="e">鼠标释放事件参数</param>
+        private void OnMouseUpEvent(MouseButtonEventArgs e)
+        {
+            Vector2 mousePos = MouseState.Position;
+            System.Diagnostics.Debug.WriteLine($"Window: OpenTK MouseUp event - Button: {e.Button}, Position: ({mousePos.X}, {mousePos.Y})");
+
+            if (_pointerInput != null && e.Button == MouseButton.Left)
+            {
+                AetherUI.Core.Point point = new(mousePos.X, mousePos.Y);
+                _pointerInput.OnMouseUp(point);
+            }
+        }
+
+        /// <summary>
+        /// OpenTK鼠标滚轮事件处理器
+        /// </summary>
+        /// <param name="e">鼠标滚轮事件参数</param>
+        private void OnMouseWheelEvent(MouseWheelEventArgs e)
+        {
+            Vector2 mousePos = MouseState.Position;
+            System.Diagnostics.Debug.WriteLine($"Window: OpenTK MouseWheel event - Delta: ({e.OffsetX}, {e.OffsetY}), Position: ({mousePos.X}, {mousePos.Y})");
+
+            if (_pointerInput != null)
+            {
+                AetherUI.Core.Point point = new(mousePos.X, mousePos.Y);
+                double delta = e.OffsetY; // 使用Y轴滚轮增量
+                _pointerInput.OnMouseWheel(point, delta);
+            }
         }
 
         #endregion
