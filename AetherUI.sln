@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AetherUI.Demo", "AetherUI.D
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AetherUI.Designer", "AetherUI.Designer\AetherUI.Designer.csproj", "{2DACD763-D30A-4CAD-B2B5-9F6B3B14DF25}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AetherUI.Input", "AetherUI.Input\AetherUI.Input.csproj", "{3E5F7A8B-9C2D-4E6F-8A1B-2C3D4E5F6A7B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -69,6 +71,10 @@ Global
 		{2DACD763-D30A-4CAD-B2B5-9F6B3B14DF25}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2DACD763-D30A-4CAD-B2B5-9F6B3B14DF25}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2DACD763-D30A-4CAD-B2B5-9F6B3B14DF25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3E5F7A8B-9C2D-4E6F-8A1B-2C3D4E5F6A7B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3E5F7A8B-9C2D-4E6F-8A1B-2C3D4E5F6A7B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3E5F7A8B-9C2D-4E6F-8A1B-2C3D4E5F6A7B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3E5F7A8B-9C2D-4E6F-8A1B-2C3D4E5F6A7B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
