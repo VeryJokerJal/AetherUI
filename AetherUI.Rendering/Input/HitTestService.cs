@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using AetherUI.Core;
@@ -27,14 +27,18 @@ namespace AetherUI.Rendering.Input
         /// <returns>命中结果</returns>
         public static HitTestResult HitTest(UIElement? root, AetherUI.Core.Point point)
         {
+            Debug.WriteLine($"HitTestService.HitTest at ({point.X}, {point.Y})");
+
             if (root == null)
             {
+                Debug.WriteLine("Root is null, no hit");
                 return new HitTestResult { HitElement = null, HitPoint = point };
             }
 
             try
             {
                 UIElement? hit = HitTestRecursive(root, point, new AetherUI.Core.Point(0, 0));
+                Debug.WriteLine($"Hit test result: {hit?.GetType().Name ?? "null"}");
                 return new HitTestResult { HitElement = hit, HitPoint = point };
             }
             catch (Exception ex)
@@ -51,24 +55,25 @@ namespace AetherUI.Rendering.Input
         {
             // 当前元素在窗口坐标中的矩形
             AetherUI.Core.Rect localRect = element.LayoutRect;
-            AetherUI.Core.Rect rectInWindow = new AetherUI.Core.Rect(
+            AetherUI.Core.Rect rectInWindow = new(
                 accumulatedOffset.X + localRect.X,
                 accumulatedOffset.Y + localRect.Y,
                 localRect.Width,
                 localRect.Height);
 
+            Debug.WriteLine($"Testing {element.GetType().Name} at rect ({rectInWindow.X}, {rectInWindow.Y}, {rectInWindow.Width}, {rectInWindow.Height})");
+
             // 若点不在当前元素范围内，直接返回
             if (!rectInWindow.Contains(windowPoint))
             {
+                Debug.WriteLine($"Point ({windowPoint.X}, {windowPoint.Y}) not in rect - no hit");
                 return null;
             }
 
+            Debug.WriteLine($"Point ({windowPoint.X}, {windowPoint.Y}) is in rect - checking children");
+
             // 从后往前（Z序：后添加的在上方）遍历子元素，优先命中更上层的子
-            List<UIElement> children = new List<UIElement>();
-            foreach (UIElement child in element.GetVisualChildren())
-            {
-                children.Add(child);
-            }
+            List<UIElement> children = [.. element.GetVisualChildren()];
             children.Reverse();
 
             foreach (UIElement child in children)

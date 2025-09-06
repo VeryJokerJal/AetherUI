@@ -1,7 +1,6 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using AetherUI.Events;
 
 namespace AetherUI.Core
 {
@@ -10,10 +9,7 @@ namespace AetherUI.Core
     /// </summary>
     public abstract class UIElement : DependencyObject, IInputElement
     {
-        private readonly List<EventHandlerInfo> _eventHandlers = new List<EventHandlerInfo>();
-        private Size _desiredSize = Size.Empty;
-        private Size _renderSize = Size.Empty;
-        private Rect _arrangeRect = Rect.Empty;
+        private readonly List<EventHandlerInfo> _eventHandlers = [];
         private bool _isArrangeValid = false;
         private bool _isMeasureValid = false;
 
@@ -79,12 +75,12 @@ namespace AetherUI.Core
         /// <summary>
         /// 期望尺寸
         /// </summary>
-        public Size DesiredSize => _desiredSize;
+        public Size DesiredSize { get; private set; } = Size.Empty;
 
         /// <summary>
         /// 渲染尺寸
         /// </summary>
-        public Size RenderSize => _renderSize;
+        public Size RenderSize { get; private set; } = Size.Empty;
 
         /// <summary>
         /// 是否可见
@@ -94,7 +90,7 @@ namespace AetherUI.Core
         /// <summary>
         /// 布局矩形（元素在父容器中的位置和尺寸）
         /// </summary>
-        public Rect LayoutRect => _arrangeRect;
+        public Rect LayoutRect { get; private set; } = Rect.Empty;
 
         /// <summary>
         /// 获取视觉子元素集合（用于渲染与命中测试）
@@ -117,7 +113,7 @@ namespace AetherUI.Core
         {
             if (Visibility == Visibility.Collapsed)
             {
-                _desiredSize = Size.Empty;
+                DesiredSize = Size.Empty;
                 _isMeasureValid = true;
                 return;
             }
@@ -125,10 +121,10 @@ namespace AetherUI.Core
             Debug.WriteLine($"Measuring {GetType().Name} with available size: {availableSize}");
 
             Size measuredSize = MeasureCore(availableSize);
-            _desiredSize = measuredSize;
+            DesiredSize = measuredSize;
             _isMeasureValid = true;
 
-            Debug.WriteLine($"Measured {GetType().Name} desired size: {_desiredSize}");
+            Debug.WriteLine($"Measured {GetType().Name} desired size: {DesiredSize}");
         }
 
         /// <summary>
@@ -139,20 +135,20 @@ namespace AetherUI.Core
         {
             if (Visibility == Visibility.Collapsed)
             {
-                _arrangeRect = Rect.Empty;
-                _renderSize = Size.Empty;
+                LayoutRect = Rect.Empty;
+                RenderSize = Size.Empty;
                 _isArrangeValid = true;
                 return;
             }
 
             Debug.WriteLine($"Arranging {GetType().Name} to rect: {finalRect}");
 
-            _arrangeRect = finalRect;
+            LayoutRect = finalRect;
             Size arrangedSize = ArrangeCore(finalRect);
-            _renderSize = arrangedSize;
+            RenderSize = arrangedSize;
             _isArrangeValid = true;
 
-            Debug.WriteLine($"Arranged {GetType().Name} render size: {_renderSize}");
+            Debug.WriteLine($"Arranged {GetType().Name} render size: {RenderSize}");
         }
 
         /// <summary>
@@ -214,9 +210,14 @@ namespace AetherUI.Core
         public void AddHandler(object routedEvent, Delegate handler)
         {
             if (routedEvent == null)
+            {
                 throw new ArgumentNullException(nameof(routedEvent));
+            }
+
             if (handler == null)
+            {
                 throw new ArgumentNullException(nameof(handler));
+            }
 
             _eventHandlers.Add(new EventHandlerInfo(routedEvent, handler));
             Debug.WriteLine($"Added handler for {routedEvent} to {GetType().Name}");
@@ -230,9 +231,14 @@ namespace AetherUI.Core
         public void RemoveHandler(object routedEvent, Delegate handler)
         {
             if (routedEvent == null)
+            {
                 throw new ArgumentNullException(nameof(routedEvent));
+            }
+
             if (handler == null)
+            {
                 throw new ArgumentNullException(nameof(handler));
+            }
 
             for (int i = _eventHandlers.Count - 1; i >= 0; i--)
             {
@@ -253,12 +259,16 @@ namespace AetherUI.Core
         public void RaiseEvent(object args)
         {
             if (args == null)
+            {
                 throw new ArgumentNullException(nameof(args));
+            }
 
             if (args is RoutedEventArgs routedArgs)
             {
                 if (routedArgs.RoutedEvent == null)
+                {
                     return;
+                }
 
                 Debug.WriteLine($"Raising event {routedArgs.RoutedEvent} on {GetType().Name}");
 
@@ -267,11 +277,13 @@ namespace AetherUI.Core
                     if (info.RoutedEvent == routedArgs.RoutedEvent)
                     {
                         if (routedArgs.Handled && !info.HandledEventsToo)
+                        {
                             continue;
+                        }
 
                         try
                         {
-                            info.Handler.DynamicInvoke(this, routedArgs);
+                            _ = info.Handler.DynamicInvoke(this, routedArgs);
                             Debug.WriteLine($"Invoked handler for {routedArgs.RoutedEvent}");
                         }
                         catch (Exception ex)

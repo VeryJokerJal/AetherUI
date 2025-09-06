@@ -175,13 +175,18 @@ namespace AetherUI.Rendering
         /// <param name="bounds">边界</param>
         private void RenderButton(Button button, Rect bounds)
         {
+            Debug.WriteLine($"RenderButton called for: {button.Content} at bounds ({bounds.X}, {bounds.Y}, {bounds.Width}, {bounds.Height})");
+
             // 获取按钮的样式属性
             string backgroundColorString = button.Background;
             string borderColorString = button.BorderBrush;
             double cornerRadius = button.CornerRadius;
 
+            Debug.WriteLine($"Button styles - Background: {backgroundColorString}, Border: {borderColorString}, CornerRadius: {cornerRadius}");
+
             // 解析背景颜色
             Vector4 backgroundColor = ParseColorToVector4(backgroundColorString);
+            Debug.WriteLine($"Parsed background color: ({backgroundColor.X}, {backgroundColor.Y}, {backgroundColor.Z}, {backgroundColor.W})");
 
             // 解析边框颜色
             Vector4 borderColor = ParseColorToVector4(borderColorString);

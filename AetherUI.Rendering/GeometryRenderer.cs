@@ -151,6 +151,7 @@ namespace AetherUI.Rendering
         /// <param name="thickness">边框厚度</param>
         public void DrawRectBorder(Rect rect, Vector4 color, double thickness)
         {
+            Debug.WriteLine($"DrawRectBorder called: rect({rect.X}, {rect.Y}, {rect.Width}, {rect.Height}), color({color.X}, {color.Y}, {color.Z}, {color.W}), thickness({thickness})");
             // 顶边
             DrawRect(new Rect(rect.X, rect.Y, rect.Width, thickness), color);
             // 底边
@@ -169,8 +170,11 @@ namespace AetherUI.Rendering
         /// <param name="cornerRadius">圆角半径</param>
         public void DrawRoundedRect(Rect rect, Vector4 color, double cornerRadius)
         {
+            Debug.WriteLine($"DrawRoundedRect called: rect({rect.X}, {rect.Y}, {rect.Width}, {rect.Height}), color({color.X}, {color.Y}, {color.Z}, {color.W}), radius({cornerRadius})");
+
             if (cornerRadius <= 0)
             {
+                Debug.WriteLine("Corner radius <= 0, drawing regular rect");
                 DrawRect(rect, color);
                 return;
             }
