@@ -19,4 +19,8 @@
     <ProjectReference Include="..\AetherUI.Compiler\AetherUI.Compiler.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="System.IO.FileSystem.Watcher" Version="4.3.0" />
+  </ItemGroup>
+
 </Project>

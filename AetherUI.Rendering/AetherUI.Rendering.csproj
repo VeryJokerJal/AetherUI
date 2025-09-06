@@ -19,4 +19,8 @@
     <ProjectReference Include="..\AetherUI.Layout\AetherUI.Layout.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <PackageReference Include="OpenTK" Version="4.9.4" />
+  </ItemGroup>
+
 </Project>
