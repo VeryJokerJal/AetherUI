@@ -32,15 +32,14 @@ namespace AetherUI.Demo
                 // 创建演示UI
                 UIElement demoUI = CreateDemoUI();
 
-                Console.WriteLine("启动AetherUI渲染窗口...");
-
-                // 由于OpenGL环境限制，直接运行控制台模式演示
-                Console.WriteLine("注意：图形渲染需要支持OpenGL的环境。");
-                Console.WriteLine("当前运行控制台模式演示...");
+                Console.WriteLine("启动AetherUI图形渲染窗口...");
+                Console.WriteLine("窗口将显示完整的UI界面，包括真实的字体渲染。");
                 Console.WriteLine();
 
-                // 运行控制台模式演示
-                RunConsoleDemo(demoUI);
+                // 运行图形渲染演示
+                AetherApplication.RunSimple(1200, 800, "AetherUI 字体渲染演示", demoUI);
+
+                Console.WriteLine("演示窗口已关闭。");
             }
             catch (Exception ex)
             {
@@ -133,8 +132,11 @@ namespace AetherUI.Demo
 
             var iconText = new TextBlock
             {
-                Text = "A",
+                Text = "字",
                 FontSize = 20,
+                FontFamily = "Microsoft YaHei",
+                FontWeight = FontWeight.Bold,
+                Foreground = "#2C3E50",
                 HorizontalAlignment = HorizontalAlignment.Center,
                 VerticalAlignment = VerticalAlignment.Center
             };
@@ -150,14 +152,20 @@ namespace AetherUI.Demo
 
             var mainTitle = new TextBlock
             {
-                Text = "AetherUI 框架演示",
-                FontSize = 24
+                Text = "AetherUI 字体渲染演示",
+                FontSize = 24,
+                FontFamily = "Microsoft YaHei",
+                FontWeight = FontWeight.Bold,
+                Foreground = "White"
             };
 
             var subTitle = new TextBlock
             {
-                Text = "现代化跨平台UI框架 - 实时渲染演示",
-                FontSize = 14
+                Text = "现代化跨平台UI框架 - 完整字体系统支持",
+                FontSize = 14,
+                FontFamily = "Microsoft YaHei",
+                FontStyle = FontStyle.Italic,
+                Foreground = "LightGray"
             };
 
             titleTextPanel.Children.Add(mainTitle);
@@ -298,8 +306,11 @@ namespace AetherUI.Demo
             // 欢迎标题
             var welcomeTitle = new TextBlock
             {
-                Text = "欢迎使用 AetherUI 框架！",
+                Text = "欢迎使用 AetherUI 字体渲染系统！",
                 FontSize = 20,
+                FontFamily = "Microsoft YaHei",
+                FontWeight = FontWeight.Bold,
+                Foreground = "#2C3E50",
                 Margin = new Thickness(0, 0, 0, 15)
             };
             cardContent.Children.Add(welcomeTitle);
@@ -307,12 +318,62 @@ namespace AetherUI.Demo
             // 描述文本
             var description = new TextBlock
             {
-                Text = "AetherUI 是一个现代化的跨平台UI框架，基于OpenGL渲染，支持MVVM架构。" +
-                       "本演示展示了框架的核心功能，包括布局系统、控件库、事件处理和数据绑定。",
+                Text = "AetherUI 是一个现代化的跨平台UI框架，基于OpenGL渲染，支持完整的字体系统。" +
+                       "本演示展示了真实的字体渲染功能，包括中文字体、字体样式、颜色和大小控制。",
                 FontSize = 14,
+                FontFamily = "Microsoft YaHei",
+                Foreground = "#34495E",
                 Margin = new Thickness(0, 0, 0, 20)
             };
             cardContent.Children.Add(description);
+
+            // 字体演示区域
+            var fontDemoTitle = new TextBlock
+            {
+                Text = "字体渲染演示：",
+                FontSize = 16,
+                FontFamily = "Microsoft YaHei",
+                FontWeight = FontWeight.SemiBold,
+                Foreground = "#2980B9",
+                Margin = new Thickness(0, 0, 0, 10)
+            };
+            cardContent.Children.Add(fontDemoTitle);
+
+            // 不同字体样式演示
+            var fontSamples = new StackPanel
+            {
+                Orientation = Orientation.Vertical,
+                Margin = new Thickness(20, 0, 0, 20)
+            };
+
+            // 添加各种字体样式示例
+            var samples = new[]
+            {
+                new { Text = "默认字体：Microsoft YaHei 14px", FontSize = 14.0, FontWeight = FontWeight.Normal, FontStyle = FontStyle.Normal, Color = "#000000" },
+                new { Text = "粗体文本：Bold Weight", FontSize = 14.0, FontWeight = FontWeight.Bold, FontStyle = FontStyle.Normal, Color = "#2C3E50" },
+                new { Text = "斜体文本：Italic Style", FontSize = 14.0, FontWeight = FontWeight.Normal, FontStyle = FontStyle.Italic, Color = "#8E44AD" },
+                new { Text = "大号文本：Large Size 18px", FontSize = 18.0, FontWeight = FontWeight.Normal, FontStyle = FontStyle.Normal, Color = "#E74C3C" },
+                new { Text = "小号文本：Small Size 12px", FontSize = 12.0, FontWeight = FontWeight.Normal, FontStyle = FontStyle.Normal, Color = "#27AE60" },
+                new { Text = "中文测试：这是中文字体渲染测试", FontSize = 16.0, FontWeight = FontWeight.Medium, FontStyle = FontStyle.Normal, Color = "#F39C12" },
+                new { Text = "混合文本：Mixed Chinese 中文 and English", FontSize = 15.0, FontWeight = FontWeight.SemiBold, FontStyle = FontStyle.Normal, Color = "#9B59B6" }
+            };
+
+            foreach (var sample in samples)
+            {
+                var sampleText = new TextBlock
+                {
+                    Text = sample.Text,
+                    FontSize = sample.FontSize,
+                    FontFamily = "Microsoft YaHei",
+                    FontWeight = sample.FontWeight,
+                    FontStyle = sample.FontStyle,
+                    Foreground = sample.Color,
+                    Margin = new Thickness(0, 0, 0, 8)
+                };
+                fontSamples.Children.Add(sampleText);
+            }
+
+            cardContent.Children.Add(fontSamples);
 
             // 功能亮点
             var featuresPanel = new StackPanel
@@ -322,10 +383,10 @@ namespace AetherUI.Demo
 
             var features = new[]
             {
-                "⚡ 高性能渲染",
-                "🎨 丰富控件",
-                "📱 跨平台支持",
-                "🔧 MVVM架构"
+                new { Text = "字体渲染", Color = "#E74C3C" },
+                new { Text = "中文支持", Color = "#2ECC71" },
+                new { Text = "OpenGL加速", Color = "#3498DB" },
+                new { Text = "MVVM架构", Color = "#9B59B6" }
             };
 
             foreach (var feature in features)
@@ -340,8 +401,11 @@ namespace AetherUI.Demo
 
                 var featureText = new TextBlock
                 {
-                    Text = feature,
-                    FontSize = 12
+                    Text = feature.Text,
+                    FontSize = 12,
+                    FontFamily = "Microsoft YaHei",
+                    FontWeight = FontWeight.Medium,
+                    Foreground = feature.Color
                 };
 
                 featureBorder.Child = featureText;
@@ -747,200 +811,13 @@ namespace AetherUI.Demo
             return demoCard;
         }
 
-        /// <summary>
-        /// 运行控制台模式演示
-        /// </summary>
-        /// <param name="demoUI">演示UI</param>
-        private static void RunConsoleDemo(UIElement demoUI)
-        {
-            Console.WriteLine("===========================================");
-            Console.WriteLine("    AetherUI 框架控制台演示模式");
-            Console.WriteLine("===========================================");
-            Console.WriteLine();
 
-            // 显示UI结构
-            Console.WriteLine("UI结构树:");
-            PrintUITree(demoUI, 0);
-            Console.WriteLine();
 
-            // 显示功能演示
-            Console.WriteLine("功能演示:");
-            DemonstrateFeatures();
-            Console.WriteLine();
 
-            Console.WriteLine("控制台演示完成！");
-            Console.WriteLine("注意：完整的图形界面需要支持OpenGL的环境。");
-        }
 
-        /// <summary>
-        /// 打印UI树结构
-        /// </summary>
-        /// <param name="element">UI元素</param>
-        /// <param name="depth">深度</param>
-        private static void PrintUITree(UIElement element, int depth)
-        {
-            string indent = new string(' ', depth * 2);
-            string elementInfo = GetElementInfo(element);
-            Console.WriteLine($"{indent}├─ {elementInfo}");
 
-            // 递归打印子元素
-            if (element is Panel panel)
-            {
-                foreach (UIElement child in panel.Children)
-                {
-                    PrintUITree(child, depth + 1);
-                }
-            }
-            else if (element is Border border && border.Child != null)
-            {
-                PrintUITree(border.Child, depth + 1);
-            }
-            else if (element is Card card && card.Content != null)
-            {
-                PrintUITree(card.Content, depth + 1);
-            }
-        }
 
-        /// <summary>
-        /// 获取元素信息
-        /// </summary>
-        /// <param name="element">UI元素</param>
-        /// <returns>元素信息字符串</returns>
-        private static string GetElementInfo(UIElement element)
-        {
-            string typeName = element.GetType().Name;
-            string info = typeName;
 
-            switch (element)
-            {
-                case TextBlock textBlock:
-                    info += $" \"{textBlock.Text}\"";
-                    break;
-                case Button button:
-                    info += $" \"{button.Content}\"";
-                    break;
-                case Grid grid:
-                    info += $" ({grid.RowDefinitions.Count}行 x {grid.ColumnDefinitions.Count}列)";
-                    break;
-                case StackPanel stackPanel:
-                    info += $" ({stackPanel.Orientation}, {stackPanel.Children.Count}个子元素)";
-                    break;
-                case Border border:
-                    if (border.Background != null)
-                        info += $" (背景: {border.Background})";
-                    break;
-                case Card card:
-                    if (card.Header != null)
-                        info += $" (标题: {card.Header})";
-                    break;
-            }
-
-            return info;
-        }
-
-        /// <summary>
-        /// 演示功能特性
-        /// </summary>
-        private static void DemonstrateFeatures()
-        {
-            Console.WriteLine("1. 布局系统演示:");
-            DemonstrateLayoutSystem();
-            Console.WriteLine();
-
-            Console.WriteLine("2. MVVM功能演示:");
-            DemonstrateMVVM();
-            Console.WriteLine();
-
-            Console.WriteLine("3. 事件系统演示:");
-            DemonstrateEventSystem();
-        }
-
-        /// <summary>
-        /// 演示布局系统
-        /// </summary>
-        private static void DemonstrateLayoutSystem()
-        {
-            // 创建各种布局容器
-            var stackPanel = new StackPanel { Orientation = Orientation.Vertical };
-            stackPanel.Children.Add(new TextBlock { Text = "项目1" });
-            stackPanel.Children.Add(new TextBlock { Text = "项目2" });
-            stackPanel.Children.Add(new Button { Content = "按钮" });
-
-            Console.WriteLine($"   ✓ StackPanel: {stackPanel.Children.Count}个子元素");
-
-            var grid = new Grid();
-            grid.RowDefinitions.Add(new RowDefinition());
-            grid.RowDefinitions.Add(new RowDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-            grid.ColumnDefinitions.Add(new ColumnDefinition());
-
-            Console.WriteLine($"   ✓ Grid: {grid.RowDefinitions.Count}行 x {grid.ColumnDefinitions.Count}列");
-
-            var canvas = new Canvas();
-            var canvasChild = new TextBlock { Text = "Canvas子元素" };
-            Canvas.SetLeft(canvasChild, 10);
-            Canvas.SetTop(canvasChild, 20);
-            canvas.Children.Add(canvasChild);
-
-            Console.WriteLine($"   ✓ Canvas: 绝对定位，{canvas.Children.Count}个子元素");
-
-            Console.WriteLine("   ✓ DockPanel: 停靠布局");
-            Console.WriteLine("   ✓ WrapPanel: 自动换行布局");
-            Console.WriteLine("   ✓ UniformGrid: 均匀网格布局");
-            Console.WriteLine("   ✓ Border: 边框容器");
-            Console.WriteLine("   ✓ Card: 卡片容器");
-        }
-
-        /// <summary>
-        /// 演示MVVM功能
-        /// </summary>
-        private static void DemonstrateMVVM()
-        {
-            var viewModel = new TestViewModel();
-            Console.WriteLine($"   ✓ ViewModel创建: {viewModel.Title}");
-
-            // 测试属性变化通知
-            bool propertyChanged = false;
-            viewModel.PropertyChanged += (s, e) =>
-            {
-                propertyChanged = true;
-                Console.WriteLine($"   ✓ 属性变化通知: {e.PropertyName}");
-            };
-
-            viewModel.Title = "更新的标题";
-            viewModel.Counter = 42;
-
-            if (propertyChanged)
-            {
-                Console.WriteLine("   ✓ PropertyChanged事件正常工作");
-            }
-
-            // 测试命令
-            if (viewModel.TestCommand.CanExecute(null))
-            {
-                viewModel.TestCommand.Execute(null);
-                Console.WriteLine("   ✓ 命令执行成功");
-            }
-        }
-
-        /// <summary>
-        /// 演示事件系统
-        /// </summary>
-        private static void DemonstrateEventSystem()
-        {
-            var button = new Button { Content = "测试按钮" };
-
-            button.Click += (s, e) =>
-            {
-                Console.WriteLine("   ✓ 按钮点击事件触发");
-            };
-
-            Console.WriteLine("   ✓ 事件订阅成功");
-            Console.WriteLine("   ✓ 事件系统已配置");
-            Console.WriteLine("   ✓ 支持鼠标和键盘事件");
-            Console.WriteLine("   ✓ 支持路由事件");
-            Console.WriteLine("   ✓ 支持命令绑定");
-        }
     }
 
     /// <summary>

@@ -14,6 +14,7 @@ namespace AetherUI.Rendering
         private readonly RenderContext _renderContext;
         private readonly ShaderManager _shaderManager;
         private readonly GeometryRenderer _geometryRenderer;
+        private readonly FontRenderer _fontRenderer;
         private bool _disposed = false;
 
         #region 构造函数
@@ -32,6 +33,9 @@ namespace AetherUI.Rendering
 
             // 创建几何渲染器
             _geometryRenderer = new GeometryRenderer(_shaderManager);
+
+            // 创建字体渲染器
+            _fontRenderer = new FontRenderer(_shaderManager);
 
             Debug.WriteLine("UIRenderer initialized");
         }
@@ -162,21 +166,50 @@ namespace AetherUI.Rendering
         /// <param name="bounds">边界</param>
         private void RenderTextBlock(TextBlock textBlock, Rect bounds)
         {
-            // 文本背景（透明，TextBlock通常没有背景）
-            // 这里可以根据需要添加背景渲染逻辑
+            if (string.IsNullOrEmpty(textBlock.Text))
+                return;
 
-            // 文本占位符（简单矩形）
-            Vector4 textColor = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
-            double textHeight = Math.Min(bounds.Height * 0.6, textBlock.FontSize);
-            Rect textRect = new Rect(
-                bounds.X + 2, 
-                bounds.Y + (bounds.Height - textHeight) / 2, 
-                bounds.Width - 4, 
-                textHeight);
-            
-            _geometryRenderer.DrawRect(textRect, textColor);
+            try
+            {
+                // 创建字体信息
+                var fontInfo = new FontInfo(
+                    textBlock.FontFamily,
+                    textBlock.FontSize,
+                    textBlock.FontWeight,
+                    textBlock.FontStyle,
+                    textBlock.Foreground);
 
-            Debug.WriteLine($"Rendered TextBlock: {bounds}, Text: {textBlock.Text}");
+                // 测量文本尺寸
+                var metrics = _fontRenderer.GetTextMetrics(textBlock.Text, fontInfo);
+
+                // 计算文本位置（居中对齐）
+                double textX = bounds.X + Math.Max(0, (bounds.Width - metrics.Width) / 2);
+                double textY = bounds.Y + Math.Max(0, (bounds.Height - metrics.Height) / 2);
+
+                // 渲染文本
+                _fontRenderer.RenderText(
+                    textBlock.Text,
+                    fontInfo,
+                    new Vector2((float)textX, (float)textY),
+                    _renderContext.MVPMatrix);
+
+                Debug.WriteLine($"Rendered TextBlock: '{textBlock.Text}' at {bounds} with font {fontInfo.Family} {fontInfo.Size}px");
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error rendering TextBlock '{textBlock.Text}': {ex.Message}");
+
+                // 降级到简单矩形渲染
+                Vector4 textColor = new Vector4(0.2f, 0.2f, 0.2f, 1.0f);
+                double textHeight = Math.Min(bounds.Height * 0.6, textBlock.FontSize);
+                Rect textRect = new Rect(
+                    bounds.X + 2,
+                    bounds.Y + (bounds.Height - textHeight) / 2,
+                    bounds.Width - 4,
+                    textHeight);
+
+                _geometryRenderer.DrawRect(textRect, textColor);
+            }
         }
 
         /// <summary>
@@ -297,6 +330,7 @@ namespace AetherUI.Rendering
                 {
                     Debug.WriteLine("Disposing UIRenderer...");
 
+                    _fontRenderer?.Dispose();
                     _geometryRenderer?.Dispose();
                     _shaderManager?.Dispose();
 

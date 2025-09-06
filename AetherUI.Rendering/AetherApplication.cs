@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
@@ -11,7 +11,7 @@ namespace AetherUI.Rendering
     /// </summary>
     public class AetherApplication : IDisposable
     {
-        private AetherWindow? _mainWindow;
+        private Window? _mainWindow;
         private bool _disposed = false;
 
         #region 事件
@@ -33,7 +33,7 @@ namespace AetherUI.Rendering
         /// <summary>
         /// 主窗口
         /// </summary>
-        public AetherWindow? MainWindow => _mainWindow;
+        public Window? MainWindow => _mainWindow;
 
         /// <summary>
         /// 应用程序是否正在运行
@@ -63,7 +63,7 @@ namespace AetherUI.Rendering
         /// <param name="height">窗口高度</param>
         /// <param name="title">窗口标题</param>
         /// <returns>创建的窗口</returns>
-        public AetherWindow CreateMainWindow(int width, int height, string title)
+        public Window CreateMainWindow(int width, int height, string title)
         {
             if (_mainWindow != null)
             {
@@ -72,7 +72,7 @@ namespace AetherUI.Rendering
 
             Debug.WriteLine($"Creating main window: {title} ({width}x{height})");
 
-            _mainWindow = new AetherWindow(width, height, title);
+            _mainWindow = new Window(width, height, title);
 
             // 订阅窗口事件
             // 注意：OpenTK的GameWindow事件签名可能不同，这里简化处理
@@ -151,7 +151,7 @@ namespace AetherUI.Rendering
         {
             using AetherApplication app = new AetherApplication();
             
-            AetherWindow window = app.CreateMainWindow(width, height, title);
+            Window window = app.CreateMainWindow(width, height, title);
             
             if (rootElement != null)
             {

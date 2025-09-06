@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using OpenTK.Graphics.OpenGL4;
 using OpenTK.Windowing.Common;
@@ -12,7 +12,7 @@ namespace AetherUI.Rendering
     /// <summary>
     /// AetherUI窗口，基于OpenTK的游戏窗口
     /// </summary>
-    public class AetherWindow : GameWindow
+    public class Window : GameWindow
     {
         private RenderContext? _renderContext;
         private UIRenderer? _uiRenderer;
@@ -62,7 +62,7 @@ namespace AetherUI.Rendering
         /// </summary>
         /// <param name="gameWindowSettings">游戏窗口设置</param>
         /// <param name="nativeWindowSettings">本地窗口设置</param>
-        public AetherWindow(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
+        public Window(GameWindowSettings gameWindowSettings, NativeWindowSettings nativeWindowSettings)
             : base(gameWindowSettings, nativeWindowSettings)
         {
             Debug.WriteLine("AetherWindow created");
@@ -74,7 +74,7 @@ namespace AetherUI.Rendering
         /// <param name="width">窗口宽度</param>
         /// <param name="height">窗口高度</param>
         /// <param name="title">窗口标题</param>
-        public AetherWindow(int width, int height, string title)
+        public Window(int width, int height, string title)
             : this(GameWindowSettings.Default, new NativeWindowSettings()
             {
                 ClientSize = new Vector2i(width, height),
