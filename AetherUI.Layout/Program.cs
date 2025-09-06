@@ -37,6 +37,11 @@ namespace AetherUI.Layout
                 Console.WriteLine("=============");
                 // 运行Canvas测试
                 CanvasTest.RunAllTests();
+
+                Console.WriteLine("\n高级布局容器测试:");
+                Console.WriteLine("==================");
+                // 运行高级布局测试
+                AdvancedLayoutTest.RunAllTests();
             }
             catch (Exception ex)
             {
