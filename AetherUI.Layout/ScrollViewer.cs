@@ -312,7 +312,10 @@ namespace AetherUI.Layout
         public void ScrollByWheel(double delta)
         {
             double scrollAmount = delta * VerticalScrollBar.SmallChange * 3; // 滚轮滚动倍数
+            double oldOffset = VerticalOffset;
             VerticalOffset = Math.Max(0, Math.Min(ScrollableSize.Height, VerticalOffset - scrollAmount));
+
+            Debug.WriteLine($"ScrollViewer: ScrollByWheel delta={delta}, scrollAmount={scrollAmount}, oldOffset={oldOffset}, newOffset={VerticalOffset}, ScrollableSize.Height={ScrollableSize.Height}");
         }
 
         #endregion

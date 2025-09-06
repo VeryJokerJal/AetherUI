@@ -116,11 +116,18 @@ namespace AetherUI.Rendering.Input
         /// <param name="delta">滚轮增量</param>
         public void OnMouseWheel(AetherUI.Core.Point point, double delta)
         {
+            System.Diagnostics.Debug.WriteLine($"PointerInputManager: OnMouseWheel at {point}, delta={delta}");
+
             // 查找包含鼠标位置的 ScrollViewer
             ScrollViewer? scrollViewer = FindScrollViewerAt(point);
             if (scrollViewer != null)
             {
+                System.Diagnostics.Debug.WriteLine($"PointerInputManager: Found ScrollViewer, calling ScrollByWheel");
                 scrollViewer.ScrollByWheel(delta);
+            }
+            else
+            {
+                System.Diagnostics.Debug.WriteLine($"PointerInputManager: No ScrollViewer found at {point}");
             }
         }
 
@@ -134,12 +141,23 @@ namespace AetherUI.Rendering.Input
         private bool HandleScrollBarClick(AetherUI.Core.Point point)
         {
             ScrollBar? scrollBar = FindScrollBarAt(point);
-            if (scrollBar == null) return false;
+            if (scrollBar == null)
+            {
+                System.Diagnostics.Debug.WriteLine($"PointerInputManager: No ScrollBar found at {point}");
+                return false;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"PointerInputManager: Found ScrollBar at {point}, checking click regions");
+            System.Diagnostics.Debug.WriteLine($"  ThumbRect: {scrollBar.ThumbRect}");
+            System.Diagnostics.Debug.WriteLine($"  UpButtonRect: {scrollBar.UpButtonRect}");
+            System.Diagnostics.Debug.WriteLine($"  DownButtonRect: {scrollBar.DownButtonRect}");
+            System.Diagnostics.Debug.WriteLine($"  TrackRect: {scrollBar.TrackRect}");
 
             // 检查点击位置
             if (scrollBar.ThumbRect.Contains(point))
             {
                 // 开始拖拽滑块
+                System.Diagnostics.Debug.WriteLine($"PointerInputManager: Starting thumb drag");
                 _isDraggingThumb = true;
                 _draggingScrollBar = scrollBar;
                 scrollBar.IsDragging = true;
@@ -150,24 +168,30 @@ namespace AetherUI.Rendering.Input
             else if (scrollBar.UpButtonRect.Contains(point))
             {
                 // 点击上/左按钮
+                double oldValue = scrollBar.Value;
                 double newValue = scrollBar.Value - scrollBar.SmallChange;
                 scrollBar.Value = Math.Max(scrollBar.Minimum, newValue);
+                System.Diagnostics.Debug.WriteLine($"PointerInputManager: Up button clicked, value: {oldValue} -> {scrollBar.Value}");
                 return true;
             }
             else if (scrollBar.DownButtonRect.Contains(point))
             {
                 // 点击下/右按钮
+                double oldValue = scrollBar.Value;
                 double newValue = scrollBar.Value + scrollBar.SmallChange;
                 scrollBar.Value = Math.Min(scrollBar.Maximum, newValue);
+                System.Diagnostics.Debug.WriteLine($"PointerInputManager: Down button clicked, value: {oldValue} -> {scrollBar.Value}");
                 return true;
             }
             else if (scrollBar.TrackRect.Contains(point))
             {
                 // 点击轨道，跳转到对应位置
+                System.Diagnostics.Debug.WriteLine($"PointerInputManager: Track clicked");
                 HandleTrackClick(scrollBar, point);
                 return true;
             }
 
+            System.Diagnostics.Debug.WriteLine($"PointerInputManager: Click not in any ScrollBar region");
             return false;
         }
 

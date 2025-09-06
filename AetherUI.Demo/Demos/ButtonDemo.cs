@@ -27,6 +27,8 @@ namespace AetherUI.Demo.Demos
                 Height = 600
             };
 
+            Debug.WriteLine($"ButtonDemo: Created ScrollViewer with size {scrollViewer.Width}x{scrollViewer.Height}");
+
             // 主内容容器
             Border mainBorder = new()
             {
@@ -589,10 +591,12 @@ namespace AetherUI.Demo.Demos
                 scrollTestStack.Children.Add(WrapInContainer(scrollToBottomButton, "#E74C3C"));
 
                 // 添加更多按钮来增加内容高度，测试滚动功能
-                for (int i = 1; i <= 15; i++)
+                for (int i = 1; i <= 30; i++)
                 {
-                    Button extraButton = CreateStyledButton($"额外按钮 {i}", "#95A5A6", "#FFFFFF");
+                    Button extraButton = CreateStyledButton($"额外按钮 {i} - 测试滚动功能", "#95A5A6", "#FFFFFF");
                     extraButton.Click += (s, e) => Console.WriteLine($"额外按钮 {i} 被点击");
+                    extraButton.Height = 50; // 增加按钮高度
+                    extraButton.Margin = new Thickness(0, 5, 0, 5); // 增加间距
                     scrollTestStack.Children.Add(WrapInContainer(extraButton, "#95A5A6"));
                 }
 
