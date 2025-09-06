@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>AetherUI.Compiler</RootNamespace>
     <AssemblyName>AetherUI.Compiler</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
@@ -16,7 +16,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\AetherUI.Core\AetherUI.Core.csproj" />
-    <ProjectReference Include="..\AetherUI.Markup\AetherUI.Markup.csproj" />
+    <ProjectReference Include="..\AetherUI.Layout\AetherUI.Layout.csproj" />
+    <ProjectReference Include="..\AetherUI.Xaml\AetherUI.Xaml.csproj" />
   </ItemGroup>
 
   <ItemGroup>
