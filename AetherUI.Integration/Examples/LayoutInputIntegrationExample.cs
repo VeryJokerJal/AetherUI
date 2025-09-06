@@ -1,9 +1,10 @@
 using System;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using AetherUI.Core.Input;
+using AetherUI.Core;
+using AetherUI.Integration.Input;
 
-namespace AetherUI.Core.Examples
+namespace AetherUI.Integration.Examples
 {
     /// <summary>
     /// 布局输入集成示例

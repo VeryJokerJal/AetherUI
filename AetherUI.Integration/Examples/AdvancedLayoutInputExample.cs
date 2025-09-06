@@ -2,11 +2,12 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
-using AetherUI.Core.Input;
+using AetherUI.Core;
+using AetherUI.Integration.Input;
 using AetherUI.Input.Accessibility;
 using AetherUI.Input.Gestures;
 
-namespace AetherUI.Core.Examples
+namespace AetherUI.Integration.Examples
 {
     /// <summary>
     /// 高级布局输入示例 - 展示手势识别和无障碍功能

@@ -458,4 +458,3 @@ namespace AetherUI.Input.Platform.Windows
         public const VirtualKey RWin = (VirtualKey)0x5C;
     }
 }
-}

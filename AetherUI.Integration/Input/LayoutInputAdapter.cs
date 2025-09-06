@@ -2,11 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using AetherUI.Core;
 using AetherUI.Input.Core;
-using AetherUI.Input.HitTesting;
 using AetherUI.Input.Integration;
 
-namespace AetherUI.Core.Input
+namespace AetherUI.Integration.Input
 {
     /// <summary>
     /// 布局输入适配器 - 连接AetherUI.Input和AetherUI.Core布局系统
@@ -126,9 +126,6 @@ namespace AetherUI.Core.Input
             var adapter = new LayoutElementAdapter(element, this);
             _elementAdapters[element] = adapter;
 
-            // 订阅元素事件
-            element.LayoutUpdated += OnElementLayoutUpdated;
-
             Debug.WriteLine($"UI元素已注册: {element.GetType().Name}");
         }
 
@@ -140,9 +137,6 @@ namespace AetherUI.Core.Input
         {
             if (element == null || !_elementAdapters.ContainsKey(element))
                 return;
-
-            // 取消订阅元素事件
-            element.LayoutUpdated -= OnElementLayoutUpdated;
 
             // 移除适配器
             var adapter = _elementAdapters[element];
@@ -195,26 +189,6 @@ namespace AetherUI.Core.Input
             }
 
             UnregisterElement(element);
-        }
-
-        /// <summary>
-        /// 处理元素布局更新
-        /// </summary>
-        /// <param name="sender">发送者</param>
-        /// <param name="e">事件参数</param>
-        private void OnElementLayoutUpdated(object? sender, EventArgs e)
-        {
-            if (sender is UIElement element && _elementAdapters.TryGetValue(element, out LayoutElementAdapter? adapter))
-            {
-                // 通知适配器布局已更新
-                adapter.OnLayoutUpdated();
-
-                // 如果启用了命中测试缓存失效
-                if (_configuration.InvalidateHitTestOnLayoutChange)
-                {
-                    _inputSystem.HitTestEngine?.InvalidateCache();
-                }
-            }
         }
 
         /// <summary>
@@ -292,7 +266,6 @@ namespace AetherUI.Core.Input
             foreach (var kvp in _elementAdapters)
             {
                 var element = kvp.Key;
-                var adapter = kvp.Value;
                 report.AppendLine($"- {element.GetType().Name}: {element.RenderBounds}");
             }
             report.AppendLine();
@@ -353,11 +326,6 @@ namespace AetherUI.Core.Input
         public bool HitTestUseBoundingBoxOnly { get; set; } = false;
         public int HitTestMaxDepth { get; set; } = 50;
 
-        // 布局集成配置
-        public bool InvalidateHitTestOnLayoutChange { get; set; } = true;
-        public bool AutoRegisterChildren { get; set; } = true;
-        public bool EnableLayoutEventPropagation { get; set; } = true;
-
         /// <summary>
         /// 创建高性能配置
         /// </summary>
@@ -370,8 +338,7 @@ namespace AetherUI.Core.Input
                 EnableAsyncProcessing = true,
                 MaxInputQueueSize = 2000,
                 ProcessingIntervalMs = 0,
-                HitTestUseBoundingBoxOnly = true,
-                InvalidateHitTestOnLayoutChange = false
+                HitTestUseBoundingBoxOnly = true
             };
         }
 
@@ -387,8 +354,7 @@ namespace AetherUI.Core.Input
                 EnableAsyncProcessing = false,
                 MaxInputQueueSize = 100,
                 ProcessingIntervalMs = 10,
-                HitTestUseBoundingBoxOnly = false,
-                InvalidateHitTestOnLayoutChange = true
+                HitTestUseBoundingBoxOnly = false
             };
         }
     }

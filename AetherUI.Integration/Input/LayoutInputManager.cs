@@ -3,9 +3,10 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
+using AetherUI.Core;
 using AetherUI.Input.Events;
 
-namespace AetherUI.Core.Input
+namespace AetherUI.Integration.Input
 {
     /// <summary>
     /// 布局输入管理器 - 管理整个布局系统的输入处理

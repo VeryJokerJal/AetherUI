@@ -1,6 +1,7 @@
 using System;
+using AetherUI.Core;
 
-namespace AetherUI.Core.Input
+namespace AetherUI.Integration.Input
 {
     /// <summary>
     /// 鼠标事件参数基类

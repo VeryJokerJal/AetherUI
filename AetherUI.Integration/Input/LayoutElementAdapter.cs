@@ -2,10 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using AetherUI.Core;
 using AetherUI.Input.Core;
 using AetherUI.Input.HitTesting;
 
-namespace AetherUI.Core.Input
+namespace AetherUI.Integration.Input
 {
     /// <summary>
     /// 布局元素适配器 - 将UIElement适配为IHitTestable
