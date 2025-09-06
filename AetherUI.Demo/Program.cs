@@ -77,9 +77,7 @@ namespace AetherUI.Demo
             {
                 Type = AetherUI.Rendering.BackgroundEffectType.Acrylic,
                 Opacity = 0.85f,
-                BlurStrength = 0.6f,
-                TintColor = new OpenTK.Mathematics.Vector4(0.95f, 0.95f, 0.98f, 1.0f),
-                NoiseStrength = 0.08f
+                TintColor = new OpenTK.Mathematics.Vector4(0.95f, 0.95f, 0.98f, 1.0f)
             };
 
             // 添加窗口大小变化监听器
@@ -95,14 +93,42 @@ namespace AetherUI.Demo
             // 在窗口加载后设置背景效果
             window.Load += () =>
             {
-                // 暂时禁用背景效果，先测试窗口大小变化功能
-                // window.SetBackgroundEffect(backgroundConfig);
+                // 设置Windows原生背景效果
+                window.SetBackgroundEffect(backgroundConfig);
+                Console.WriteLine("Windows原生背景效果已启用：亚克力效果");
                 Console.WriteLine("窗口大小变化响应系统已启用");
                 Console.WriteLine("尝试调整窗口大小来测试响应式布局！");
+                Console.WriteLine();
+
+                // 显示系统兼容性信息
+                ShowSystemCompatibilityInfo();
             };
 
             // 运行窗口
             window.Run();
+        }
+
+        /// <summary>
+        /// 显示系统兼容性信息
+        /// </summary>
+        private static void ShowSystemCompatibilityInfo()
+        {
+            Console.WriteLine("=== 系统兼容性信息 ===");
+
+            bool compositionEnabled = AetherUI.Rendering.WindowsCompositionApi.IsCompositionEnabled();
+            bool isWindows10 = AetherUI.Rendering.WindowsCompositionApi.IsWindows10OrLater();
+            bool isWindows11 = AetherUI.Rendering.WindowsCompositionApi.IsWindows11OrLater();
+
+            Console.WriteLine($"DWM组合效果: {(compositionEnabled ? "✓ 支持" : "✗ 不支持")}");
+            Console.WriteLine($"Windows 10+: {(isWindows10 ? "✓ 支持" : "✗ 不支持")}");
+            Console.WriteLine($"Windows 11+: {(isWindows11 ? "✓ 支持" : "✗ 不支持")}");
+
+            Console.WriteLine();
+            Console.WriteLine("支持的背景效果:");
+            Console.WriteLine($"- 亚克力效果: {(isWindows10 ? "✓ 支持" : "✗ 需要Windows 10+")}");
+            Console.WriteLine($"- 云母效果: {(isWindows11 ? "✓ 支持" : "✗ 需要Windows 11+")}");
+            Console.WriteLine($"- 渐变效果: ✓ 支持（OpenGL实现）");
+            Console.WriteLine();
         }
 
         /// <summary>

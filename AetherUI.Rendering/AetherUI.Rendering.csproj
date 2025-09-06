@@ -8,6 +8,7 @@
     <RootNamespace>AetherUI.Rendering</RootNamespace>
     <AssemblyName>AetherUI.Rendering</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

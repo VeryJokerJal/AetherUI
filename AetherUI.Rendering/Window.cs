@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Diagnostics;
+using AetherUI.Core;
 using OpenTK.Graphics.OpenGL4;
+using OpenTK.Mathematics;
 using OpenTK.Windowing.Common;
 using OpenTK.Windowing.Desktop;
 using OpenTK.Windowing.GraphicsLibraryFramework;
-using OpenTK.Mathematics;
-using AetherUI.Core;
 
 namespace AetherUI.Rendering
 {
@@ -14,10 +14,7 @@ namespace AetherUI.Rendering
     /// </summary>
     public class Window : GameWindow
     {
-        private RenderContext? _renderContext;
         private UIRenderer? _uiRenderer;
-        private BackgroundEffectRenderer? _backgroundRenderer;
-        private WindowResizeManager? _resizeManager;
         private UIElement? _rootElement;
         private bool _needsLayout = true;
         private float _time = 0.0f;
@@ -41,17 +38,17 @@ namespace AetherUI.Rendering
         /// <summary>
         /// 渲染上下文
         /// </summary>
-        public RenderContext? RenderContext => _renderContext;
+        public RenderContext? RenderContext { get; private set; }
 
         /// <summary>
         /// 背景效果渲染器
         /// </summary>
-        public BackgroundEffectRenderer? BackgroundRenderer => _backgroundRenderer;
+        public BackgroundEffectRenderer? BackgroundRenderer { get; private set; }
 
         /// <summary>
         /// 窗口大小变化管理器
         /// </summary>
-        public WindowResizeManager? ResizeManager => _resizeManager;
+        public WindowResizeManager? ResizeManager { get; private set; }
 
         /// <summary>
         /// 根UI元素
@@ -123,18 +120,21 @@ namespace AetherUI.Rendering
             Debug.WriteLine("AetherWindow loading...");
 
             // 初始化渲染上下文
-            _renderContext = new RenderContext();
-            _renderContext.SetViewport(ClientSize.X, ClientSize.Y);
+            RenderContext = new RenderContext();
+            RenderContext.SetViewport(ClientSize.X, ClientSize.Y);
 
             // 初始化UI渲染器
-            _uiRenderer = new UIRenderer(_renderContext);
+            _uiRenderer = new UIRenderer(RenderContext);
 
-            // 初始化背景效果渲染器（暂时禁用）
-            // _backgroundRenderer = new BackgroundEffectRenderer(_uiRenderer.ShaderManager);
+            // 初始化背景效果渲染器
+            unsafe
+            {
+                BackgroundRenderer = new BackgroundEffectRenderer(_uiRenderer.ShaderManager, new IntPtr(WindowPtr));
+            }
 
             // 初始化窗口大小变化管理器
-            _resizeManager = new WindowResizeManager(new Size(ClientSize.X, ClientSize.Y));
-            _resizeManager.WindowResized += OnWindowResizedInternal;
+            ResizeManager = new WindowResizeManager(new Size(ClientSize.X, ClientSize.Y));
+            ResizeManager.WindowResized += OnWindowResizedInternal;
 
             // 设置窗口可见
             IsVisible = true;
@@ -151,14 +151,14 @@ namespace AetherUI.Rendering
             Debug.WriteLine("AetherWindow unloading...");
 
             // 释放背景效果渲染器
-            _backgroundRenderer?.Dispose();
-            _backgroundRenderer = null;
+            BackgroundRenderer?.Dispose();
+            BackgroundRenderer = null;
 
             // 释放窗口大小变化管理器
-            if (_resizeManager != null)
+            if (ResizeManager != null)
             {
-                _resizeManager.WindowResized -= OnWindowResizedInternal;
-                _resizeManager = null;
+                ResizeManager.WindowResized -= OnWindowResizedInternal;
+                ResizeManager = null;
             }
 
             // 释放UI渲染器
@@ -166,8 +166,8 @@ namespace AetherUI.Rendering
             _uiRenderer = null;
 
             // 释放渲染上下文
-            _renderContext?.Dispose();
-            _renderContext = null;
+            RenderContext?.Dispose();
+            RenderContext = null;
 
             base.OnUnload();
 
@@ -185,10 +185,10 @@ namespace AetherUI.Rendering
             Debug.WriteLine($"AetherWindow resized to: {e.Width}x{e.Height}");
 
             // 更新渲染上下文视口
-            _renderContext?.SetViewport(e.Width, e.Height);
+            RenderContext?.SetViewport(e.Width, e.Height);
 
             // 通知窗口大小变化管理器
-            _resizeManager?.NotifyResize(new Size(e.Width, e.Height));
+            ResizeManager?.NotifyResize(new Size(e.Width, e.Height));
 
             // 标记需要重新布局
             _needsLayout = true;
@@ -202,8 +202,10 @@ namespace AetherUI.Rendering
         {
             base.OnRenderFrame(e);
 
-            if (_renderContext == null)
+            if (RenderContext == null)
+            {
                 return;
+            }
 
             try
             {
@@ -211,13 +213,13 @@ namespace AetherUI.Rendering
                 _time += (float)e.Time;
 
                 // 开始渲染帧
-                _renderContext.BeginFrame();
+                RenderContext.BeginFrame();
 
                 // 渲染背景效果
-                if (_backgroundRenderer != null && _renderContext != null)
+                if (BackgroundRenderer != null && RenderContext != null)
                 {
-                    var resolution = new Vector2((float)_renderContext.ViewportSize.Width, (float)_renderContext.ViewportSize.Height);
-                    _backgroundRenderer.RenderBackground(_renderContext.MVPMatrix, resolution, _time);
+                    Vector2 resolution = new((float)RenderContext.ViewportSize.Width, (float)RenderContext.ViewportSize.Height);
+                    BackgroundRenderer.RenderBackground(RenderContext.MVPMatrix, resolution, _time);
                 }
 
                 // 执行布局（如果需要）
@@ -234,13 +236,13 @@ namespace AetherUI.Rendering
                 }
 
                 // 结束渲染帧
-                _renderContext.EndFrame();
+                RenderContext.EndFrame();
 
                 // 交换缓冲区
                 SwapBuffers();
 
                 // 检查OpenGL错误
-                _renderContext.CheckGLError("OnRenderFrame");
+                RenderContext.CheckGLError("OnRenderFrame");
             }
             catch (Exception ex)
             {
@@ -257,7 +259,7 @@ namespace AetherUI.Rendering
             base.OnUpdateFrame(e);
 
             // 更新窗口大小变化管理器
-            _resizeManager?.Update();
+            ResizeManager?.Update();
 
             // 检查退出条件
             if (KeyboardState.IsKeyDown(Keys.Escape))
@@ -275,10 +277,12 @@ namespace AetherUI.Rendering
         /// </summary>
         private void PerformLayout()
         {
-            if (_rootElement == null || _renderContext == null)
+            if (_rootElement == null || RenderContext == null)
+            {
                 return;
+            }
 
-            Size availableSize = _renderContext.ViewportSize;
+            Size availableSize = RenderContext.ViewportSize;
             Debug.WriteLine($"Performing layout with available size: {availableSize}");
 
             // 测量根元素
@@ -286,7 +290,7 @@ namespace AetherUI.Rendering
             Debug.WriteLine($"Root element desired size: {_rootElement.DesiredSize}");
 
             // 排列根元素
-            Rect finalRect = new Rect(0, 0, availableSize.Width, availableSize.Height);
+            Rect finalRect = new(0, 0, availableSize.Width, availableSize.Height);
             _rootElement.Arrange(finalRect);
             Debug.WriteLine($"Root element arranged to: {finalRect}");
         }
@@ -311,9 +315,9 @@ namespace AetherUI.Rendering
         /// <param name="config">背景效果配置</param>
         public void SetBackgroundEffect(BackgroundEffectConfig config)
         {
-            if (_backgroundRenderer != null)
+            if (BackgroundRenderer != null)
             {
-                _backgroundRenderer.Config = config;
+                BackgroundRenderer.Config = config;
                 Debug.WriteLine($"Background effect set to: {config.Type}");
             }
         }
@@ -324,7 +328,7 @@ namespace AetherUI.Rendering
         /// <returns>窗口尺寸</returns>
         public Size GetWindowSize()
         {
-            return _resizeManager?.CurrentSize ?? new Size(ClientSize.X, ClientSize.Y);
+            return ResizeManager?.CurrentSize ?? new Size(ClientSize.X, ClientSize.Y);
         }
 
         /// <summary>
@@ -333,7 +337,7 @@ namespace AetherUI.Rendering
         /// <param name="listener">监听器</param>
         public void AddResizeListener(IWindowResizeListener listener)
         {
-            _resizeManager?.AddListener(listener);
+            ResizeManager?.AddListener(listener);
         }
 
         /// <summary>
@@ -342,7 +346,7 @@ namespace AetherUI.Rendering
         /// <param name="listener">监听器</param>
         public void RemoveResizeListener(IWindowResizeListener listener)
         {
-            _resizeManager?.RemoveListener(listener);
+            ResizeManager?.RemoveListener(listener);
         }
 
         #endregion

@@ -16,17 +16,22 @@ namespace AetherUI.Rendering
         None,
 
         /// <summary>
-        /// 亚克力效果（半透明模糊）
+        /// 亚克力效果（Windows原生半透明模糊）
         /// </summary>
         Acrylic,
 
         /// <summary>
-        /// 云母效果（自然半透明材质）
+        /// 云母效果（Windows 11原生材质）
         /// </summary>
         Mica,
 
         /// <summary>
-        /// 渐变效果
+        /// 云母Alt效果（Windows 11原生材质变体）
+        /// </summary>
+        MicaAlt,
+
+        /// <summary>
+        /// 渐变效果（OpenGL自定义渲染）
         /// </summary>
         Gradient
     }
@@ -74,30 +79,47 @@ namespace AetherUI.Rendering
 
     /// <summary>
     /// 背景效果渲染器，实现现代化窗口背景效果
+    /// 使用Windows原生API实现亚克力和云母效果，OpenGL实现渐变效果
     /// </summary>
     public class BackgroundEffectRenderer : IDisposable
     {
-        private readonly ShaderManager _shaderManager;
-        private int _backgroundShaderProgram;
+        private readonly ShaderManager? _shaderManager;
+        private int _gradientShaderProgram;
         private int _vao, _vbo;
         private BackgroundEffectConfig _config;
+        private IntPtr _windowHandle;
         private bool _disposed = false;
+        private bool _windowEffectApplied = false;
 
         #region 构造函数
 
         /// <summary>
         /// 初始化背景效果渲染器
         /// </summary>
-        /// <param name="shaderManager">着色器管理器</param>
-        public BackgroundEffectRenderer(ShaderManager shaderManager)
+        /// <param name="shaderManager">着色器管理器（可选，仅用于渐变效果）</param>
+        /// <param name="windowHandle">窗口句柄</param>
+        public BackgroundEffectRenderer(ShaderManager? shaderManager, IntPtr windowHandle)
         {
-            _shaderManager = shaderManager ?? throw new ArgumentNullException(nameof(shaderManager));
+            _shaderManager = shaderManager;
+            _windowHandle = windowHandle;
             _config = new BackgroundEffectConfig();
-            
-            InitializeShaders();
-            InitializeBuffers();
-            
-            Debug.WriteLine("BackgroundEffectRenderer initialized");
+
+            // 仅在需要渐变效果时初始化OpenGL资源
+            if (_shaderManager != null)
+            {
+                try
+                {
+                    InitializeGradientShader();
+                    InitializeBuffers();
+                }
+                catch (Exception ex)
+                {
+                    Debug.WriteLine($"Failed to initialize gradient shader: {ex.Message}");
+                    // 渐变着色器初始化失败，但不影响Windows原生效果
+                }
+            }
+
+            Debug.WriteLine($"BackgroundEffectRenderer initialized with window handle: {windowHandle}");
         }
 
         #endregion
@@ -110,7 +132,24 @@ namespace AetherUI.Rendering
         public BackgroundEffectConfig Config
         {
             get => _config;
-            set => _config = value ?? new BackgroundEffectConfig();
+            set
+            {
+                _config = value ?? new BackgroundEffectConfig();
+                ApplyBackgroundEffect();
+            }
+        }
+
+        /// <summary>
+        /// 窗口句柄
+        /// </summary>
+        public IntPtr WindowHandle
+        {
+            get => _windowHandle;
+            set
+            {
+                _windowHandle = value;
+                ApplyBackgroundEffect();
+            }
         }
 
         #endregion
@@ -118,34 +157,33 @@ namespace AetherUI.Rendering
         #region 初始化方法
 
         /// <summary>
-        /// 初始化着色器
+        /// 初始化渐变着色器（仅用于渐变效果）
         /// </summary>
-        private void InitializeShaders()
+        private void InitializeGradientShader()
         {
+            if (_shaderManager == null)
+                return;
+
             string vertexShader = @"
                 #version 330 core
                 layout (location = 0) in vec2 aPosition;
                 layout (location = 1) in vec2 aTexCoord;
-                
+
                 uniform mat4 uMVP;
-                
+
                 out vec2 TexCoord;
-                out vec2 ScreenPos;
-                
+
                 void main()
                 {
                     gl_Position = uMVP * vec4(aPosition, 0.0, 1.0);
                     TexCoord = aTexCoord;
-                    ScreenPos = aPosition;
                 }";
 
             string fragmentShader = @"
 #version 330 core
 in vec2 TexCoord;
 
-uniform int uEffectType;
 uniform float uOpacity;
-uniform vec4 uTintColor;
 uniform vec4 uGradientStart;
 uniform vec4 uGradientEnd;
 uniform float uTime;
@@ -155,41 +193,21 @@ out vec4 FragColor;
 void main()
 {
     vec2 uv = TexCoord;
-    vec4 finalColor = uTintColor;
 
-    if (uEffectType == 1) { // Acrylic
-        // 简单的亚克力效果
-        float noise = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
-        finalColor.rgb += (noise - 0.5) * 0.02;
+    // 渐变效果
+    float gradientFactor = uv.y;
+    vec4 finalColor = mix(uGradientStart, uGradientEnd, gradientFactor);
 
-        vec2 center = vec2(0.5, 0.5);
-        float dist = distance(uv, center);
-        float radialGradient = 1.0 - smoothstep(0.0, 0.8, dist);
-        finalColor.rgb += radialGradient * 0.05;
+    // 添加微妙的水平变化
+    float horizontalVariation = sin(uv.x * 3.14159 + uTime * 0.1) * 0.05;
+    finalColor.rgb += horizontalVariation;
 
-    } else if (uEffectType == 2) { // Mica
-        // 简单的云母效果
-        float noise = fract(sin(dot(uv * 15.0, vec2(12.9898, 78.233))) * 43758.5453);
-        finalColor.rgb += (noise - 0.5) * 0.1;
-
-        float colorShift = sin(uv.x * 3.14159 + uTime * 0.5) * 0.02;
-        finalColor.rgb += vec3(colorShift, -colorShift * 0.5, colorShift * 0.3);
-
-    } else if (uEffectType == 3) { // Gradient
-        // 渐变效果
-        float gradientFactor = uv.y;
-        finalColor = mix(uGradientStart, uGradientEnd, gradientFactor);
-
-        float horizontalVariation = sin(uv.x * 3.14159) * 0.05;
-        finalColor.rgb += horizontalVariation;
-    }
-
-    finalColor.a = uOpacity;
+    finalColor.a *= uOpacity;
     FragColor = finalColor;
 }";
 
-            _backgroundShaderProgram = _shaderManager.CreateShaderProgram("background", vertexShader, fragmentShader);
-            Debug.WriteLine($"Background shader program created: {_backgroundShaderProgram}");
+            _gradientShaderProgram = _shaderManager.CreateShaderProgram("gradient", vertexShader, fragmentShader);
+            Debug.WriteLine($"Gradient shader program created: {_gradientShaderProgram}");
         }
 
         /// <summary>
@@ -229,24 +247,101 @@ void main()
 
         #endregion
 
+        #region 背景效果应用
+
+        /// <summary>
+        /// 应用背景效果
+        /// </summary>
+        private void ApplyBackgroundEffect()
+        {
+            if (_windowHandle == IntPtr.Zero)
+            {
+                Debug.WriteLine("Window handle is null, cannot apply background effect");
+                return;
+            }
+
+            try
+            {
+                bool success = false;
+
+                switch (_config.Type)
+                {
+                    case BackgroundEffectType.None:
+                        success = WindowsCompositionApi.SetWindowBackgroundEffect(_windowHandle, WindowCompositionType.Disabled);
+                        break;
+
+                    case BackgroundEffectType.Acrylic:
+                        // 将配置参数映射到Windows API
+                        uint tintColor = ColorToUint(_config.TintColor);
+                        success = WindowsCompositionApi.SetWindowBackgroundEffect(_windowHandle, WindowCompositionType.Acrylic, _config.Opacity, tintColor);
+                        break;
+
+                    case BackgroundEffectType.Mica:
+                        success = WindowsCompositionApi.SetWindowBackgroundEffect(_windowHandle, WindowCompositionType.Mica);
+                        break;
+
+                    case BackgroundEffectType.MicaAlt:
+                        success = WindowsCompositionApi.SetWindowBackgroundEffect(_windowHandle, WindowCompositionType.MicaAlt);
+                        break;
+
+                    case BackgroundEffectType.Gradient:
+                        // 渐变效果不需要Windows API，在渲染时处理
+                        success = true;
+                        break;
+                }
+
+                _windowEffectApplied = success;
+
+                if (success)
+                {
+                    Debug.WriteLine($"Successfully applied {_config.Type} background effect");
+                }
+                else
+                {
+                    Debug.WriteLine($"Failed to apply {_config.Type} background effect");
+                }
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine($"Error applying background effect: {ex.Message}");
+                _windowEffectApplied = false;
+            }
+        }
+
+        /// <summary>
+        /// 将Vector4颜色转换为uint格式
+        /// </summary>
+        /// <param name="color">颜色向量</param>
+        /// <returns>uint颜色值</returns>
+        private static uint ColorToUint(Vector4 color)
+        {
+            byte r = (byte)(color.X * 255);
+            byte g = (byte)(color.Y * 255);
+            byte b = (byte)(color.Z * 255);
+            return (uint)(r | (g << 8) | (b << 16));
+        }
+
+        #endregion
+
         #region 渲染方法
 
         /// <summary>
-        /// 渲染背景效果
+        /// 渲染背景效果（仅用于渐变效果，其他效果由Windows API处理）
         /// </summary>
         /// <param name="mvpMatrix">MVP矩阵</param>
         /// <param name="resolution">分辨率</param>
         /// <param name="time">时间</param>
         public void RenderBackground(Matrix4 mvpMatrix, Vector2 resolution, float time)
         {
-            if (_config.Type == BackgroundEffectType.None)
+            // 只有渐变效果需要OpenGL渲染，其他效果由Windows API处理
+            if (_config.Type != BackgroundEffectType.Gradient || _shaderManager == null)
                 return;
 
-            GL.UseProgram(_backgroundShaderProgram);
+            GL.UseProgram(_gradientShaderProgram);
             GL.BindVertexArray(_vao);
 
             // 设置uniform变量
-            SetShaderUniforms(mvpMatrix, resolution, time);
+            SetGradientShaderUniforms(mvpMatrix, time);
 
             // 禁用深度写入，启用混合
             GL.DepthMask(false);
@@ -263,38 +358,29 @@ void main()
         }
 
         /// <summary>
-        /// 设置着色器uniform变量
+        /// 设置渐变着色器uniform变量
         /// </summary>
         /// <param name="mvpMatrix">MVP矩阵</param>
-        /// <param name="resolution">分辨率</param>
         /// <param name="time">时间</param>
-        private void SetShaderUniforms(Matrix4 mvpMatrix, Vector2 resolution, float time)
+        private void SetGradientShaderUniforms(Matrix4 mvpMatrix, float time)
         {
             // MVP矩阵
-            int mvpLocation = GL.GetUniformLocation(_backgroundShaderProgram, "uMVP");
+            int mvpLocation = GL.GetUniformLocation(_gradientShaderProgram, "uMVP");
             GL.UniformMatrix4(mvpLocation, false, ref mvpMatrix);
 
-            // 效果类型
-            int effectTypeLocation = GL.GetUniformLocation(_backgroundShaderProgram, "uEffectType");
-            GL.Uniform1(effectTypeLocation, (int)_config.Type);
-
             // 透明度
-            int opacityLocation = GL.GetUniformLocation(_backgroundShaderProgram, "uOpacity");
+            int opacityLocation = GL.GetUniformLocation(_gradientShaderProgram, "uOpacity");
             GL.Uniform1(opacityLocation, _config.Opacity);
 
-            // 主色调
-            int tintLocation = GL.GetUniformLocation(_backgroundShaderProgram, "uTintColor");
-            GL.Uniform4(tintLocation, _config.TintColor);
-
             // 渐变颜色
-            int gradientStartLocation = GL.GetUniformLocation(_backgroundShaderProgram, "uGradientStart");
+            int gradientStartLocation = GL.GetUniformLocation(_gradientShaderProgram, "uGradientStart");
             GL.Uniform4(gradientStartLocation, _config.GradientStart);
 
-            int gradientEndLocation = GL.GetUniformLocation(_backgroundShaderProgram, "uGradientEnd");
+            int gradientEndLocation = GL.GetUniformLocation(_gradientShaderProgram, "uGradientEnd");
             GL.Uniform4(gradientEndLocation, _config.GradientEnd);
 
             // 时间
-            int timeLocation = GL.GetUniformLocation(_backgroundShaderProgram, "uTime");
+            int timeLocation = GL.GetUniformLocation(_gradientShaderProgram, "uTime");
             GL.Uniform1(timeLocation, time);
         }
 
@@ -323,10 +409,16 @@ void main()
                 {
                     Debug.WriteLine("Disposing BackgroundEffectRenderer...");
 
+                    // 清理Windows背景效果
+                    if (_windowHandle != IntPtr.Zero && _windowEffectApplied)
+                    {
+                        WindowsCompositionApi.SetWindowBackgroundEffect(_windowHandle, WindowCompositionType.Disabled);
+                    }
+
                     // 清理OpenGL资源
                     if (_vao != 0) GL.DeleteVertexArray(_vao);
                     if (_vbo != 0) GL.DeleteBuffer(_vbo);
-                    if (_backgroundShaderProgram != 0) GL.DeleteProgram(_backgroundShaderProgram);
+                    if (_gradientShaderProgram != 0) GL.DeleteProgram(_gradientShaderProgram);
 
                     Debug.WriteLine("BackgroundEffectRenderer disposed");
                 }
