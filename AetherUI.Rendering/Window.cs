@@ -277,14 +277,17 @@ namespace AetherUI.Rendering
 
                 if (pos != _prevMouseState.Position)
                 {
+                    System.Diagnostics.Debug.WriteLine($"Window: Mouse move to {p}");
                     _pointerInput.OnMouseMove(p);
                 }
                 if (mouse.IsButtonDown(MouseButton.Left) && !_prevMouseState.IsButtonDown(MouseButton.Left))
                 {
+                    System.Diagnostics.Debug.WriteLine($"Window: Mouse down at {p}");
                     _pointerInput.OnMouseDown(p);
                 }
                 if (!mouse.IsButtonDown(MouseButton.Left) && _prevMouseState.IsButtonDown(MouseButton.Left))
                 {
+                    System.Diagnostics.Debug.WriteLine($"Window: Mouse up at {p}");
                     _pointerInput.OnMouseUp(p);
                 }
             }
@@ -295,6 +298,7 @@ namespace AetherUI.Rendering
                 Vector2 pos = mouse.Position;
                 AetherUI.Core.Point p = new(pos.X, pos.Y);
                 double delta = mouse.ScrollDelta.Y - _prevMouseState.ScrollDelta.Y;
+                System.Diagnostics.Debug.WriteLine($"Window: Mouse wheel at {p}, delta={delta}, current={mouse.ScrollDelta.Y}, prev={_prevMouseState.ScrollDelta.Y}");
                 _pointerInput?.OnMouseWheel(p, delta);
             }
 
