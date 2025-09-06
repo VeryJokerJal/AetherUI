@@ -120,6 +120,7 @@ namespace AetherUI.Rendering
         /// <param name="color">颜色</param>
         public void DrawRect(Rect rect, Vector4 color)
         {
+            Debug.WriteLine($"DrawRect called: rect({rect.X}, {rect.Y}, {rect.Width}, {rect.Height}), color({color.X}, {color.Y}, {color.Z}, {color.W})");
             uint baseIndex = (uint)(_vertices.Count / 7);
 
             // 添加四个顶点 (x, y, z, r, g, b, a)
