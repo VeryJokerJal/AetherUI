@@ -12,6 +12,7 @@ namespace AetherUI.Core
     {
         private readonly Dictionary<DependencyProperty, object?> _values = new();
         private readonly object _valuesLock = new object();
+        private readonly HashSet<DependencyProperty> _updatingProperties = new();
 
         /// <summary>
         /// 获取依赖属性的值
@@ -121,46 +122,67 @@ return defaultValue;
         /// <param name="isReadOnlyKey">是否为只读属性键设置</param>
         private void SetValueInternal(DependencyProperty dp, object? value, bool isReadOnlyKey)
         {
-            // 验证值类型
-            if (value != null && !dp.PropertyType.IsAssignableFrom(value.GetType()))
-            {
-                throw new ArgumentException($"Value of type '{value.GetType()}' cannot be assigned to property of type '{dp.PropertyType}'");
-            }
-
-            // 强制值回调
-            if (dp.Metadata?.CoerceValueCallback != null)
-            {
-                value = dp.Metadata.CoerceValueCallback(this, value);
-            }
-
-            object? oldValue;
-            bool hasChanged;
-
+            // 防止递归更新同一属性
             lock (_valuesLock)
             {
-                _values.TryGetValue(dp, out oldValue);
-                hasChanged = !Equals(oldValue, value);
+                if (_updatingProperties.Contains(dp))
+                {
+                    Debug.WriteLine($"Preventing recursive update for property: {dp.Name}");
+                    return;
+                }
+                _updatingProperties.Add(dp);
+            }
+
+            try
+            {
+                // 验证值类型
+                if (value != null && !dp.PropertyType.IsAssignableFrom(value.GetType()))
+                {
+                    throw new ArgumentException($"Value of type '{value.GetType()}' cannot be assigned to property of type '{dp.PropertyType}'");
+                }
+
+                // 强制值回调
+                if (dp.Metadata?.CoerceValueCallback != null)
+                {
+                    value = dp.Metadata.CoerceValueCallback(this, value);
+                }
+
+                object? oldValue;
+                bool hasChanged;
+
+                lock (_valuesLock)
+                {
+                    _values.TryGetValue(dp, out oldValue);
+                    hasChanged = !Equals(oldValue, value);
+
+                    if (hasChanged)
+                    {
+                        if (value == null || Equals(value, dp.DefaultValue))
+                        {
+                            _values.Remove(dp);
+                        }
+                        else
+                        {
+                            _values[dp] = value;
+                        }
+                    }
+                }
 
                 if (hasChanged)
                 {
-                    if (value == null || Equals(value, dp.DefaultValue))
-                    {
-                        _values.Remove(dp);
-                    }
-                    else
-                    {
-                        _values[dp] = value;
-                    }
+                    DependencyPropertyChangedEventArgs args = new DependencyPropertyChangedEventArgs(dp, oldValue, value);
+                    OnPropertyChanged(args);
+
+                    // 调用属性更改回调
+                    dp.Metadata?.PropertyChangedCallback?.Invoke(this, args);
                 }
             }
-
-            if (hasChanged)
+            finally
             {
-                DependencyPropertyChangedEventArgs args = new DependencyPropertyChangedEventArgs(dp, oldValue, value);
-                OnPropertyChanged(args);
-
-                // 调用属性更改回调
-                dp.Metadata?.PropertyChangedCallback?.Invoke(this, args);
+                lock (_valuesLock)
+                {
+                    _updatingProperties.Remove(dp);
+                }
             }
         }
 

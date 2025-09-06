@@ -1,8 +1,7 @@
-﻿using System.Diagnostics;
-using AetherUI.Core;
+﻿using AetherUI.Core;
+using AetherUI.Demo.Demos;
 using AetherUI.Layout;
 using AetherUI.Rendering;
-using AetherUI.Demo.Demos;
 
 namespace AetherUI.Demo
 {
@@ -72,7 +71,7 @@ namespace AetherUI.Demo
             {
                 Console.WriteLine($"演示程序运行失败: {ex.Message}");
                 Console.WriteLine($"详细错误: {ex}");
-Console.WriteLine("\n按任意键退出...");
+                Console.WriteLine("\n按任意键退出...");
                 try
                 {
                     _ = Console.ReadKey();

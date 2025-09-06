@@ -9,6 +9,15 @@ namespace AetherUI.Layout
     /// </summary>
     public class ScrollViewer : FrameworkElement
     {
+        #region 私有字段
+
+        /// <summary>
+        /// 防止递归更新的标志
+        /// </summary>
+        private bool _isUpdatingScrollBars = false;
+
+        #endregion
+
         #region 依赖属性
 
         /// <summary>
@@ -279,58 +288,70 @@ namespace AetherUI.Layout
         /// </summary>
         private void UpdateLayout()
         {
-            double scrollBarSize = 16;
-            bool needVerticalScrollBar = ShouldShowVerticalScrollBar();
-            bool needHorizontalScrollBar = ShouldShowHorizontalScrollBar();
+            // 防止递归更新
+            if (_isUpdatingScrollBars)
+                return;
 
-            // 计算视口区域
-            double viewportWidth = RenderSize.Width - (needVerticalScrollBar ? scrollBarSize : 0);
-            double viewportHeight = RenderSize.Height - (needHorizontalScrollBar ? scrollBarSize : 0);
-            ViewportRect = new Rect(0, 0, viewportWidth, viewportHeight);
-
-            // 计算可滚动尺寸
-            ScrollableSize = new Size(
-                Math.Max(0, ContentSize.Width - viewportWidth),
-                Math.Max(0, ContentSize.Height - viewportHeight));
-
-            // 排列内容
-            if (Content != null)
+            _isUpdatingScrollBars = true;
+            try
             {
-                ContentRect = new Rect(-HorizontalOffset, -VerticalOffset, ContentSize.Width, ContentSize.Height);
-                Content.Arrange(ContentRect);
+                double scrollBarSize = 16;
+                bool needVerticalScrollBar = ShouldShowVerticalScrollBar();
+                bool needHorizontalScrollBar = ShouldShowHorizontalScrollBar();
+
+                // 计算视口区域
+                double viewportWidth = RenderSize.Width - (needVerticalScrollBar ? scrollBarSize : 0);
+                double viewportHeight = RenderSize.Height - (needHorizontalScrollBar ? scrollBarSize : 0);
+                ViewportRect = new Rect(0, 0, viewportWidth, viewportHeight);
+
+                // 计算可滚动尺寸
+                ScrollableSize = new Size(
+                    Math.Max(0, ContentSize.Width - viewportWidth),
+                    Math.Max(0, ContentSize.Height - viewportHeight));
+
+                // 排列内容
+                if (Content != null)
+                {
+                    ContentRect = new Rect(-HorizontalOffset, -VerticalOffset, ContentSize.Width, ContentSize.Height);
+                    Content.Arrange(ContentRect);
+                }
+
+                // 排列滚动条
+                if (needVerticalScrollBar)
+                {
+                    VerticalScrollBar.Visibility = Visibility.Visible;
+                    VerticalScrollBar.Maximum = ScrollableSize.Height;
+                    VerticalScrollBar.ViewportSize = viewportHeight;
+                    VerticalScrollBar.Value = VerticalOffset;
+
+                    Rect vScrollRect = new Rect(RenderSize.Width - scrollBarSize, 0, scrollBarSize,
+                        RenderSize.Height - (needHorizontalScrollBar ? scrollBarSize : 0));
+                    VerticalScrollBar.Arrange(vScrollRect);
+                }
+                else
+                {
+                    VerticalScrollBar.Visibility = Visibility.Collapsed;
+                }
+
+                if (needHorizontalScrollBar)
+                {
+                    HorizontalScrollBar.Visibility = Visibility.Visible;
+                    HorizontalScrollBar.Maximum = ScrollableSize.Width;
+                    HorizontalScrollBar.ViewportSize = viewportWidth;
+                    HorizontalScrollBar.Value = HorizontalOffset;
+
+                    Rect hScrollRect = new Rect(0, RenderSize.Height - scrollBarSize,
+                        RenderSize.Width - (needVerticalScrollBar ? scrollBarSize : 0), scrollBarSize);
+                    HorizontalScrollBar.Arrange(hScrollRect);
+                }
+                else
+                {
+                    HorizontalScrollBar.Visibility = Visibility.Collapsed;
+                }
             }
-
-            // 排列滚动条
-            if (needVerticalScrollBar)
+            finally
             {
-                VerticalScrollBar.Visibility = Visibility.Visible;
-                VerticalScrollBar.Maximum = ScrollableSize.Height;
-                VerticalScrollBar.ViewportSize = viewportHeight;
-                VerticalScrollBar.Value = VerticalOffset;
-                
-                Rect vScrollRect = new Rect(RenderSize.Width - scrollBarSize, 0, scrollBarSize, 
-                    RenderSize.Height - (needHorizontalScrollBar ? scrollBarSize : 0));
-                VerticalScrollBar.Arrange(vScrollRect);
-            }
-            else
-            {
-                VerticalScrollBar.Visibility = Visibility.Collapsed;
-            }
-
-            if (needHorizontalScrollBar)
-            {
-                HorizontalScrollBar.Visibility = Visibility.Visible;
-                HorizontalScrollBar.Maximum = ScrollableSize.Width;
-                HorizontalScrollBar.ViewportSize = viewportWidth;
-                HorizontalScrollBar.Value = HorizontalOffset;
-                
-                Rect hScrollRect = new Rect(0, RenderSize.Height - scrollBarSize, 
-                    RenderSize.Width - (needVerticalScrollBar ? scrollBarSize : 0), scrollBarSize);
-                HorizontalScrollBar.Arrange(hScrollRect);
-            }
-            else
-            {
-                HorizontalScrollBar.Visibility = Visibility.Collapsed;
+                _isUpdatingScrollBars = false;
             }
         }
 
@@ -373,7 +394,11 @@ namespace AetherUI.Layout
         /// </summary>
         private void OnVerticalScrollBarValueChanged(object? sender, double value)
         {
-            VerticalOffset = value;
+            // 防止递归更新
+            if (!_isUpdatingScrollBars)
+            {
+                VerticalOffset = value;
+            }
         }
 
         /// <summary>
@@ -381,7 +406,11 @@ namespace AetherUI.Layout
         /// </summary>
         private void OnHorizontalScrollBarValueChanged(object? sender, double value)
         {
-            HorizontalOffset = value;
+            // 防止递归更新
+            if (!_isUpdatingScrollBars)
+            {
+                HorizontalOffset = value;
+            }
         }
 
         #endregion

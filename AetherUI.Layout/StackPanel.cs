@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Diagnostics;
 using AetherUI.Core;
 
 namespace AetherUI.Layout
@@ -27,7 +26,7 @@ namespace AetherUI.Layout
         /// </summary>
         public Orientation Orientation
         {
-            get => (Orientation)(GetValue(OrientationProperty) ?? Orientation.Vertical);
+            get => (Orientation)(GetValue(OrientationProperty) ?? Layout.Orientation.Vertical);
             set => SetValue(OrientationProperty, value);
         }
 
@@ -42,7 +41,7 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureChildren(Size availableSize)
         {
-double totalWidth = 0;
+            double totalWidth = 0;
             double totalHeight = 0;
             double maxWidth = 0;
             double maxHeight = 0;
@@ -65,11 +64,13 @@ double totalWidth = 0;
             foreach (UIElement child in Children)
             {
                 if (child.Visibility == Visibility.Collapsed)
+                {
                     continue;
+                }
 
                 child.Measure(childAvailableSize);
                 Size childDesiredSize = child.DesiredSize;
-if (Orientation == Orientation.Horizontal)
+                if (Orientation == Orientation.Horizontal)
                 {
                     // 水平堆叠：累加宽度，取最大高度
                     totalWidth += childDesiredSize.Width;
@@ -83,16 +84,8 @@ if (Orientation == Orientation.Horizontal)
                 }
             }
 
-            Size desiredSize;
-            if (Orientation == Orientation.Horizontal)
-            {
-                desiredSize = new Size(totalWidth, maxHeight);
-            }
-            else
-            {
-                desiredSize = new Size(maxWidth, totalHeight);
-            }
-return desiredSize;
+            Size desiredSize = Orientation == Orientation.Horizontal ? new Size(totalWidth, maxHeight) : new Size(maxWidth, totalHeight);
+            return desiredSize;
         }
 
         /// <summary>
@@ -102,12 +95,14 @@ return desiredSize;
         /// <returns>实际尺寸</returns>
         protected override Size ArrangeChildren(Size finalSize)
         {
-double currentPosition = 0;
+            double currentPosition = 0;
 
             foreach (UIElement child in Children)
             {
                 if (child.Visibility == Visibility.Collapsed)
+                {
                     continue;
+                }
 
                 Size childDesiredSize = child.DesiredSize;
                 Rect childRect;
@@ -128,7 +123,7 @@ double currentPosition = 0;
                         finalSize.Width, childDesiredSize.Height);
                     currentPosition += childDesiredSize.Height;
                 }
-child.Arrange(childRect);
+                child.Arrange(childRect);
             }
 
             return finalSize;
@@ -143,7 +138,7 @@ child.Arrange(childRect);
             if (d is StackPanel stackPanel)
             {
                 stackPanel.InvalidateMeasure();
-}
+            }
         }
 
         #endregion

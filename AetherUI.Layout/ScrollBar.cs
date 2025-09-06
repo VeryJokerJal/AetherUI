@@ -1,25 +1,8 @@
-using System;
-using System.Diagnostics;
+﻿using System;
 using AetherUI.Core;
 
 namespace AetherUI.Layout
 {
-    /// <summary>
-    /// 滚动条方向
-    /// </summary>
-    public enum Orientation
-    {
-        /// <summary>
-        /// 水平方向
-        /// </summary>
-        Horizontal,
-
-        /// <summary>
-        /// 垂直方向
-        /// </summary>
-        Vertical
-    }
-
     /// <summary>
     /// 滚动条可见性
     /// </summary>
@@ -237,14 +220,9 @@ namespace AetherUI.Layout
         /// <returns>期望尺寸</returns>
         protected override Size MeasureCore(Size availableSize)
         {
-            if (Orientation == Orientation.Vertical)
-            {
-                return new Size(16, Math.Min(availableSize.Height, 100));
-            }
-            else
-            {
-                return new Size(Math.Min(availableSize.Width, 100), 16);
-            }
+            return Orientation == Orientation.Vertical
+                ? new Size(16, Math.Min(availableSize.Height, 100))
+                : new Size(Math.Min(availableSize.Width, 100), 16);
         }
 
         /// <summary>
@@ -268,16 +246,16 @@ namespace AetherUI.Layout
         private void UpdateLayout()
         {
             double buttonSize = Orientation == Orientation.Vertical ? RenderSize.Width : RenderSize.Height;
-            
+
             if (Orientation == Orientation.Vertical)
             {
                 // 垂直滚动条
                 UpButtonRect = new Rect(0, 0, RenderSize.Width, buttonSize);
                 DownButtonRect = new Rect(0, RenderSize.Height - buttonSize, RenderSize.Width, buttonSize);
-                
-                double trackHeight = RenderSize.Height - 2 * buttonSize;
+
+                double trackHeight = RenderSize.Height - (2 * buttonSize);
                 TrackRect = new Rect(0, buttonSize, RenderSize.Width, trackHeight);
-                
+
                 // 计算滑块位置和大小
                 UpdateThumbRect();
             }
@@ -286,10 +264,10 @@ namespace AetherUI.Layout
                 // 水平滚动条
                 UpButtonRect = new Rect(0, 0, buttonSize, RenderSize.Height);
                 DownButtonRect = new Rect(RenderSize.Width - buttonSize, 0, buttonSize, RenderSize.Height);
-                
-                double trackWidth = RenderSize.Width - 2 * buttonSize;
+
+                double trackWidth = RenderSize.Width - (2 * buttonSize);
                 TrackRect = new Rect(buttonSize, 0, trackWidth, RenderSize.Height);
-                
+
                 // 计算滑块位置和大小
                 UpdateThumbRect();
             }
@@ -312,7 +290,7 @@ namespace AetherUI.Layout
                 double thumbHeight = Math.Max(20, TrackRect.Height * ViewportSize / (range + ViewportSize));
                 double availableHeight = TrackRect.Height - thumbHeight;
                 double thumbY = TrackRect.Y + (availableHeight * (Value - Minimum) / range);
-                
+
                 ThumbRect = new Rect(TrackRect.X, thumbY, TrackRect.Width, thumbHeight);
             }
             else
@@ -320,7 +298,7 @@ namespace AetherUI.Layout
                 double thumbWidth = Math.Max(20, TrackRect.Width * ViewportSize / (range + ViewportSize));
                 double availableWidth = TrackRect.Width - thumbWidth;
                 double thumbX = TrackRect.X + (availableWidth * (Value - Minimum) / range);
-                
+
                 ThumbRect = new Rect(thumbX, TrackRect.Y, thumbWidth, TrackRect.Height);
             }
         }
@@ -369,7 +347,12 @@ namespace AetherUI.Layout
         {
             if (d is ScrollBar scrollBar)
             {
-                scrollBar.Value = scrollBar.CoerceValue(scrollBar.Value);
+                // 使用内部方法设置值，避免触发属性变化回调导致无限递归
+                double coercedValue = scrollBar.CoerceValue(scrollBar.Value);
+                if (coercedValue != scrollBar.Value)
+                {
+                    scrollBar.SetValue(ValueProperty, coercedValue);
+                }
                 scrollBar.UpdateThumbRect();
             }
         }
