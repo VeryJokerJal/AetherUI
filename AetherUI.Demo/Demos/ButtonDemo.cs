@@ -18,7 +18,16 @@ namespace AetherUI.Demo.Demos
         {
             Console.WriteLine("创建按钮控件演示页面...");
 
-            // 主滚动容器
+            // 创建滚动视图作为主容器
+            ScrollViewer scrollViewer = new()
+            {
+                VerticalScrollBarVisibility = ScrollBarVisibility.Auto,
+                HorizontalScrollBarVisibility = ScrollBarVisibility.Auto,
+                Width = 800,
+                Height = 600
+            };
+
+            // 主内容容器
             Border mainBorder = new()
             {
                 Background = "White",
@@ -33,7 +42,7 @@ namespace AetherUI.Demo.Demos
             // 页面标题
             TextBlock pageTitle = new()
             {
-                Text = "🔘 按钮控件完整演示",
+                Text = "🔘 按钮控件完整演示 (可滚动)",
                 FontSize = 32,
                 FontFamily = "Microsoft YaHei",
                 FontWeight = FontWeight.Bold,
@@ -47,7 +56,7 @@ namespace AetherUI.Demo.Demos
             TextBlock pageDescription = new()
             {
                 Text = "本页面展示了 AetherUI 框架中按钮控件的各种功能特性，包括不同尺寸、颜色主题、状态和交互效果。" +
-                       "所有按钮都支持点击事件、命令绑定和字体渲染优化。",
+                       "所有按钮都支持点击事件、命令绑定和字体渲染优化。使用鼠标滚轮或拖拽滚动条来浏览所有内容。",
                 FontSize = 14,
                 FontFamily = "Microsoft YaHei",
                 Foreground = "#7F8C8D",
@@ -55,6 +64,18 @@ namespace AetherUI.Demo.Demos
                 HorizontalAlignment = HorizontalAlignment.Center
             };
             mainPanel.Children.Add(pageDescription);
+
+            // 滚动提示
+            TextBlock scrollHint = new()
+            {
+                Text = "💡 提示：使用鼠标滚轮或拖拽右侧滚动条来浏览更多内容",
+                FontSize = 12,
+                FontFamily = "Microsoft YaHei",
+                Foreground = "#95A5A6",
+                Margin = new Thickness(0, 0, 0, 20),
+                HorizontalAlignment = HorizontalAlignment.Center
+            };
+            mainPanel.Children.Add(scrollHint);
 
             // 创建演示区域网格
             Grid demoGrid = new();
@@ -84,6 +105,7 @@ namespace AetherUI.Demo.Demos
             rightColumn.Children.Add(CreateInteractiveButtonsSection());
             rightColumn.Children.Add(CreateSpecialButtonsSection());
             rightColumn.Children.Add(CreatePerformanceTestSection());
+            rightColumn.Children.Add(CreateScrollTestSection()); // 新增滚动测试区域
 
             Grid.SetColumn(leftColumn, 0);
             Grid.SetColumn(rightColumn, 1);
@@ -93,8 +115,11 @@ namespace AetherUI.Demo.Demos
             mainPanel.Children.Add(demoGrid);
             mainBorder.Child = mainPanel;
 
-            Console.WriteLine("按钮控件演示页面创建完成");
-            return mainBorder;
+            // 将内容设置到滚动视图中
+            scrollViewer.Content = mainBorder;
+
+            Console.WriteLine("按钮控件演示页面创建完成（包含滚动功能）");
+            return scrollViewer;
         }
 
         /// <summary>
@@ -517,6 +542,62 @@ namespace AetherUI.Demo.Demos
 
             sectionCard.Content = sectionContent;
             return sectionCard;
+        }
+
+        /// <summary>
+        /// 创建滚动测试演示区域
+        /// </summary>
+        /// <returns>滚动测试演示UI元素</returns>
+        private static UIElement CreateScrollTestSection()
+        {
+            return CreateDemoSection("滚动功能测试", "测试滚动条的各种交互功能", () =>
+            {
+                StackPanel scrollTestStack = new()
+                {
+                    Orientation = Orientation.Vertical
+                };
+
+                // 滚动条交互测试按钮
+                Button scrollInteractionButton = CreateStyledButton("滚动条交互测试", "#1ABC9C", "#FFFFFF");
+                scrollInteractionButton.Click += (s, e) =>
+                {
+                    Console.WriteLine("=== 滚动条交互测试 ===");
+                    Console.WriteLine("请尝试以下操作:");
+                    Console.WriteLine("1. 使用鼠标滚轮滚动");
+                    Console.WriteLine("2. 点击滚动条轨道跳转");
+                    Console.WriteLine("3. 拖拽滚动条滑块");
+                    Console.WriteLine("4. 点击滚动条箭头按钮");
+                };
+                scrollTestStack.Children.Add(WrapInContainer(scrollInteractionButton, "#1ABC9C"));
+
+                // 滚动到顶部按钮
+                Button scrollToTopButton = CreateStyledButton("滚动到顶部", "#3498DB", "#FFFFFF");
+                scrollToTopButton.Click += (s, e) =>
+                {
+                    Console.WriteLine("滚动到顶部功能触发");
+                    // 这里可以添加实际的滚动到顶部逻辑
+                };
+                scrollTestStack.Children.Add(WrapInContainer(scrollToTopButton, "#3498DB"));
+
+                // 滚动到底部按钮
+                Button scrollToBottomButton = CreateStyledButton("滚动到底部", "#E74C3C", "#FFFFFF");
+                scrollToBottomButton.Click += (s, e) =>
+                {
+                    Console.WriteLine("滚动到底部功能触发");
+                    // 这里可以添加实际的滚动到底部逻辑
+                };
+                scrollTestStack.Children.Add(WrapInContainer(scrollToBottomButton, "#E74C3C"));
+
+                // 添加更多按钮来增加内容高度，测试滚动功能
+                for (int i = 1; i <= 15; i++)
+                {
+                    Button extraButton = CreateStyledButton($"额外按钮 {i}", "#95A5A6", "#FFFFFF");
+                    extraButton.Click += (s, e) => Console.WriteLine($"额外按钮 {i} 被点击");
+                    scrollTestStack.Children.Add(WrapInContainer(extraButton, "#95A5A6"));
+                }
+
+                return scrollTestStack;
+            });
         }
     }
 }

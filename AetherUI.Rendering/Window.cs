@@ -288,6 +288,16 @@ Debug.WriteLine($"OpenGL Renderer: {GL.GetString(StringName.Renderer)}");
                     _pointerInput.OnMouseUp(p);
                 }
             }
+
+            // 处理鼠标滚轮
+            if (mouse.ScrollDelta != _prevMouseState.ScrollDelta)
+            {
+                var pos = mouse.Position;
+                AetherUI.Core.Point p = new AetherUI.Core.Point(pos.X, pos.Y);
+                double delta = mouse.ScrollDelta.Y - _prevMouseState.ScrollDelta.Y;
+                _pointerInput?.OnMouseWheel(p, delta);
+            }
+
             _prevMouseState = mouse;
 
             // 检查退出条件

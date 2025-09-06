@@ -102,6 +102,25 @@ namespace AetherUI.Rendering
                 if (card.Footer != null)
                     RenderElementRecursive(card.Footer, elementTransform);
             }
+            else if (element is ScrollViewer scrollViewer)
+            {
+                // 渲染滚动视图的内容和滚动条
+                if (scrollViewer.Content != null)
+                {
+                    RenderElementRecursive(scrollViewer.Content, elementTransform);
+                }
+
+                // 渲染滚动条
+                if (scrollViewer.VerticalScrollBar.Visibility == Visibility.Visible)
+                {
+                    RenderElementRecursive(scrollViewer.VerticalScrollBar, elementTransform);
+                }
+
+                if (scrollViewer.HorizontalScrollBar.Visibility == Visibility.Visible)
+                {
+                    RenderElementRecursive(scrollViewer.HorizontalScrollBar, elementTransform);
+                }
+            }
         }
 
         /// <summary>
@@ -145,6 +164,14 @@ namespace AetherUI.Rendering
 
                     case Panel panel:
                         RenderPanel(panel, bounds);
+                        break;
+
+                    case ScrollBar scrollBar:
+                        RenderScrollBar(scrollBar, bounds);
+                        break;
+
+                    case ScrollViewer scrollViewer:
+                        RenderScrollViewer(scrollViewer, bounds);
                         break;
 
                     default:
@@ -424,6 +451,135 @@ namespace AetherUI.Rendering
             {
 }
         }
+
+        /// <summary>
+        /// 渲染滚动条
+        /// </summary>
+        /// <param name="scrollBar">滚动条</param>
+        /// <param name="bounds">边界</param>
+        private void RenderScrollBar(ScrollBar scrollBar, Rect bounds)
+        {
+            // 滚动条背景
+            Vector4 trackColor = new Vector4(0.95f, 0.95f, 0.95f, 1.0f);
+            _geometryRenderer.DrawRect(bounds, trackColor);
+
+            // 渲染轨道
+            if (!scrollBar.TrackRect.IsEmpty)
+            {
+                Vector4 trackBgColor = new Vector4(0.9f, 0.9f, 0.9f, 1.0f);
+                _geometryRenderer.DrawRect(scrollBar.TrackRect, trackBgColor);
+            }
+
+            // 渲染滑块
+            if (!scrollBar.ThumbRect.IsEmpty)
+            {
+                Vector4 thumbColor = scrollBar.IsDragging
+                    ? new Vector4(0.6f, 0.6f, 0.6f, 1.0f)  // 拖拽时颜色
+                    : new Vector4(0.7f, 0.7f, 0.7f, 1.0f); // 正常颜色
+
+                _geometryRenderer.DrawRoundedRect(scrollBar.ThumbRect, thumbColor, 2);
+
+                // 滑块边框
+                Vector4 thumbBorderColor = new Vector4(0.5f, 0.5f, 0.5f, 1.0f);
+                _geometryRenderer.DrawRectBorder(scrollBar.ThumbRect, thumbBorderColor, 1);
+            }
+
+            // 渲染箭头按钮
+            RenderScrollBarButton(scrollBar.UpButtonRect, scrollBar.Orientation, true);
+            RenderScrollBarButton(scrollBar.DownButtonRect, scrollBar.Orientation, false);
+        }
+
+        /// <summary>
+        /// 渲染滚动条按钮
+        /// </summary>
+        /// <param name="buttonRect">按钮矩形</param>
+        /// <param name="orientation">方向</param>
+        /// <param name="isUpLeft">是否为上/左按钮</param>
+        private void RenderScrollBarButton(Rect buttonRect, Orientation orientation, bool isUpLeft)
+        {
+            if (buttonRect.IsEmpty) return;
+
+            // 按钮背景
+            Vector4 buttonColor = new Vector4(0.85f, 0.85f, 0.85f, 1.0f);
+            _geometryRenderer.DrawRect(buttonRect, buttonColor);
+
+            // 按钮边框
+            Vector4 borderColor = new Vector4(0.6f, 0.6f, 0.6f, 1.0f);
+            _geometryRenderer.DrawRectBorder(buttonRect, borderColor, 1);
+
+            // 绘制箭头（简化为三角形）
+            Vector4 arrowColor = new Vector4(0.4f, 0.4f, 0.4f, 1.0f);
+            double centerX = buttonRect.X + buttonRect.Width / 2;
+            double centerY = buttonRect.Y + buttonRect.Height / 2;
+            double arrowSize = Math.Min(buttonRect.Width, buttonRect.Height) * 0.3;
+
+            if (orientation == Orientation.Vertical)
+            {
+                if (isUpLeft) // 向上箭头
+                {
+                    Point p1 = new Point(centerX, centerY - arrowSize / 2);
+                    Point p2 = new Point(centerX - arrowSize / 2, centerY + arrowSize / 2);
+                    Point p3 = new Point(centerX + arrowSize / 2, centerY + arrowSize / 2);
+                    RenderTriangle(p1, p2, p3, arrowColor);
+                }
+                else // 向下箭头
+                {
+                    Point p1 = new Point(centerX, centerY + arrowSize / 2);
+                    Point p2 = new Point(centerX - arrowSize / 2, centerY - arrowSize / 2);
+                    Point p3 = new Point(centerX + arrowSize / 2, centerY - arrowSize / 2);
+                    RenderTriangle(p1, p2, p3, arrowColor);
+                }
+            }
+            else
+            {
+                if (isUpLeft) // 向左箭头
+                {
+                    Point p1 = new Point(centerX - arrowSize / 2, centerY);
+                    Point p2 = new Point(centerX + arrowSize / 2, centerY - arrowSize / 2);
+                    Point p3 = new Point(centerX + arrowSize / 2, centerY + arrowSize / 2);
+                    RenderTriangle(p1, p2, p3, arrowColor);
+                }
+                else // 向右箭头
+                {
+                    Point p1 = new Point(centerX + arrowSize / 2, centerY);
+                    Point p2 = new Point(centerX - arrowSize / 2, centerY - arrowSize / 2);
+                    Point p3 = new Point(centerX - arrowSize / 2, centerY + arrowSize / 2);
+                    RenderTriangle(p1, p2, p3, arrowColor);
+                }
+            }
+        }
+
+        /// <summary>
+        /// 渲染三角形
+        /// </summary>
+        /// <param name="p1">顶点1</param>
+        /// <param name="p2">顶点2</param>
+        /// <param name="p3">顶点3</param>
+        /// <param name="color">颜色</param>
+        private void RenderTriangle(Point p1, Point p2, Point p3, Vector4 color)
+        {
+            // 使用线条绘制三角形（简化实现）
+            _geometryRenderer.DrawLine(p1, p2, color, 1);
+            _geometryRenderer.DrawLine(p2, p3, color, 1);
+            _geometryRenderer.DrawLine(p3, p1, color, 1);
+        }
+
+        /// <summary>
+        /// 渲染滚动视图
+        /// </summary>
+        /// <param name="scrollViewer">滚动视图</param>
+        /// <param name="bounds">边界</param>
+        private void RenderScrollViewer(ScrollViewer scrollViewer, Rect bounds)
+        {
+            // 滚动视图背景
+            Vector4 backgroundColor = new Vector4(1.0f, 1.0f, 1.0f, 1.0f);
+            _geometryRenderer.DrawRect(bounds, backgroundColor);
+
+            // 滚动视图边框
+            Vector4 borderColor = new Vector4(0.8f, 0.8f, 0.8f, 1.0f);
+            _geometryRenderer.DrawRectBorder(bounds, borderColor, 1);
+        }
+
         #endregion
 
         #region IDisposable
