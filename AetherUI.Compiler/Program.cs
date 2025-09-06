@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using AetherUI.Xaml;
 
 namespace AetherUI.Compiler
 {
@@ -21,6 +22,7 @@ namespace AetherUI.Compiler
                 TestXamlCompilation();
                 TestJsonCompilation();
                 TestCodeGeneration();
+                TestHotReload();
 
                 Console.WriteLine("\n所有编译器测试完成！");
             }
@@ -210,6 +212,142 @@ namespace AetherUI.Compiler
             catch (Exception ex)
             {
                 Console.WriteLine($"✗ 代码生成测试失败: {ex.Message}");
+            }
+        }
+
+        /// <summary>
+        /// 测试热重载功能
+        /// </summary>
+        private static void TestHotReload()
+        {
+            Console.WriteLine("\n=== 测试热重载功能 ===");
+
+            try
+            {
+                using HotReloadManager hotReloadManager = new HotReloadManager();
+
+                // 设置事件处理
+                hotReloadManager.HotReloadCompleted += (sender, e) =>
+                {
+                    Console.WriteLine($"✓ 热重载完成: {Path.GetFileName(e.FilePath)}");
+                    Console.WriteLine($"  新元素类型: {e.NewElement?.GetType().Name ?? "null"}");
+                    Console.WriteLine($"  编译成功: {e.CompilationResult?.Success ?? false}");
+                };
+
+                hotReloadManager.HotReloadError += (sender, e) =>
+                {
+                    Console.WriteLine($"✗ 热重载错误: {Path.GetFileName(e.FilePath)}");
+                    Console.WriteLine($"  错误信息: {e.Error.Message}");
+                };
+
+                // 创建临时测试目录
+                string tempDir = Path.Combine(Path.GetTempPath(), "AetherUIHotReloadTest");
+                Directory.CreateDirectory(tempDir);
+
+                Console.WriteLine($"✓ 创建测试目录: {tempDir}");
+
+                // 创建测试XAML文件
+                string testXamlPath = Path.Combine(tempDir, "TestButton.xaml");
+                string initialXaml = @"<Button Content=""初始按钮"" />";
+                File.WriteAllText(testXamlPath, initialXaml);
+
+                Console.WriteLine($"✓ 创建测试XAML文件: {Path.GetFileName(testXamlPath)}");
+
+                // 注册元素
+                try
+                {
+                    object initialElement = XamlLoader.Load(initialXaml);
+                    hotReloadManager.RegisterElement(testXamlPath, initialElement);
+                    Console.WriteLine($"✓ 注册初始元素: {initialElement.GetType().Name}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"✗ 注册初始元素失败: {ex.Message}");
+                }
+
+                // 开始监控
+                hotReloadManager.StartWatching(tempDir);
+                Console.WriteLine("✓ 开始热重载监控");
+
+                // 模拟文件修改
+                Console.WriteLine("✓ 模拟文件修改...");
+                System.Threading.Thread.Sleep(1000); // 等待监控启动
+
+                string modifiedXaml = @"<Button Content=""修改后的按钮"" />";
+                File.WriteAllText(testXamlPath, modifiedXaml);
+
+                // 等待热重载处理
+                System.Threading.Thread.Sleep(2000);
+
+                // 创建测试JSON文件
+                string testJsonPath = Path.Combine(tempDir, "TestPanel.json");
+                string testJson = @"{
+                    ""Type"": ""StackPanel"",
+                    ""Children"": [
+                        {
+                            ""Type"": ""TextBlock"",
+                            ""Text"": ""JSON热重载测试""
+                        }
+                    ]
+                }";
+                File.WriteAllText(testJsonPath, testJson);
+
+                Console.WriteLine($"✓ 创建测试JSON文件: {Path.GetFileName(testJsonPath)}");
+
+                // 注册JSON元素
+                try
+                {
+                    object jsonElement = JsonLoader.Load(testJson);
+                    hotReloadManager.RegisterElement(testJsonPath, jsonElement);
+                    Console.WriteLine($"✓ 注册JSON元素: {jsonElement.GetType().Name}");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"✗ 注册JSON元素失败: {ex.Message}");
+                }
+
+                // 等待处理
+                System.Threading.Thread.Sleep(1000);
+
+                // 修改JSON文件
+                string modifiedJson = @"{
+                    ""Type"": ""StackPanel"",
+                    ""Children"": [
+                        {
+                            ""Type"": ""TextBlock"",
+                            ""Text"": ""JSON热重载测试 - 已修改""
+                        },
+                        {
+                            ""Type"": ""Button"",
+                            ""Content"": ""新增按钮""
+                        }
+                    ]
+                }";
+                File.WriteAllText(testJsonPath, modifiedJson);
+
+                // 等待热重载处理
+                System.Threading.Thread.Sleep(2000);
+
+                // 停止监控
+                hotReloadManager.StopWatching();
+                Console.WriteLine("✓ 停止热重载监控");
+
+                // 清理测试文件
+                try
+                {
+                    Directory.Delete(tempDir, true);
+                    Console.WriteLine("✓ 清理测试文件");
+                }
+                catch (Exception ex)
+                {
+                    Console.WriteLine($"⚠ 清理测试文件失败: {ex.Message}");
+                }
+
+                Console.WriteLine("✓ 热重载功能测试完成");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"✗ 热重载测试失败: {ex.Message}");
             }
         }
     }
