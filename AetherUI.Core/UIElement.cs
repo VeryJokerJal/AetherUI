@@ -92,6 +92,11 @@ namespace AetherUI.Core
         public Rect LayoutRect { get; private set; } = Rect.Empty;
 
         /// <summary>
+        /// 渲染边界（用于命中测试和输入处理）
+        /// </summary>
+        public Rect RenderBounds => new Rect(0, 0, RenderSize.Width, RenderSize.Height);
+
+        /// <summary>
         /// 获取视觉子元素集合（用于渲染与命中测试）
         /// </summary>
         /// <returns>子元素枚举</returns>
@@ -138,6 +143,9 @@ namespace AetherUI.Core
             Size arrangedSize = ArrangeCore(finalRect);
             RenderSize = arrangedSize;
             _isArrangeValid = true;
+
+            // 触发布局更新事件
+            OnLayoutUpdated();
         }
 
         /// <summary>
@@ -298,6 +306,129 @@ namespace AetherUI.Core
         {
             if (d is UIElement)
             {
+            }
+        }
+
+        #endregion
+
+        #region 输入相关属性
+
+        /// <summary>
+        /// 是否可命中测试依赖属性
+        /// </summary>
+        public static readonly DependencyProperty IsHitTestVisibleProperty = DependencyProperty.Register(
+            nameof(IsHitTestVisible), typeof(bool), typeof(UIElement),
+            new PropertyMetadata(true));
+
+        /// <summary>
+        /// 是否可获得焦点依赖属性
+        /// </summary>
+        public static readonly DependencyProperty FocusableProperty = DependencyProperty.Register(
+            nameof(Focusable), typeof(bool), typeof(UIElement),
+            new PropertyMetadata(false));
+
+        /// <summary>
+        /// 是否可命中测试
+        /// </summary>
+        public bool IsHitTestVisible
+        {
+            get => (bool)GetValue(IsHitTestVisibleProperty);
+            set => SetValue(IsHitTestVisibleProperty, value);
+        }
+
+        /// <summary>
+        /// 是否可获得焦点
+        /// </summary>
+        public bool Focusable
+        {
+            get => (bool)GetValue(FocusableProperty);
+            set => SetValue(FocusableProperty, value);
+        }
+
+        /// <summary>
+        /// 是否有焦点
+        /// </summary>
+        public bool IsFocused { get; private set; }
+
+        #endregion
+
+        #region 输入事件
+
+        /// <summary>
+        /// 布局更新事件
+        /// </summary>
+        public event EventHandler? LayoutUpdated;
+
+        /// <summary>
+        /// 鼠标进入事件
+        /// </summary>
+        public event EventHandler<MouseEventArgs>? MouseEnter;
+
+        /// <summary>
+        /// 鼠标离开事件
+        /// </summary>
+        public event EventHandler<MouseEventArgs>? MouseLeave;
+
+        /// <summary>
+        /// 鼠标按下事件
+        /// </summary>
+        public event EventHandler<MouseButtonEventArgs>? MouseDown;
+
+        /// <summary>
+        /// 鼠标抬起事件
+        /// </summary>
+        public event EventHandler<MouseButtonEventArgs>? MouseUp;
+
+        /// <summary>
+        /// 鼠标移动事件
+        /// </summary>
+        public event EventHandler<MouseEventArgs>? MouseMove;
+
+        /// <summary>
+        /// 键盘按下事件
+        /// </summary>
+        public event EventHandler<KeyEventArgs>? KeyDown;
+
+        /// <summary>
+        /// 键盘抬起事件
+        /// </summary>
+        public event EventHandler<KeyEventArgs>? KeyUp;
+
+        /// <summary>
+        /// 获得焦点事件
+        /// </summary>
+        public event EventHandler<FocusEventArgs>? GotFocus;
+
+        /// <summary>
+        /// 失去焦点事件
+        /// </summary>
+        public event EventHandler<FocusEventArgs>? LostFocus;
+
+        /// <summary>
+        /// 触发布局更新事件
+        /// </summary>
+        protected virtual void OnLayoutUpdated()
+        {
+            LayoutUpdated?.Invoke(this, EventArgs.Empty);
+        }
+
+        /// <summary>
+        /// 设置焦点状态
+        /// </summary>
+        /// <param name="focused">是否有焦点</param>
+        internal void SetFocused(bool focused)
+        {
+            if (IsFocused != focused)
+            {
+                IsFocused = focused;
+                if (focused)
+                {
+                    GotFocus?.Invoke(this, new FocusEventArgs());
+                }
+                else
+                {
+                    LostFocus?.Invoke(this, new FocusEventArgs());
+                }
             }
         }
 

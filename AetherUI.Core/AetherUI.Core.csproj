@@ -14,4 +14,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AetherUI.Input\AetherUI.Input.csproj" />
+  </ItemGroup>
+
 </Project>
