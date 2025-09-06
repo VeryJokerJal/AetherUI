@@ -55,7 +55,8 @@ namespace AetherUI.Rendering
             if (fragmentShader == 0)
             {
                 GL.DeleteShader(vertexShader);
-                throw new InvalidOperationException($"Failed to compile fragment shader for {name}");
+                string fragmentLog = GL.GetShaderInfoLog(fragmentShader);
+                throw new InvalidOperationException($"Failed to compile fragment shader for {name}: {fragmentLog}");
             }
 
             // 创建着色器程序

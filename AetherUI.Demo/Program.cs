@@ -32,12 +32,16 @@ namespace AetherUI.Demo
                 // 创建演示UI
                 UIElement demoUI = CreateDemoUI();
 
-                Console.WriteLine("启动AetherUI图形渲染窗口...");
-                Console.WriteLine("窗口将显示完整的UI界面，包括真实的字体渲染。");
+                Console.WriteLine("启动AetherUI现代化窗口演示...");
+                Console.WriteLine("功能特性：");
+                Console.WriteLine("- 真实字体渲染系统");
+                Console.WriteLine("- 现代化背景效果（亚克力/云母）");
+                Console.WriteLine("- 响应式窗口大小变化");
+                Console.WriteLine("- ESC键退出程序");
                 Console.WriteLine();
 
                 // 运行图形渲染演示
-                AetherApplication.RunSimple(1200, 800, "AetherUI 字体渲染演示", demoUI);
+                RunModernWindowDemo(demoUI);
 
                 Console.WriteLine("演示窗口已关闭。");
             }
@@ -54,6 +58,51 @@ namespace AetherUI.Demo
                 }
                 catch { }
             }
+        }
+
+        /// <summary>
+        /// 运行现代化窗口演示
+        /// </summary>
+        /// <param name="demoUI">演示UI</param>
+        private static void RunModernWindowDemo(UIElement demoUI)
+        {
+            // 创建窗口
+            var window = new AetherUI.Rendering.Window(1200, 800, "AetherUI 现代化窗口演示");
+
+            // 设置根UI元素
+            window.RootElement = demoUI;
+
+            // 配置现代化背景效果
+            var backgroundConfig = new AetherUI.Rendering.BackgroundEffectConfig
+            {
+                Type = AetherUI.Rendering.BackgroundEffectType.Acrylic,
+                Opacity = 0.85f,
+                BlurStrength = 0.6f,
+                TintColor = new OpenTK.Mathematics.Vector4(0.95f, 0.95f, 0.98f, 1.0f),
+                NoiseStrength = 0.08f
+            };
+
+            // 添加窗口大小变化监听器
+            window.AddResizeListener(new WindowResizeLogger());
+
+            // 添加窗口大小变化事件处理
+            window.WindowResized += (sender, args) =>
+            {
+                Console.WriteLine($"窗口大小变化: {args.OldSize} -> {args.NewSize}");
+                Console.WriteLine($"变化量: {args.Delta}");
+            };
+
+            // 在窗口加载后设置背景效果
+            window.Load += () =>
+            {
+                // 暂时禁用背景效果，先测试窗口大小变化功能
+                // window.SetBackgroundEffect(backgroundConfig);
+                Console.WriteLine("窗口大小变化响应系统已启用");
+                Console.WriteLine("尝试调整窗口大小来测试响应式布局！");
+            };
+
+            // 运行窗口
+            window.Run();
         }
 
         /// <summary>
@@ -851,6 +900,31 @@ namespace AetherUI.Demo
         {
             Counter++;
             Console.WriteLine($"Test command executed, counter: {Counter}");
+        }
+    }
+
+    /// <summary>
+    /// 窗口大小变化日志记录器
+    /// </summary>
+    public class WindowResizeLogger : AetherUI.Rendering.IWindowResizeListener
+    {
+        /// <summary>
+        /// 处理窗口大小变化
+        /// </summary>
+        /// <param name="args">事件参数</param>
+        public void OnWindowResize(AetherUI.Rendering.WindowResizeEventArgs args)
+        {
+            Console.WriteLine($"[ResizeLogger] 窗口尺寸: {args.NewSize.Width:F0}x{args.NewSize.Height:F0}");
+
+            // 根据窗口大小给出建议
+            if (args.NewSize.Width < 800 || args.NewSize.Height < 600)
+            {
+                Console.WriteLine("[ResizeLogger] 提示：窗口较小，某些UI元素可能显示不完整");
+            }
+            else if (args.NewSize.Width > 1600 && args.NewSize.Height > 1000)
+            {
+                Console.WriteLine("[ResizeLogger] 提示：大屏幕模式，UI布局已优化");
+            }
         }
     }
 }

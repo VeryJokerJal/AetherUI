@@ -16,8 +16,11 @@ namespace AetherUI.Rendering
     {
         private RenderContext? _renderContext;
         private UIRenderer? _uiRenderer;
+        private BackgroundEffectRenderer? _backgroundRenderer;
+        private WindowResizeManager? _resizeManager;
         private UIElement? _rootElement;
         private bool _needsLayout = true;
+        private float _time = 0.0f;
 
         #region 事件
 
@@ -25,6 +28,11 @@ namespace AetherUI.Rendering
         /// 根元素变更事件
         /// </summary>
         public event EventHandler<UIElement?>? RootElementChanged;
+
+        /// <summary>
+        /// 窗口大小变化事件
+        /// </summary>
+        public event EventHandler<WindowResizeEventArgs>? WindowResized;
 
         #endregion
 
@@ -34,6 +42,16 @@ namespace AetherUI.Rendering
         /// 渲染上下文
         /// </summary>
         public RenderContext? RenderContext => _renderContext;
+
+        /// <summary>
+        /// 背景效果渲染器
+        /// </summary>
+        public BackgroundEffectRenderer? BackgroundRenderer => _backgroundRenderer;
+
+        /// <summary>
+        /// 窗口大小变化管理器
+        /// </summary>
+        public WindowResizeManager? ResizeManager => _resizeManager;
 
         /// <summary>
         /// 根UI元素
@@ -111,6 +129,13 @@ namespace AetherUI.Rendering
             // 初始化UI渲染器
             _uiRenderer = new UIRenderer(_renderContext);
 
+            // 初始化背景效果渲染器（暂时禁用）
+            // _backgroundRenderer = new BackgroundEffectRenderer(_uiRenderer.ShaderManager);
+
+            // 初始化窗口大小变化管理器
+            _resizeManager = new WindowResizeManager(new Size(ClientSize.X, ClientSize.Y));
+            _resizeManager.WindowResized += OnWindowResizedInternal;
+
             // 设置窗口可见
             IsVisible = true;
 
@@ -124,6 +149,17 @@ namespace AetherUI.Rendering
         protected override void OnUnload()
         {
             Debug.WriteLine("AetherWindow unloading...");
+
+            // 释放背景效果渲染器
+            _backgroundRenderer?.Dispose();
+            _backgroundRenderer = null;
+
+            // 释放窗口大小变化管理器
+            if (_resizeManager != null)
+            {
+                _resizeManager.WindowResized -= OnWindowResizedInternal;
+                _resizeManager = null;
+            }
 
             // 释放UI渲染器
             _uiRenderer?.Dispose();
@@ -151,6 +187,9 @@ namespace AetherUI.Rendering
             // 更新渲染上下文视口
             _renderContext?.SetViewport(e.Width, e.Height);
 
+            // 通知窗口大小变化管理器
+            _resizeManager?.NotifyResize(new Size(e.Width, e.Height));
+
             // 标记需要重新布局
             _needsLayout = true;
         }
@@ -168,8 +207,18 @@ namespace AetherUI.Rendering
 
             try
             {
+                // 更新时间
+                _time += (float)e.Time;
+
                 // 开始渲染帧
                 _renderContext.BeginFrame();
+
+                // 渲染背景效果
+                if (_backgroundRenderer != null && _renderContext != null)
+                {
+                    var resolution = new Vector2((float)_renderContext.ViewportSize.Width, (float)_renderContext.ViewportSize.Height);
+                    _backgroundRenderer.RenderBackground(_renderContext.MVPMatrix, resolution, _time);
+                }
 
                 // 执行布局（如果需要）
                 if (_needsLayout && _rootElement != null)
@@ -206,6 +255,9 @@ namespace AetherUI.Rendering
         protected override void OnUpdateFrame(FrameEventArgs e)
         {
             base.OnUpdateFrame(e);
+
+            // 更新窗口大小变化管理器
+            _resizeManager?.Update();
 
             // 检查退出条件
             if (KeyboardState.IsKeyDown(Keys.Escape))
@@ -251,6 +303,63 @@ namespace AetherUI.Rendering
         public void InvalidateLayout()
         {
             _needsLayout = true;
+        }
+
+        /// <summary>
+        /// 设置背景效果配置
+        /// </summary>
+        /// <param name="config">背景效果配置</param>
+        public void SetBackgroundEffect(BackgroundEffectConfig config)
+        {
+            if (_backgroundRenderer != null)
+            {
+                _backgroundRenderer.Config = config;
+                Debug.WriteLine($"Background effect set to: {config.Type}");
+            }
+        }
+
+        /// <summary>
+        /// 获取当前窗口尺寸
+        /// </summary>
+        /// <returns>窗口尺寸</returns>
+        public Size GetWindowSize()
+        {
+            return _resizeManager?.CurrentSize ?? new Size(ClientSize.X, ClientSize.Y);
+        }
+
+        /// <summary>
+        /// 添加窗口大小变化监听器
+        /// </summary>
+        /// <param name="listener">监听器</param>
+        public void AddResizeListener(IWindowResizeListener listener)
+        {
+            _resizeManager?.AddListener(listener);
+        }
+
+        /// <summary>
+        /// 移除窗口大小变化监听器
+        /// </summary>
+        /// <param name="listener">监听器</param>
+        public void RemoveResizeListener(IWindowResizeListener listener)
+        {
+            _resizeManager?.RemoveListener(listener);
+        }
+
+        #endregion
+
+        #region 私有方法
+
+        /// <summary>
+        /// 内部窗口大小变化事件处理
+        /// </summary>
+        /// <param name="sender">发送者</param>
+        /// <param name="args">事件参数</param>
+        private void OnWindowResizedInternal(object? sender, WindowResizeEventArgs args)
+        {
+            // 触发公共事件
+            WindowResized?.Invoke(this, args);
+
+            Debug.WriteLine($"Window resize event: {args.OldSize} -> {args.NewSize}");
         }
 
         #endregion

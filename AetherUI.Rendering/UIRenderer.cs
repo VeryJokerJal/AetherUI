@@ -17,6 +17,15 @@ namespace AetherUI.Rendering
         private readonly FontRenderer _fontRenderer;
         private bool _disposed = false;
 
+        #region 属性
+
+        /// <summary>
+        /// 着色器管理器
+        /// </summary>
+        public ShaderManager ShaderManager => _shaderManager;
+
+        #endregion
+
         #region 构造函数
 
         /// <summary>
