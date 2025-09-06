@@ -1,6 +1,5 @@
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace AetherUI.Core
@@ -64,18 +63,28 @@ namespace AetherUI.Core
         public static DependencyProperty Register(string name, Type propertyType, Type ownerType, PropertyMetadata? metadata = null)
         {
             if (string.IsNullOrEmpty(name))
+            {
                 throw new ArgumentException("Property name cannot be null or empty", nameof(name));
+            }
+
             if (propertyType == null)
+            {
                 throw new ArgumentNullException(nameof(propertyType));
+            }
+
             if (ownerType == null)
+            {
                 throw new ArgumentNullException(nameof(ownerType));
+            }
 
             string key = $"{ownerType.FullName}.{name}";
-            
-            if (_registeredProperties.ContainsKey(key))
-                throw new ArgumentException($"Property '{name}' is already registered for type '{ownerType.FullName}'");
 
-            DependencyProperty property = new DependencyProperty(name, propertyType, ownerType, metadata);
+            if (_registeredProperties.ContainsKey(key))
+            {
+                throw new ArgumentException($"Property '{name}' is already registered for type '{ownerType.FullName}'");
+            }
+
+            DependencyProperty property = new(name, propertyType, ownerType, metadata);
             _registeredProperties[key] = property;
 
             Debug.WriteLine($"Registered dependency property: {key}");
@@ -105,10 +114,14 @@ namespace AetherUI.Core
         public static DependencyProperty? GetProperty(string name, Type ownerType)
         {
             string key = $"{ownerType.FullName}.{name}";
-            _registeredProperties.TryGetValue(key, out DependencyProperty? property);
+            _ = _registeredProperties.TryGetValue(key, out DependencyProperty? property);
             return property;
         }
 
+        /// <summary>
+        /// 返回属性的字符串表示形式
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return $"{OwnerType.Name}.{Name}";

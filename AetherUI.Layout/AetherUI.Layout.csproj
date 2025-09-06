@@ -4,7 +4,7 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>disable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <OutputType>Library</OutputType>
+    <OutputType>Exe</OutputType>
     <RootNamespace>AetherUI.Layout</RootNamespace>
     <AssemblyName>AetherUI.Layout</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
